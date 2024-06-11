@@ -1,0 +1,3 @@
+{
+    "lora_targets": ["query", "key", "value"]
+}

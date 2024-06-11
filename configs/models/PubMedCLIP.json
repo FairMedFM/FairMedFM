@@ -1,0 +1,4 @@
+{
+    "backbone":"ViT-B/32",
+    "pretrained_path": "./pretrained/pubmedclip/PubMedCLIP_ViT32.pth"
+}

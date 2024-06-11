@@ -1,0 +1,9 @@
+{
+    "train_meta_path": "/research/d5/gds/yzhong22/datasets/brazilian-ophthalmological/1.0.0/train.csv",
+    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/brazilian-ophthalmological/1.0.0/test.csv",
+    "test_age_meta_path": "/research/d5/gds/yzhong22/datasets/brazilian-ophthalmological/1.0.0/test_age.csv",
+    "image_train_path": "/research/d5/gds/yzhong22/datasets/brazilian-ophthalmological/1.0.0/small",
+    "image_test_path": "/research/d5/gds/yzhong22/datasets/brazilian-ophthalmological/1.0.0/small",
+    "text_template": "a fundus image of a {}",
+    "class_names": ["normal", "retinopathy"]
+}

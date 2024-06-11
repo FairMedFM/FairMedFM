@@ -1,0 +1,8 @@
+{
+    "train_meta_path": "/research/d5/gds/yzhong22/datasets/ADIN/1.5T/train.csv",
+    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/ADIN/1.5T/test.csv",
+    "image_train_path": "/research/d5/gds/yzhong22/datasets/ADIN/1.5T/preprocessed",
+    "image_test_path": "/research/d5/gds/yzhong22/datasets/ADIN/1.5T/preprocessed",
+    "text_template": "a brain MRI of {}",
+    "class_names": ["normal", "Alzheimer's disease"]
+}
