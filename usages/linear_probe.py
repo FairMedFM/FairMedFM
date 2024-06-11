@@ -11,7 +11,7 @@ class LinearProbeWarpper(nn.Module):
 
         self.head = torch.nn.Linear(self.encoder.feat_dim, 2)
 
-        for param in self.model.parameters():
+        for param in self.encoder.parameters():
             param.requires_grad = False
 
     def forward(self, x):
