@@ -2,12 +2,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from wrappers.base import BaseWrapper
 from peft import LoraConfig, get_peft_model
 
 
-class LoRAWarpper(nn.Module):
+class LoRAWrapper(BaseWrapper):
     def __init__(self, model, lora_targets, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(model, *args, **kwargs)
 
         self.model = get_peft_model(model, LoraConfig(lora_targets))
 

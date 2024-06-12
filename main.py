@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 from datasets.utils import get_dataset
 from models.utils import get_model
-from usages.utils import get_warpped_model
+from wrappers.utils import get_warpped_model
 from trainers.utils import get_trainer
 
 

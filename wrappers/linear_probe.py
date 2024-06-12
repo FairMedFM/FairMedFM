@@ -2,10 +2,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from wrappers.base import BaseWrapper
 
-class LinearProbeWarpper(nn.Module):
+
+class LinearProbeWrapper(BaseWrapper):
     def __init__(self, model, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(model, *args, **kwargs)
 
         self.encoder = model
 

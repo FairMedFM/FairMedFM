@@ -2,10 +2,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from wrappers.base import BaseWrapper
 
-class CLIPWarpper(nn.Module):
+
+class CLIPWrapper(BaseWrapper):
     def __init__(self, model, base_text_features, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(model, *args, **kwargs)
 
         self.model = model
         self.base_text_features = base_text_features
