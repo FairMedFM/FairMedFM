@@ -17,6 +17,9 @@ class ADNI(BaseDataset):
     def set_sensitive(self):
         if self.sens_name == "Sex":
             return np.asarray(self.dataframe["Sex"].values != "M").astype(np.float32)
+        elif self.sens_name == "Age":
+            # 0-60: 0, >60: 1
+            return self.dataframe["age_binary"].values.astype(np.float32)
         else:
             raise NotImplementedError
 
