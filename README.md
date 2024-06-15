@@ -37,6 +37,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
    ```git
    git clone https://github.com/FairMedFM/FairMedFM.git
+   cd FairMedFM
    ```
 
 2. Creating conda environment
