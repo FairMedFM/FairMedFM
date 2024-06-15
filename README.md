@@ -6,9 +6,9 @@ The advent of foundation models (FMs) in healthcare offers unprecedented opportu
 
 
 # Checklist
-[] Realease of the official code.
+- [ ] Realease of the official code.
 
-[] Release of the dataset.
+- [ ] Release of the dataset.
 
 # Citation
 TO Appear.
