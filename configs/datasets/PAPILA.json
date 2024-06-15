@@ -1,0 +1,9 @@
+{
+    "train_meta_path": "/research/d5/gds/yzhong22/datasets/PAPILA/train.csv",
+    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/PAPILA/test.csv",
+    "test_age_meta_path": "/research/d5/gds/yzhong22/datasets/PAPILA/test_age.csv",
+    "image_train_path": "/research/d5/gds/yzhong22/datasets/PAPILA/FundusImages",
+    "image_test_path": "/research/d5/gds/yzhong22/datasets/PAPILA/FundusImages",
+    "text_template": "a fundus image of a {}",
+    "class_names": ["normal", "glaucoma"]
+}

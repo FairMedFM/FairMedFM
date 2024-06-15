@@ -1,0 +1,9 @@
+{
+    "train_meta_path": "/research/d5/gds/yzhong22/datasets/COVID-CT-MD/train.csv",
+    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/COVID-CT-MD/test.csv",
+    "test_age_meta_path": "/research/d5/gds/yzhong22/datasets/COVID-CT-MD/test_age.csv",
+    "image_train_path": "/research/d5/gds/yzhong22/datasets/COVID-CT-MD/nifti",
+    "image_test_path": "/research/d5/gds/yzhong22/datasets/COVID-CT-MD/nifti",
+    "text_template": "a computed tomography of a {}",
+    "class_names": ["normal", "pneumonia"]
+}

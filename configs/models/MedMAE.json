@@ -1,0 +1,4 @@
+{
+    "pretrained_path": "./pretrained/medmae/vit-b_CXR_0.5M_mae.pth",
+    "lora_targets": ["qkv"]
+}
