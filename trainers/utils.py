@@ -4,8 +4,10 @@ def get_trainer(args, model, logger):
             from trainers import CLSTrainer
 
             return CLSTrainer(args, model, logger)
-    elif args.tasl == "seg":
-        # TODO
-        pass
+    elif args.task == "seg":
+        if args.method == "erm":
+            from trainers import SegTrainer
+
+            return SegTrainer(args, model, logger)
     else:
         raise NotImplementedError
