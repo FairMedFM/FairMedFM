@@ -1,4 +1,4 @@
-def get_trainer(args, model, logger):
+def get_trainer(args, model, logger, test_dataloader=None):
     if args.task == "cls":
         if args.method == "erm":
             from trainers import CLSTrainer
@@ -8,6 +8,6 @@ def get_trainer(args, model, logger):
         if args.method == "erm":
             from trainers import SegTrainer
 
-            return SegTrainer(args, model, logger)
+            return SegTrainer(args, model, logger, test_dataloader)
     else:
         raise NotImplementedError

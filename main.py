@@ -65,10 +65,15 @@ if __name__ == "__main__":
     torch.manual_seed(args.random_seed)
     np.random.seed(args.random_seed)
 
-    _, train_dataloader, _ = get_dataset(args, split="train")
-    _, test_dataloader, _ = get_dataset(args, split="test")
+    train_data, train_dataloader, train_meta = get_dataset(args, split="train")
+    test_data, test_dataloader, test_meta = get_dataset(args, split="test")
     model = get_model(args).to(args.device)
-    model = get_warpped_model(args, model).to(args.device)
+
+    if args.task == "cls":
+        model = get_warpped_model(args, model).to(args.device)
+    elif args.task == "seg":
+        model = get_warpped_model(args, model, test_data).to(
+            args.device)  # SAMLearner
 
     trainer = get_trainer(args, model, logger)
 
@@ -83,6 +88,7 @@ if __name__ == "__main__":
         trainer.evaluate(test_dataloader, save_path=os.path.join(
             args["save_folder"], "center"))
         exit(0)
+        # for seg, teh test_dataloader is not used.
 
     elif args.usage == "seg2d-rand":
         logger.info("2D SegFM using 1 random point prompt performance:")

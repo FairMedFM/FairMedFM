@@ -7,7 +7,7 @@ from utils.static import CLIP_MODELS
 from utils.tokenizer import tokenize_text
 
 
-def get_warpped_model(args, model):
+def get_warpped_model(args, model, data_engine=None):
 
     if args.task == "cls":
         if args.usage == "lp":
@@ -37,8 +37,8 @@ def get_warpped_model(args, model):
             raise NotImplementedError
 
     elif args.task == "seg":
-        pass
-        # TODO
+        from wrappers import SAMWrapper
+        model_warpped = SAMWrapper(model, data_engine)
     else:
         raise NotImplementedError
 
