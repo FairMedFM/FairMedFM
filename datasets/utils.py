@@ -109,7 +109,8 @@ def get_dataset(args, split):
     meta = pd.read_csv(data_setting[f"{split}_meta_path"])
 
     dataset_name = getattr(datasets, args.dataset)
-    image_path = None
+
+    image_path = data_setting[f"image_{split}_path"]
 
     if args.task == "cls":
         data = dataset_name(meta, args.sensitive_name,
@@ -125,9 +126,9 @@ def get_dataset(args, split):
             img_size=(args.img_size, args.img_size)
         )
     else:
-        raise NotImplementedError
+        raise NotImplementedError()
 
-    print("loaded dataset ", args.dataset_name)
+    print("loaded dataset ", args.dataset)
 
     if split == "train":
         sampler = None

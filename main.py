@@ -78,6 +78,14 @@ if __name__ == "__main__":
         trainer.evaluate(test_dataloader, save_path=os.path.join(
             args.save_folder, "zs"))
         exit(0)
+    
+    elif args.usage == "lp":
+        logger.info("Linear probing performance:")
+        trainer.init_optimizers()
+        trainer.train(train_dataloader)
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args.save_folder, "zs"))
+        exit(0)
 
     elif args.usage == "seg2d-center":
         logger.info("2D SegFM using 1 center point prompt performance:")

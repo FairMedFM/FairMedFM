@@ -54,7 +54,7 @@ class CLSTrainer(BaseTrainer):
             a = minibatch["sensitive"].to(self.device)
 
             with torch.no_grad():
-                if self.args["is_3d"]:
+                if self.args.is_3d:
                     logits_sliced = torch.stack([self.model(x[:, i]) for i in range(x.shape[1])], dim=1)
                     prob_sliced = F.softmax(logits_sliced, dim=-1)
                     indices = torch.argmax(prob_sliced[:, :, 1], dim=1)
@@ -73,11 +73,10 @@ class CLSTrainer(BaseTrainer):
         prob_list = torch.concat(prob_list).squeeze().cpu().numpy()
         target_list = torch.concat(target_list).squeeze().cpu().numpy().astype(int)
         sensitive_list = torch.concat(sensitive_list).squeeze().cpu().numpy().astype(int)
-
         overall_metrics, subgroup_metrics = evaluate_binary(prob_list[:, 1], target_list, sensitive_list)
         organized_metrics = organize_results(overall_metrics, subgroup_metrics)
 
-        if self.args["early_stopping"] == 1:
+        if self.args.early_stopping == 1:
             if len(self.last_five_auc) >= 5:
                 self.last_five_auc.pop(0)
 
