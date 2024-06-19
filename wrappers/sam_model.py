@@ -2,7 +2,6 @@ import os
 from copy import deepcopy
 from typing import Optional, Tuple
 
-import ipdb
 import numpy as np
 import torch
 from einops import rearrange

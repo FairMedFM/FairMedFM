@@ -1,8 +1,8 @@
 import json
 
 import torch
-from sam_builder.build_sammed2d import sam_model_registry1
-from sam_builder.build_tinysam import sam_model_registry2
+from models.sam_builder.build_sammed2d import sam_model_registry1
+from models.sam_builder.build_tinysam import sam_model_registry2
 from segment_anything.build_sam import sam_model_registry
 
 import models

@@ -12,6 +12,7 @@ def collect_args():
     parser.add_argument(
         "--usage",
         type=str,
+        default='clip-zs',
         choices=["lp", "clip-zs", "clip-adapt"],
     )
     parser.add_argument("--method", default="erm", choices=["erm", "resampling", "group-dro", "laftr"])
@@ -32,6 +33,7 @@ def collect_args():
     )
     parser.add_argument("--sensitive_name", default="Sex", choices=["Sex", "Age", "Race", "Language"])
     parser.add_argument("--is_3d", action="store_true")
+    parser.add_argument("--augment", action="store_true")
 
     parser.add_argument("--experiment_name", type=str, default="test")
     parser.add_argument("--wandb_name", type=str, default="baseline")
@@ -49,7 +51,7 @@ def collect_args():
     parser.add_argument("--weight_decay", type=float, default=1e-4, help="weight decay for optimizer")
     parser.add_argument("--lr_decay_rate", type=float, default=0.1, help="decay rate of the learning rate")
     parser.add_argument("--lr_decay_period", type=float, default=10, help="decay period of the learning rate")
-    parser.add_argument("--total_epochs", type=int, default=50, help="total training epochs")
+    parser.add_argument("--total_epochs", type=int, default=100, help="total training epochs")
     parser.add_argument("--early_stopping", type=int, default=1, help="early stopping epochs")
     parser.add_argument("--test_mode", type=bool, default=False, help="if using test mode")
     parser.add_argument("--warmup_epochs", type=int, default=5)
@@ -91,7 +93,7 @@ def collect_args():
 
     # logging
     parser.add_argument("--log_freq", type=int, default=50, help="logging frequency (step)")
-    parser.add_argument("--exp_path", type=str)
+    parser.add_argument("--exp_path", type=str, default="./output")
 
     args = parser.parse_args()
     return args

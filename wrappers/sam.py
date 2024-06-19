@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from sam_model import SamLearner
+from wrappers.sam_model import SamLearner
 
 from wrappers.base import BaseWrapper
 

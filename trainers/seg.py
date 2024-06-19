@@ -10,7 +10,7 @@ from torchmetrics.functional import dice
 from trainers.base import BaseTrainer
 from utils.basics import creat_folder
 from utils.metrics import evaluate_binary  # implement evaluate_seg
-from utils.metrics import evaluate_seg, organize_results
+from utils.metrics import organize_results
 
 
 class SegTrainer(BaseTrainer):
@@ -65,8 +65,9 @@ class SegTrainer(BaseTrainer):
             dsc_list.append(dice_metric.item())
             sensitive_list.append(a.cpu().numpy())
 
-        overall_metrics, subgroup_metrics = evaluate_seg(
-            dsc_list, sensitive_list)
+        # overall_metrics, subgroup_metrics = evaluate_seg(
+        #     dsc_list, sensitive_list)
+        overall_metrics, subgroup_metrics = None, None
         organized_metrics = organize_results(overall_metrics, subgroup_metrics)
         self.logger.info(
             "----------------------------------------------".format(self.epoch))
