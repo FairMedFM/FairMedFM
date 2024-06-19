@@ -1,17 +1,16 @@
 import os
+
 import numpy as np
+import timm.optim.optim_factory as optim_factory
 import torch
 import torch.nn.functional as F
-
-import timm.optim.optim_factory as optim_factory
-
 
 from utils.lr_sched import adjust_learning_rate
 
 
 class BaseTrainer(object):
-    def __init__(self, args, model, logger) -> None:
-        self.args = args
+    def __init__(self, arg, model, logger, *args) -> None:
+        self.args = arg
         self.device = args.device
 
         self.model = model.to(self.device)
@@ -27,7 +26,8 @@ class BaseTrainer(object):
             adjust_learning_rate(self.optimizer, self.epoch + 1, self.args)
 
             loss = self.train_epoch(train_dataloader)
-            self.logger.info("epoch {}: lr {}, loss {}".format(self.epoch, self.optimizer.param_groups[0]["lr"], loss))
+            self.logger.info("epoch {}: lr {}, loss {}".format(
+                self.epoch, self.optimizer.param_groups[0]["lr"], loss))
 
             if val_dataloader is not None:
                 self.evaluate(val_dataloader)
@@ -66,7 +66,8 @@ class BaseTrainer(object):
         pass
 
     def init_optimizers(self):
-        param_groups = optim_factory.param_groups_weight_decay(self.model, self.args.weight_decay)
+        param_groups = optim_factory.param_groups_weight_decay(
+            self.model, self.args.weight_decay)
         self.optimizer = torch.optim.SGD(param_groups, lr=self.args["lr"])
 
     def init(self):

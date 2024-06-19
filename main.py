@@ -57,27 +57,67 @@ if __name__ == "__main__":
     args = parse_args.collect_args()
     args = create_exerpiment_setting(args)
 
-    logger = basics.setup_logger("train", args["save_folder"], "history.log", screen=True, tofile=True)
+    logger = basics.setup_logger(
+        "train", args["save_folder"], "history.log", screen=True, tofile=True)
     logger.info("Using following arguments for training.")
     logger.info(args)
 
     torch.manual_seed(args.random_seed)
     np.random.seed(args.random_seed)
 
-    _, train_dataloader, _ = get_dataset(args, split="train")
-    _, test_dataloader, _ = get_dataset(args, split="test")
+    train_data, train_dataloader, train_meta = get_dataset(args, split="train")
+    test_data, test_dataloader, test_meta = get_dataset(args, split="test")
     model = get_model(args).to(args.device)
-    model = get_warpped_model(args, model).to(args.device)
-    
+
+    if args.task == "cls":
+        model = get_warpped_model(args, model).to(args.device)
+    elif args.task == "seg":
+        model = get_warpped_model(args, model, test_data).to(
+            args.device)  # SAMLearner
+
     trainer = get_trainer(args, model, logger)
 
     if args.usage == "clip-zs":
         logger.info("Zero-shot performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(args["save_folder"], "zs"))
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args["save_folder"], "zs"))
+        exit(0)
+
+    elif args.usage == "seg2d-center":
+        logger.info("2D SegFM using 1 center point prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args["save_folder"], "center"))
+        exit(0)
+        # for seg, teh test_dataloader is not used.
+
+    elif args.usage == "seg2d-rand":
+        logger.info("2D SegFM using 1 random point prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args["save_folder"], "rand"))
+        exit(0)
+
+    elif args.usage == "seg2d-rands":
+        logger.info("2D SegFM using 5 random points prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args["save_folder"], "rands"))
+        exit(0)
+
+    elif args.usage == "seg2d-bbox":
+        logger.info("2D SegFM using 1 bounding box prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args["save_folder"], "bbox"))
+        exit(0)
+
+    elif args.usage == "seg3d-center":
+        # TODO
+        logger.info("3D SegFM using 1 center point prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args["save_folder"], "center"))
         exit(0)
 
     logger.info("Start training")
     trainer.train(train_dataloader, test_dataloader)
 
     logger.info("Final results:")
-    trainer.evaluate(test_dataloader, save_path=os.path.join(args["save_folder"], "lp_final"))
+    trainer.evaluate(test_dataloader, save_path=os.path.join(
+        args["save_folder"], "lp_final"))

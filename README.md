@@ -1,4 +1,5 @@
-# FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models
+# <div align =center><img src=./figs/icon.png width=40> FairMedFM
+## <div align =center> Fairness Benchmarking for Medical Imaging Foundation Models
 ![main](./figs/main.png)
 
 ## Abstract
@@ -27,7 +28,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 - [x] Release the classification tasks.
 
-- [ ] Release the segmentation tasks.
+- [x] Release the segmentation tasks.
 
 - [ ] Release more models and datasets.
 
@@ -68,4 +69,8 @@ python main.py --task cls --usage lp --dataset MIMIC_CXR --sensitive_name Sex --
 
 ## Acknowledgement
 
-We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering works on benchmarking fairness for medical image analysis. 
+We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering works on benchmarking fairness for medical image analysis, and [Slide-SAM](https://github.com/Curli-quan/Slide-SAM) for the SAM inference framework.
+
+## License
+
+This project is released under the CC BY 4.0 license. Please see the LICENSE file for more information.
