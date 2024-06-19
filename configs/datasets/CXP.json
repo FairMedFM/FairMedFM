@@ -1,10 +1,10 @@
 {
-    "train_meta_path": "/research/d5/gds/yzhong22/datasets/CheXpert/CheXpert-v1.0-small/train.csv",
-    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/CheXpert/CheXpert-v1.0-small/test.csv",
-    "test_age_meta_path": "/research/d5/gds/yzhong22/datasets/CheXpert/CheXpert-v1.0-small/test_age.csv",
-    "test_race_meta_path": "/research/d5/gds/yzhong22/datasets/CheXpert/CheXpert-v1.0-small/test_race.csv",
-    "image_train_path": "/research/d5/gds/yzhong22/datasets/CheXpert",
-    "image_test_path": "/research/d5/gds/yzhong22/datasets/CheXpert",
+    "train_meta_path": "./data/CXP/split/new_train.csv",
+    "test_sex_meta_path": "./data/CXP/split/new_test.csv",
+    "test_age_meta_path": "./data/CXP/split/test_age.csv",
+    "test_race_meta_path": "./data/CXP/split/test_race.csv",
+    "image_train_path": "../DataSets/",
+    "image_test_path": "../DataSets/",
     "text_template": "a chest X-ray of a {}",
     "class_names": ["diseased", "normal"]
 }

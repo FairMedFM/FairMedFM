@@ -63,8 +63,7 @@ We provide data preprocessing scripts for each datasets [here](./notebooks/prepr
 We provide an example of running a linear-probe (classification) experiment of the CLIP model on the MIMIC-CXR dataset to evaluate fairness on sex. Please refer to [parse_args.py](./parse_args.py) for more details.
 
 ```bash
-python main.py --task cls --usage lp --dataset MIMIC_CXR --sensitive_name Sex --method erm --total_epochs 100 \\
-	--warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
+python main.py --task cls --usage lp --dataset CXP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
 ```
 
 ## Acknowledgement

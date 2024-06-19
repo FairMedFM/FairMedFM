@@ -8,12 +8,10 @@ import ipdb
 import numpy as np
 import pandas as pd
 import torch
-import torchio as tio
 import torchvision.transforms as transforms
 from albumentations.augmentations import transforms as atransforms
 from albumentations.core.composition import Compose
 from einops import rearrange
-from icecream import ic
 from matplotlib import pyplot as plt
 from torch.utils.data import Dataset, WeightedRandomSampler
 from torchvision.transforms._transforms_video import NormalizeVideo
@@ -110,7 +108,7 @@ def get_dataset(args, split):
     # TODO: Add segmentation meta path
     meta = pd.read_csv(data_setting[f"{split}_meta_path"])
 
-    dataset_name = getattr(datasets, args["dataset_name"])
+    dataset_name = getattr(datasets, args.dataset)
     image_path = None
 
     if args.task == "cls":
@@ -147,7 +145,7 @@ def get_dataset(args, split):
     elif split == "test":
         data_loader = torch.utils.data.DataLoader(
             data,
-            batch_size=args["batch_size"],
+            batch_size=args.batch_size,
             shuffle=False,
             num_workers=6,
             worker_init_fn=seed_worker,

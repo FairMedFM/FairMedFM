@@ -1,4 +1,4 @@
-from sam_builder import build_sammed2d, build_tinysam
+from .sam_builder import build_sammed2d, build_tinysam
 
 from models.biomed_clip import BiomedCLIP
 from models.blip import BLIP
