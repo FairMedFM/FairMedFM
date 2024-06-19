@@ -20,7 +20,7 @@ class CLSTrainer(BaseTrainer):
         x = minibatch["img"].to(self.device)
         y = minibatch["label"].to(self.device)
 
-        if self.args["is_3d"]:
+        if self.args.is_3d:
             # input shape: B x N_slice x 3 x H x W
             # output shape: B x N_slice x N_classes
             # logits list for each slice

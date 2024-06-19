@@ -34,7 +34,7 @@ def get_warpped_model(args, model, data_engine=None):
             model_warpped = LoRAWrapper(
                 model, lora_targets=model_setting["lora_targets"])
         else:
-            raise NotImplementedError
+            raise NotImplementedError()
 
     elif args.task == "seg":
         from wrappers import SAMWrapper

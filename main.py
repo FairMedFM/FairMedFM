@@ -68,8 +68,7 @@ if __name__ == "__main__":
     if args.task == "cls":
         model = get_warpped_model(args, model).to(args.device)
     elif args.task == "seg":
-        model = get_warpped_model(args, model, test_data).to(
-            args.device)  # SAMLearner
+        model = get_warpped_model(args, model, test_data).to(args.device)  # SAMLearner
 
     trainer = get_trainer(args, model, logger)
 

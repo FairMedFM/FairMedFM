@@ -39,10 +39,10 @@ class BaseTrainer(object):
                     "optimizer": self.optimizer.state_dict(),
                     "epoch": self.epoch,
                 },
-                os.path.join(self.args["save_folder"], "ckpt.pth"),
+                os.path.join(self.args.save_folder, "ckpt.pth"),
             )
 
-            if self.args["early_stopping"] and val_dataloader is not None:
+            if self.args.early_stopping and val_dataloader is not None:
                 if self.epoch > 10 and (max(self.last_five_auc) - min(self.last_five_auc) < 1e-5):
                     break
 
