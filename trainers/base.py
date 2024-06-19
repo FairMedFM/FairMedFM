@@ -9,8 +9,8 @@ from utils.lr_sched import adjust_learning_rate
 
 
 class BaseTrainer(object):
-    def __init__(self, arg, model, logger, *args) -> None:
-        self.args = arg
+    def __init__(self, args, model, logger) -> None:
+        self.args = args
         self.device = args.device
 
         self.model = model.to(self.device)
@@ -39,10 +39,10 @@ class BaseTrainer(object):
                     "optimizer": self.optimizer.state_dict(),
                     "epoch": self.epoch,
                 },
-                os.path.join(self.args["save_folder"], "ckpt.pth"),
+                os.path.join(self.args.save_folder, "ckpt.pth"),
             )
 
-            if self.args["early_stopping"] and val_dataloader is not None:
+            if self.args.early_stopping and val_dataloader is not None:
                 if self.epoch > 10 and (max(self.last_five_auc) - min(self.last_five_auc) < 1e-5):
                     break
 
@@ -68,13 +68,13 @@ class BaseTrainer(object):
     def init_optimizers(self):
         param_groups = optim_factory.param_groups_weight_decay(
             self.model, self.args.weight_decay)
-        self.optimizer = torch.optim.SGD(param_groups, lr=self.args["lr"])
+        self.optimizer = torch.optim.SGD(param_groups, lr=self.args.lr)
 
     def init(self):
         self.start_epoch = 0
         self.epoch = self.start_epoch
 
-        self.total_epochs = self.args["total_epochs"]
+        self.total_epochs = self.args.total_epochs
 
         self.last_five_auc = []
 

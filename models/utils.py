@@ -18,6 +18,7 @@ def get_model(args):
 
         if model_setting is not None and "pretrained_path" in model_setting.keys():
             model.from_pretrained(model_setting["pretrained_path"])
+        
 
     elif args.task == "seg":
         sam_checkpoint = args.resume_path
