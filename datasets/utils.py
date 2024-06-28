@@ -82,7 +82,7 @@ def get_transform(args, split, augment=False):
             )
     elif args.task == "seg":
         transform = Compose([
-            albu.Resize(args.image_size, args.image_size),
+            albu.Resize(args.img_size, args.img_size),
             atransforms.Normalize(),
             # transforms.ToTensor()
         ])
@@ -108,13 +108,12 @@ def get_dataset(args, split):
     # TODO: Add segmentation meta path
     meta = pd.read_csv(data_setting[f"{split}_meta_path"])
 
-    dataset_name = getattr(datasets, args.dataset)
-
-    image_path = data_setting[f"image_{split}_path"]
-
     if args.task == "cls":
+        dataset_name = getattr(datasets, args.dataset)
+        image_path = data_setting[f"image_{split}_path"]
         data = dataset_name(meta, args.sensitive_name,
                             transform, path_to_images=image_path)
+
     elif args.task == "seg":
         # TODO
         dataset = Dataset2D(

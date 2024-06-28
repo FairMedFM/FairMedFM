@@ -33,7 +33,7 @@ class SegTrainer(BaseTrainer):
             prompt_rands = minibatch["prompt_rands"].to(self.device)
 
             self.model.set_torch_image(
-                x, (self.args.image_size, self.args.image_size))
+                x, (self.args.img_size, self.args.img_size))
 
             with torch.no_grad():
                 f = self.model.encode({"img": x})
