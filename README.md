@@ -30,7 +30,11 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 - [x] Release the segmentation tasks.
 
-- [ ] Release more models and datasets.
+- [ ] Release more models 
+
+- [ ] Release the preprocessed datasets.
+
+- [ ] Release examples and tutorials.
 
 ## Installation
 
