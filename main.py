@@ -1,16 +1,19 @@
-import os
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import json
-from utils import basics
-import parse_args
-
-from datasets.utils import get_dataset
-from models.utils import get_model
 from wrappers.utils import get_warpped_model
+from utils import basics
 from trainers.utils import get_trainer
+from models.utils import get_model
+from datasets.utils import get_dataset
+import parse_args
+from icecream import ic
+import torch.nn.functional as F
+import torch.nn as nn
+import torch
+import numpy as np
+import ipdb
+import json
+import os
+
+os.environ["WANDB_DISABLED"] = "true"
 
 
 def create_exerpiment_setting(args):
@@ -35,8 +38,12 @@ def create_exerpiment_setting(args):
         with open(f"configs/datasets/{args.dataset}.json", "r") as f:
             data_setting = json.load(f)
             data_setting["augment"] = False
-            data_setting["test_meta_path"] = data_setting[f"test_{str.lower(args.sensitive_name)}_meta_path"]
+            data_setting["test_meta_path"] = data_setting[
+                f"test_{str.lower(args.sensitive_name)}_meta_path"]
             args.data_setting = data_setting
+
+            if args.pos_class is not None:
+                args.data_setting["pos_class"] = args.pos_class
     except:
         args.data_setting = None
 
@@ -65,10 +72,16 @@ if __name__ == "__main__":
     test_data, test_dataloader, test_meta = get_dataset(args, split="test")
     model = get_model(args).to(args.device)
 
+    ic(train_data, train_dataloader, train_meta)
+    ic(test_data, test_dataloader, test_meta)
+    ic(model)
+    ipdb.set_trace()
+
     if args.task == "cls":
         model = get_warpped_model(args, model).to(args.device)
     elif args.task == "seg":
-        model = get_warpped_model(args, model, test_data).to(args.device)  # SAMLearner
+        model = get_warpped_model(args, model, test_data).to(
+            args.device)  # SAMLearner
 
     trainer = get_trainer(args, model, logger)
 
@@ -77,7 +90,7 @@ if __name__ == "__main__":
         trainer.evaluate(test_dataloader, save_path=os.path.join(
             args.save_folder, "zs"))
         exit(0)
-    
+
     elif args.usage == "lp":
         logger.info("Linear probing performance:")
         trainer.init_optimizers()

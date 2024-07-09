@@ -1,11 +1,12 @@
 import json
 
 import torch
-from models.sam_builder.build_sammed2d import sam_model_registry1
-from models.sam_builder.build_tinysam import sam_model_registry2
+from icecream import ic
 from segment_anything.build_sam import sam_model_registry
 
 import models
+from models.sam_builder.build_sammed2d import sam_model_registry1
+from models.sam_builder.build_tinysam import sam_model_registry2
 
 
 def get_model(args):
@@ -18,11 +19,10 @@ def get_model(args):
 
         if model_setting is not None and "pretrained_path" in model_setting.keys():
             model.from_pretrained(model_setting["pretrained_path"])
-        
 
     elif args.task == "seg":
-        sam_checkpoint = args.resume_path
-
+        sam_checkpoint = args.sam_ckpt_path
+        ic(sam_checkpoint)
         if args.model in ["SAM", "MedSAM", "MedSAMAdaptor"]:
             model = sam_model_registry['vit_b'](checkpoint=sam_checkpoint)
         elif args.model in ["SAMMed2D", "FT-SAM"]:

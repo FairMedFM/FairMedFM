@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=7 python main.py --task seg --usage seg-infer --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path /data/zikangxu/Documents/NeurIPS2024_FairFM/weights/SAM.pth
