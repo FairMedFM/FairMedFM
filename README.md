@@ -33,7 +33,13 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
   - [x] 3D dataset + 2D SAMs
   - [ ] 3D dataset + 3D SAMs
 
-- [ ] Release more models and datasets.
+- [ ] Release more models 
+
+- [ ] Release the preprocessed datasets.
+
+- [ ] Integration of the classic strategies.
+
+- [ ] Release examples and tutorials.
 
 ## Installation
 
@@ -60,6 +66,19 @@ We provide data preprocessing scripts for each datasets [here](./notebooks/prepr
 - (Optional) preprocess imaging data.
 - Preprocess metadata and sensitive attributes.
 - Split dataset into training set and test set with balanced subgroups.
+
+Our data is downloaded uisng the following links.
+| Dataset         | Link                                                                                               |
+|-----------------|------------------------------------------------------------------------------------------------------|
+| **CheXpert**    | [Original data](https://stanfordmlgroup.github.io/competitions/chexpert/) <br> [Demographic data](https://stanfordaimi.azurewebsites.net/datasets/192ada7c-4d43-466e-b8bb-b81992bb80cf) |
+| **MIMIC-CXR**   | [MIMIC-CXR](https://physionet.org/content/mimic-cxr-jpg/2.0.0/)                                      |
+| **PAPILA**      | [PAPILA](https://www.nature.com/articles/s41597-022-01388-1#Sec6)                                    |
+| **HAM10000**    | [HAM10000](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T)          |
+| **OCT**         | [OCT](https://people.duke.edu/~sf59/RPEDC_Ophth_2013_dataset.htm)                                    |
+| **OL3I**        | [OL3I](https://stanfordaimi.azurewebsites.net/datasets/3263e34a-252e-460f-8f63-d585a9bfecfc)         |
+| **COVID-CT-MD** | [COVID-CT-MD](https://doi.org/10.6084/m9.figshare.12991592)                                          |
+| **ADNI**   | [ADNI-1.5T](https://ida.loni.usc.edu/login.jsp?project=ADNI)                                         |
+
 
 ### Running Experiment
 
