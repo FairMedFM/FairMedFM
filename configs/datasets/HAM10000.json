@@ -1,9 +1,9 @@
 {
-    "train_meta_path": "/research/d5/gds/yzhong22/datasets/HAM10000/train.csv",
-    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/HAM10000/test.csv",
-    "test_age_meta_path": "/research/d5/gds/yzhong22/datasets/HAM10000/test_age.csv",
-    "image_train_path": "/research/d5/gds/yzhong22/datasets/HAM10000/HAM10000_images",
-    "image_test_path" : "/research/d5/gds/yzhong22/datasets/HAM10000/HAM10000_images",
+    "train_meta_path": "./data/HAM10000/split/train.csv",
+    "test_sex_meta_path": "./data/HAM10000/split/test.csv",
+    "test_age_meta_path": "./data/HAM10000/split/test_age.csv",
+    "image_train_path": "./data/HAM10000/HAM10000_images",
+    "image_test_path" : "./data/HAM10000/HAM10000_images",
     "text_template": "a photo of a {}",
     "class_names": ["benign lesion", "malignant lesion"]
 }

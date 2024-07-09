@@ -75,7 +75,6 @@ if __name__ == "__main__":
     ic(train_data, train_dataloader, train_meta)
     ic(test_data, test_dataloader, test_meta)
     ic(model)
-    ipdb.set_trace()
 
     if args.task == "cls":
         model = get_warpped_model(args, model).to(args.device)
