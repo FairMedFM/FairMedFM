@@ -13,7 +13,8 @@ def collect_args():
         "--usage",
         type=str,
         default='clip-zs',
-        choices=["lp", "clip-zs", "clip-adapt", "seg-infer"],
+        choices=["lp", "clip-zs", "clip-adapt", "seg2d-rand",
+                 "seg2d-rands", "seg2d-center", "seg2d-bbox"],
     )
     parser.add_argument("--method", default="erm",
                         choices=["erm", "resampling", "group-dro", "laftr"])
