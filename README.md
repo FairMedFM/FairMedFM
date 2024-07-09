@@ -33,7 +33,11 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
   - [x] 3D dataset + 2D SAMs
   - [ ] 3D dataset + 3D SAMs
 
-- [ ] Release more models and datasets.
+- [ ] Release more models 
+
+- [ ] Release the preprocessed datasets.
+
+- [ ] Release examples and tutorials.
 
 ## Installation
 
