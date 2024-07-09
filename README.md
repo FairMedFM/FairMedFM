@@ -76,7 +76,6 @@ Our data is downloaded uisng the following links.
 | **HAM10000**    | [HAM10000](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T)          |
 | **OCT**         | [OCT](https://people.duke.edu/~sf59/RPEDC_Ophth_2013_dataset.htm)                                    |
 | **OL3I**        | [OL3I](https://stanfordaimi.azurewebsites.net/datasets/3263e34a-252e-460f-8f63-d585a9bfecfc)         |
-| **Fitzpatrick17k** | [Fitzpatrick17k](https://github.com/mattgroh/fitzpatrick17k)                                      |
 | **COVID-CT-MD** | [COVID-CT-MD](https://doi.org/10.6084/m9.figshare.12991592)                                          |
 | **ADNI**   | [ADNI-1.5T](https://ida.loni.usc.edu/login.jsp?project=ADNI)                                         |
 
