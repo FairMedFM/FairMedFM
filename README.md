@@ -65,9 +65,12 @@ We provide data preprocessing scripts for each datasets [here](./notebooks/prepr
 
 - (Optional) preprocess imaging data.
 - Preprocess metadata and sensitive attributes.
-- Split dataset into training set and test set with balanced subgroups.
+- Split dataset into training set and test set with balanced subgroups (for classification only).
 
 Our data is downloaded uisng the following links.
+
+#### Classification Dataset
+
 | Dataset         | Link                                                                                               |
 |-----------------|------------------------------------------------------------------------------------------------------|
 | **CheXpert**    | [Original data](https://stanfordmlgroup.github.io/competitions/chexpert/) <br> [Demographic data](https://stanfordaimi.azurewebsites.net/datasets/192ada7c-4d43-466e-b8bb-b81992bb80cf) |
@@ -79,13 +82,36 @@ Our data is downloaded uisng the following links.
 | **COVID-CT-MD** | [COVID-CT-MD](https://doi.org/10.6084/m9.figshare.12991592)                                          |
 | **ADNI**   | [ADNI-1.5T](https://ida.loni.usc.edu/login.jsp?project=ADNI)                                         |
 
+#### Segmentation Dataset
+
+| Dataset         | Link                                                                                               |
+|-----------------|------------------------------------------------------------------------------------------------------|
+| **HAM10000**    | [HAM10000](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/DBW86T)|
+| **TUSC**   | [TUSC](https://stanfordaimi.azurewebsites.net/datasets/a72f2b02-7b53-4c5d-963c-d7253220bfd5)                                      |
+| **FairSeg**      | [FairSeg](https://ophai.hms.harvard.edu/datasets/harvard-fairseg10k)                                    |
+| **Montgomery County X-ray**    | [Montgomery County X-ray](https://data.lhncbc.nlm.nih.gov/public/Tuberculosis-Chest-X-ray-Datasets/Montgomery-County-CXR-Set/MontgomerySet/index.html)          |
+| **KiTS2023**         | [KiTS2023](https://kits-challenge.org/kits23/)                                    |
+| **IRCADb**        | [IRCADb](https://www.ircad.fr/research/data-sets/liver-segmentation-3d-ircadb-01/)         |
+| **CANDI** | [CANDI](https://www.nitrc.org/projects/candi_share)                                          |
+| **SPIDER**   | [SPIDER](http://spider.grand-challenge.org)|
 
 ### Running Experiment
+
+#### Classification
 
 We provide an example of running a linear-probe (classification) experiment of the CLIP model on the MIMIC-CXR dataset to evaluate fairness on sex. Please refer to [parse_args.py](./parse_args.py) for more details.
 
 ```bash
 python main.py --task cls --usage lp --dataset CXP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
+```
+
+#### Segmentation (2D SAMs)
+
+We also provide an example of using SAM with center point prompt on the TUSC dataset to evaluate fairness on sex.
+Please refer to [parse_args.py](./parse_args.py) for more details.
+
+```bash
+python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path ./weights/SAM.pth --img_size 1024 --prompt center
 ```
 
 ## Acknowledgement

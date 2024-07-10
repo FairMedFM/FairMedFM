@@ -1,17 +1,18 @@
-from wrappers.utils import get_warpped_model
-from utils import basics
-from trainers.utils import get_trainer
-from models.utils import get_model
-from datasets.utils import get_dataset
-import parse_args
-from icecream import ic
-import torch.nn.functional as F
-import torch.nn as nn
-import torch
-import numpy as np
-import ipdb
 import json
 import os
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from icecream import ic
+
+import parse_args
+from datasets.utils import get_dataset
+from models.utils import get_model
+from trainers.utils import get_trainer
+from utils import basics
+from wrappers.utils import get_warpped_model
 
 os.environ["WANDB_DISABLED"] = "true"
 
@@ -72,9 +73,9 @@ if __name__ == "__main__":
     test_data, test_dataloader, test_meta = get_dataset(args, split="test")
     model = get_model(args).to(args.device)
 
-    ic(train_data, train_dataloader, train_meta)
-    ic(test_data, test_dataloader, test_meta)
-    ic(model)
+    # ic(train_data, train_dataloader, train_meta)
+    # ic(test_data, test_dataloader, test_meta)
+    # ic(model)
 
     if args.task == "cls":
         model = get_warpped_model(args, model).to(args.device)
@@ -98,37 +99,18 @@ if __name__ == "__main__":
             args.save_folder, "zs"))
         exit(0)
 
-    elif args.usage == "seg2d-center":
-        logger.info("2D SegFM using 1 center point prompt performance:")
+    elif args.usage == "seg2d":
+        logger.info(f"2D SegFM using {args.prompt} prompt performance:")
         trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "center"))
-        exit(0)
-        # for seg, teh test_dataloader is not used.
-
-    elif args.usage == "seg2d-rand":
-        logger.info("2D SegFM using 1 random point prompt performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "rand"))
+            args.save_folder, args.prompt))
         exit(0)
 
-    elif args.usage == "seg2d-rands":
-        logger.info("2D SegFM using 5 random points prompt performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folders, "rands"))
-        exit(0)
-
-    elif args.usage == "seg2d-bbox":
-        logger.info("2D SegFM using 1 bounding box prompt performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "bbox"))
-        exit(0)
-
-    elif args.usage == "seg3d-center":
-        # TODO
-        logger.info("3D SegFM using 1 center point prompt performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "center"))
-        exit(0)
+    # elif args.usage == "seg3d-center":
+    #     # TODO
+    #     logger.info("3D SegFM using 1 center point prompt performance:")
+    #     trainer.evaluate(test_dataloader, save_path=os.path.join(
+    #         args.save_folder, "center"))
+    #     exit(0)
 
     logger.info("Start training")
     trainer.train(train_dataloader, test_dataloader)

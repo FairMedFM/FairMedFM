@@ -6,6 +6,6 @@ def get_trainer(args, model, logger, test_dataloader=None):
     elif args.task == "seg":
         if args.method == "erm":
             from trainers import SegTrainer
-            return SegTrainer(args, model, logger, test_dataloader)
+            return SegTrainer(args, model, logger)
     else:
         raise NotImplementedError

@@ -13,7 +13,8 @@ def collect_args():
         "--usage",
         type=str,
         default='clip-zs',
-        choices=["lp", "clip-zs", "clip-adapt", "seg-infer"],
+        choices=["lp", "clip-zs", "clip-adapt", "seg2d-rand",
+                 "seg2d-rands", "seg2d-center", "seg2d-bbox", "seg2d"],
     )
     parser.add_argument("--method", default="erm",
                         choices=["erm", "resampling", "group-dro", "laftr"])
@@ -121,6 +122,8 @@ def collect_args():
     parser.add_argument("--pos_class", type=int, default=None)
     parser.add_argument("--img_size", type=int, default=256)
     parser.add_argument("--sam_ckpt_path", type=str)
+    parser.add_argument("--prompt", type=str,
+                        choices=["bbox", "rand", "rands", "center"])
 
     args = parser.parse_args()
     return args
