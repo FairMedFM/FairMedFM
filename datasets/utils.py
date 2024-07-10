@@ -12,6 +12,7 @@ import torchvision.transforms as transforms
 from albumentations.augmentations import transforms as atransforms
 from albumentations.core.composition import Compose
 from einops import rearrange
+from icecream import ic
 from matplotlib import pyplot as plt
 from torch.utils.data import Dataset, WeightedRandomSampler
 from torchvision.transforms._transforms_video import NormalizeVideo
@@ -182,9 +183,11 @@ class Dataset2D(Dataset):
         sample_dict = {
             "image": einops.rearrange(augmented["image"], "w h c -> c w h"),
             "label": einops.rearrange(augmented["mask"], "w h c -> c w h"),
-            "sex": sample["sexBinary"][0],
+            "sex": 0 if sample["sexBinary"][0] == "F" else 1,
             "filename": sample["labelPath"].split("/")[-1]
         }
+
+        # ic(sample_dict)
 
         # ic(sample_dict["image"].shape, sample_dict["label"].shape)
         # Change range

@@ -1,9 +1,10 @@
+import ipdb
 import numpy as np
 import pandas as pd
+import sklearn.metrics as sklm
 import torch
 import torch.nn as nn
-from sklearn.metrics import roc_auc_score, confusion_matrix, accuracy_score
-import sklearn.metrics as sklm
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score
 
 
 # adapted from https://github.com/LalehSeyyed/Underdiagnosis_NatMed/blob/main/CXP/classification/predictions.py
@@ -24,7 +25,8 @@ def find_threshold(tol_output, tol_target):
 def bce_loss(pred_probs, labels):
     bce = nn.BCELoss()
 
-    pred_probs, labels = torch.from_numpy(pred_probs).flatten().cuda(), torch.from_numpy(labels).flatten().cuda()
+    pred_probs, labels = torch.from_numpy(pred_probs).flatten(
+    ).cuda(), torch.from_numpy(labels).flatten().cuda()
     with torch.no_grad():
         loss = bce(pred_probs, labels.float())
     # print(loss)
@@ -36,7 +38,8 @@ def binary_classification_report(pred, y, threshold=0.5, suffix=""):
     ece = expected_calibration_error(pred, y)
     bce = bce_loss(pred, y)
 
-    tn, fp, fn, tp = confusion_matrix(y, (pred > threshold).astype(int)).ravel()
+    tn, fp, fn, tp = confusion_matrix(
+        y, (pred > threshold).astype(int)).ravel()
     report = {
         f"auc{suffix}": auc,
         f"acc{suffix}": (tp + tn) / (tn + fp + fn + tp),
@@ -75,7 +78,8 @@ def expected_calibration_error(pred_probs, labels, num_bins=10, metric_variant="
         cut_fn = pd.cut
 
     bin_ids = cut_fn(pred_probs, num_bins, labels=False, retbins=False)
-    df = pd.DataFrame({"pred_probs": pred_probs, "labels": labels, "bin_id": bin_ids})
+    df = pd.DataFrame(
+        {"pred_probs": pred_probs, "labels": labels, "bin_id": bin_ids})
     ece_df = (
         df.groupby("bin_id")
         .agg(
@@ -103,7 +107,8 @@ def evaluate_binary(pred, Y, A):
 
     for threshold, suffix in zip(threshold_list, suffix_list):
         # overall
-        overall_metrics.update(binary_classification_report(pred, Y, threshold=threshold, suffix=suffix))
+        overall_metrics.update(binary_classification_report(
+            pred, Y, threshold=threshold, suffix=suffix))
 
         # subgroup
         idx = np.arange(pred.shape[0])
@@ -111,7 +116,8 @@ def evaluate_binary(pred, Y, A):
         for i in range(len(np.unique(A))):
             idx_sub = idx[np.where(A == i)[0]]
 
-            sub_report = binary_classification_report(pred[idx_sub], Y[idx_sub], threshold=threshold, suffix=suffix)
+            sub_report = binary_classification_report(
+                pred[idx_sub], Y[idx_sub], threshold=threshold, suffix=suffix)
 
             for k, v in sub_report.items():
                 if k not in subgroup_metrics.keys():
@@ -142,6 +148,38 @@ def organize_results(overall_metrics, subgroup_metrics):
         "ece-gap": max(subgroup_ece) - min(subgroup_ece),
         "eod": 1 - ((max(subgroup_tpr) - min(subgroup_tpr)) + (max(subgroup_tnr) - min(subgroup_tnr))) / 2,
         "eo": max(subgroup_tpr) - min(subgroup_tpr),
+    }
+
+    return result
+
+
+def evaluate_seg(dsc_list, sensitive_list):
+    dsc_list, sensitive_list = np.array(
+        dsc_list), np.array(sensitive_list).squeeze()
+
+    mean_dice = dsc_list.mean()
+    # TODO: modify for multi-class sensitive
+    class_0_dice = dsc_list[sensitive_list == 0]
+    class_1_dice = dsc_list[sensitive_list == 1]
+
+    mean_class_0_dice = class_0_dice.mean()
+    mean_class_1_dice = class_1_dice.mean()
+
+    min_dice = min(mean_class_0_dice, mean_class_1_dice)
+    max_dice = max(mean_class_0_dice, mean_class_1_dice)
+    delta_dice = abs(mean_class_0_dice - mean_class_1_dice)
+    sk_dice = (1 - min_dice) / (1 - max_dice)
+    std_dice = np.array([mean_class_0_dice, mean_class_1_dice]).std()
+    es_dice = mean_dice / (1 + std_dice)
+
+    result = {
+        "mean_dice": mean_dice,
+        "min_dice": min_dice,
+        "max_dice": max_dice,
+        "delta_dice": delta_dice,
+        "skewness_dice": sk_dice,
+        "std_dice": std_dice,
+        "es_dice": es_dice
     }
 
     return result

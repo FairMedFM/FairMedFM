@@ -38,7 +38,7 @@ def get_warpped_model(args, model, data_engine=None):
 
     elif args.task == "seg":
         from wrappers import SAMWrapper
-        model_warpped = SAMWrapper(model, data_engine)
+        model_warpped = SAMWrapper(model, data_engine=data_engine)
     else:
         raise NotImplementedError
 
