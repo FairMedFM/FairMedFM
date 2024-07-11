@@ -1,5 +1,6 @@
 import json
 import os
+import random
 
 import numpy as np
 import torch
@@ -26,6 +27,7 @@ def create_exerpiment_setting(args):
         args.exp_path,
         args.task,
         args.usage,
+        args.method,
         args.dataset,
         args.model,
         args.sensitive_name,
@@ -68,6 +70,12 @@ if __name__ == "__main__":
 
     torch.manual_seed(args.random_seed)
     np.random.seed(args.random_seed)
+    random.seed(args.random_seed)
+    if args.cuda:
+        torch.cuda.manual_seed(args.random_seed)
+        torch.cuda.manual_seed_all(args.random_seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
     train_data, train_dataloader, train_meta = get_dataset(args, split="train")
     test_data, test_dataloader, test_meta = get_dataset(args, split="test")
@@ -83,7 +91,7 @@ if __name__ == "__main__":
         model = get_warpped_model(args, model, test_data).to(
             args.device)  # SAMLearner
 
-    trainer = get_trainer(args, model, logger)
+    trainer = get_trainer(args, model, logger, test_dataloader)
 
     if args.usage == "clip-zs":
         logger.info("Zero-shot performance:")
@@ -96,7 +104,7 @@ if __name__ == "__main__":
         trainer.init_optimizers()
         trainer.train(train_dataloader)
         trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "zs"))
+            args.save_folder, "lp_final"))
         exit(0)
 
     elif args.usage == "seg2d":
@@ -105,16 +113,24 @@ if __name__ == "__main__":
             args.save_folder, args.prompt))
         exit(0)
 
-    # elif args.usage == "seg3d-center":
-    #     # TODO
-    #     logger.info("3D SegFM using 1 center point prompt performance:")
-    #     trainer.evaluate(test_dataloader, save_path=os.path.join(
-    #         args.save_folder, "center"))
-    #     exit(0)
+    elif args.usage == "seg2d-rands":
+        logger.info("2D SegFM using 5 random points prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args.save_folders, "rands"))
+        exit(0)
 
-    logger.info("Start training")
-    trainer.train(train_dataloader, test_dataloader)
+    elif args.usage == "seg2d-bbox":
+        logger.info("2D SegFM using 1 bounding box prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args.save_folder, "bbox"))
+        exit(0)
 
-    logger.info("Final results:")
-    trainer.evaluate(test_dataloader, save_path=os.path.join(
-        args.save_folder, "lp_final"))
+    elif args.usage == "seg3d-center":
+        # TODO
+        logger.info("3D SegFM using 1 center point prompt performance:")
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args.save_folder, "center"))
+        exit(0)
+    
+    else:
+        raise NotImplementedError
