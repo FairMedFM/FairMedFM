@@ -14,7 +14,13 @@ class GF3300(BaseDataset):
     def set_sensitive(self):
         if self.sens_name == "Sex":
             # female: 1, male: 0
-            return np.asarray(self.dataframe["gender"].values != "male").astype(np.float32)
+            sa_array = np.asarray(self.dataframe["gender"].values != "M").astype(np.float32)
+            class_0_count = np.sum(sa_array == 0)
+            class_1_count = np.sum(sa_array == 1)
+            total_count_sa = len(sa_array)
+            weight_class_0 = total_count_sa / (2 * class_0_count)
+            weight_class_1 = total_count_sa / (2 * class_1_count)
+            return sa_array
         elif self.sens_name == "Age":
             # 0-60: 0, >60: 1
             age_binary = self.dataframe["age"].values.astype(np.float32)
