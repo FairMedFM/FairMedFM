@@ -148,3 +148,13 @@ We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering work
 ## License
 
 This project is released under the CC BY 4.0 license. Please see the LICENSE file for more information.
+
+## Citation
+```
+@article{jin2024fairmedfm,
+  title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
+  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qiongsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
+  journal={arXiv preprint arXiv:2407.00983},
+  year={2024}
+}
+```
