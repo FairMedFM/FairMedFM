@@ -57,11 +57,11 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
    conda activate fairmedfm
    ```
 
-## Getting Started
+## Instructions
 
-### Data Preprocessing
+### Data
 
-You can either download our pre-processed data directly (see the next section) or pre-process customized data your self. 
+You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data your self. 
 
 #### Preprocess data on your own
 We provide data preprocessing scripts for each datasets [here](./notebooks/preprocess). The data preprocessing contains 3 steps:
