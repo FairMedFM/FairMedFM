@@ -57,13 +57,12 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
    conda activate fairmedfm
    ```
 
-## Instructions
 
-### Data
+## Data
 
 You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data your self. 
 
-#### Preprocess data on your own
+### Preprocess data on your own
 We provide data preprocessing scripts for each datasets [here](./notebooks/preprocess). The data preprocessing contains 3 steps:
 
 - (Optional) preprocess imaging data.
@@ -99,7 +98,7 @@ Our data is downloaded uisng the following links.
 | **SPIDER**   | [SPIDER](http://spider.grand-challenge.org)|
 
 
-#### Use Our Pre-processed Data
+### Use Our Pre-processed Data
 We offer data downloading through the S3 link. We are working to build this feature now.
 #### Classification Dataset
 
@@ -114,7 +113,7 @@ We offer data downloading through the S3 link. We are working to build this feat
 | **COVID-CT-MD** | TODO                                       |
 | **ADNI**   | TODO
 
-### Notebook Tutorial
+## Notebook Tutorial
 We offer some examples of how to use our package through the notebook.
 
 | Feature | Notebook  |
@@ -123,9 +122,9 @@ We offer some examples of how to use our package through the notebook.
 | **CLIP-Adaptor**   | TODO |
 | **More Coming Soon**   | TODO |
 
-### Running Experiment
+## Running Experiment
 
-#### Classification
+### Classification
 
 We provide an example of running a linear-probe (classification) experiment of the CLIP model on the MIMIC-CXR dataset to evaluate fairness on sex. Please refer to [parse_args.py](./parse_args.py) for more details.
 
@@ -133,7 +132,7 @@ We provide an example of running a linear-probe (classification) experiment of t
 python main.py --task cls --usage lp --dataset CXP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
 ```
 
-#### Segmentation (2D SAMs)
+### Segmentation (2D SAMs)
 
 We also provide an example of using SAM with center point prompt on the TUSC dataset to evaluate fairness on sex.
 Please refer to [parse_args.py](./parse_args.py) for more details.
