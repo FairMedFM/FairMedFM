@@ -61,6 +61,9 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 ### Data Preprocessing
 
+You can either download our pre-processed data directly (see the next section) or pre-process customized data your self. 
+
+#### Preprocess data on your own
 We provide data preprocessing scripts for each datasets [here](./notebooks/preprocess). The data preprocessing contains 3 steps:
 
 - (Optional) preprocess imaging data.
@@ -94,6 +97,30 @@ Our data is downloaded uisng the following links.
 | **IRCADb**        | [IRCADb](https://www.ircad.fr/research/data-sets/liver-segmentation-3d-ircadb-01/)         |
 | **CANDI** | [CANDI](https://www.nitrc.org/projects/candi_share)                                          |
 | **SPIDER**   | [SPIDER](http://spider.grand-challenge.org)|
+
+
+#### Use Our Pre-processed Data
+We offer data downloading through the S3 link. We are working to build this feature now.
+#### Classification Dataset
+
+| Dataset         | Link                                                                                               |
+|-----------------|------------------------------------------------------------------------------------------------------|
+| **CheXpert**    | TODO |
+| **MIMIC-CXR**   | TODO                   |
+| **PAPILA**      | TODO                            |
+| **HAM10000**    | [HAM10000](https://object-arbutus.cloud.computecanada.ca/rjin/HAM10000.zip)         |
+| **OCT**         | TODO                                |
+| **OL3I**        | TODO         |
+| **COVID-CT-MD** | TODO                                       |
+| **ADNI**   | TODO
+
+### Notebook Tutorial
+We offer some examples of how to use our package through the notebook.
+
+| Feature | Notebook  |
+|-----------------|------------------------------------------------------------------------------------------------------|
+| **Linear Probing**    | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/linear_probing.ipynb) |
+| **CLIP-Adaptor**   | TODO |
 
 ### Running Experiment
 
