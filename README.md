@@ -57,6 +57,13 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
    conda activate fairmedfm
    ```
 
+3. Download Pretrained FMs
+  ```
+  wget https://object-arbutus.cloud.computecanada.ca:443/rjin/pretrained.zip
+  unzip pretrained.zip
+  rm -f pretrained.zip
+  ```
+
 
 ## Data
 
