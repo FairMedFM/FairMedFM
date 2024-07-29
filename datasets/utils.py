@@ -43,8 +43,15 @@ class ToTensor(object):
 
 
 def get_transform(args, split, augment=False):
-    mean = [0.48145466, 0.4578275, 0.40821073]
-    std = [0.26862954, 0.26130258, 0.27577711]
+    if args.dataset in ["CXP", "MIMIC_CXR", "COVID_CT_MD", "ADNI"]:
+        mean = [0.5056, 0.5056, 0.5056]
+        std = [0.252, 0.252, 0.252]
+    elif args.dataset == "GF3300":
+        mean = [0.2756, 0.2756, 0.2756],
+        std = [0.1708, 0.1708, 0.1708]
+    else:
+        mean = [0.48145466, 0.4578275, 0.40821073]
+        std = [0.26862954, 0.26130258, 0.27577711]
     normalize = transforms.Normalize(mean=mean, std=std)
 
     if args.task == "cls":
@@ -413,5 +420,6 @@ class DataEngine2D(Dataset):
         data['prompt_center'] = np.array(prompt_center).astype(np.float32)
         data['prompt_rands'] = np.array(prompt_rands).astype(np.float32)
 
+        # data['point_label'] = np.ones((1,)).astype(np.float32)
 
         return data
