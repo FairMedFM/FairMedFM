@@ -54,7 +54,7 @@ class CLSTrainer(BaseTrainer):
         loss_epoch = []
         for minibatch in train_dataloader:
             if hasattr(train_dataloader, "class_weights_y"):
-                loss_batch = self.update_batch(minibatch, train_dataloader.class_weights)
+                loss_batch = self.update_batch(minibatch, train_dataloader.class_weights_y)
             else:
                 loss_batch = self.update_batch(minibatch, None)
 
@@ -75,6 +75,7 @@ class CLSTrainer(BaseTrainer):
             indices = torch.argmax(prob_sliced[:, :, 1], dim=1)
 
             logits = torch.stack([logits_sliced[i, idx] for i, idx in enumerate(indices)])
+            breakpoint()
             if class_weights is not None:
                 loss = F.cross_entropy(logits, y.long().squeeze(-1), weight=class_weights.to(self.device))
             else:
