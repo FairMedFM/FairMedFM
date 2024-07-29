@@ -42,7 +42,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 - [ ] Release examples and tutorials.
 
 ## Installation
-
+The installation requires three steps.
 1. Download from github
 
    ```git
@@ -65,6 +65,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
     rm -f pretrained.zip
     ```
 
+Our notebook tutorials also contains how to setup the environment in Colab. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/linear_probing.ipynb)
 
 ## Data
 
