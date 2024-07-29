@@ -10,13 +10,59 @@ from trainers.base import BaseTrainer
 
 from utils.metrics import evaluate_binary, organize_results
 from utils.basics import creat_folder
+from utils.lr_sched import adjust_learning_rate
 
 
 class CLSTrainer(BaseTrainer):
-    def __init__(self, args, model, logger) -> None:
+    def __init__(self, args, model, test_loader, logger) -> None:
         super().__init__(args, model, logger)
+        self.test_loader = test_loader
+    
+    def train(self, train_dataloader, val_dataloader=None):
+        self.model.train()
 
-    def update_batch(self, minibatch):
+        while self.epoch < self.total_epochs:
+            adjust_learning_rate(self.optimizer, self.epoch + 1, self.args)
+
+            loss = self.train_epoch(train_dataloader)
+            self.logger.info("epoch {}: lr {}, loss {}".format(
+                self.epoch, self.optimizer.param_groups[0]["lr"], loss))
+
+            if val_dataloader is not None:
+                self.evaluate(val_dataloader)
+            
+            if self.epoch % 5 == 0:
+                self.evaluate(self.test_loader)
+
+            # save model
+            torch.save(
+                {
+                    "model": self.model.state_dict(),
+                    "optimizer": self.optimizer.state_dict(),
+                    "epoch": self.epoch,
+                },
+                os.path.join(self.args.save_folder, "ckpt.pth"),
+            )
+
+            if self.args.early_stopping and val_dataloader is not None:
+                if self.epoch > 10 and (max(self.last_five_auc) - min(self.last_five_auc) < 1e-5):
+                    break
+
+            self.epoch += 1
+            
+    def train_epoch(self, train_dataloader):
+        loss_epoch = []
+        for minibatch in train_dataloader:
+            if hasattr(train_dataloader, "class_weights_y"):
+                loss_batch = self.update_batch(minibatch, train_dataloader.class_weights)
+            else:
+                loss_batch = self.update_batch(minibatch, None)
+
+            loss_epoch.append(loss_batch.item())
+
+        return np.mean(loss_epoch)
+
+    def update_batch(self, minibatch, class_weights=None):
         x = minibatch["img"].to(self.device)
         y = minibatch["label"].to(self.device)
 
@@ -29,10 +75,16 @@ class CLSTrainer(BaseTrainer):
             indices = torch.argmax(prob_sliced[:, :, 1], dim=1)
 
             logits = torch.stack([logits_sliced[i, idx] for i, idx in enumerate(indices)])
-            loss = F.cross_entropy(logits, y.long().squeeze(-1))
+            if class_weights is not None:
+                loss = F.cross_entropy(logits, y.long().squeeze(-1), weight=class_weights.to(self.device))
+            else:
+                loss = F.cross_entropy(logits, y.long().squeeze(-1))
         else:
             logits = self.model(x)
-            loss = F.cross_entropy(logits, y.long().squeeze(-1))
+            if class_weights is not None:
+                loss = F.cross_entropy(logits, y.long().squeeze(-1), weight=class_weights.to(self.device))
+            else:
+                loss = F.cross_entropy(logits, y.long().squeeze(-1))
 
         self.optimizer.zero_grad()
         loss.backward()

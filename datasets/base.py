@@ -22,6 +22,7 @@ class BaseDataset(Dataset):
 
         self.A = self.set_sensitive()
         self.Y = self.set_label()
+        self.compute_class_weights()
         self.AY_proportion = None
 
     def __len__(self):
@@ -85,8 +86,16 @@ class BaseDataset(Dataset):
         np.testing.assert_almost_equal(np.sum(ret), 1.0)
         return ret
 
+    def compute_class_weights(self):
+        class_0_count = np.sum(self.Y == 0)
+        class_1_count = np.sum(self.Y == 1)
+        total_count_y = len(self.Y)
+        weight_class_0 = total_count_y / (2 * class_0_count)
+        weight_class_1 = total_count_y / (2 * class_1_count)
+        self.class_weights_y = torch.tensor([weight_class_0, weight_class_1], dtype=torch.float32)
+        return self.class_weights_y
+
 
 class BaseSegDataset(BaseDataset):
-    # TODO: @Zikang, implement a segmentation base dataset class here if needed
     def __init__(self, dataframe, sens_name, transform, path_to_images=None, path_to_labels=None):
         super().__init__(dataframe, sens_name, transform, path_to_images, path_to_labels)

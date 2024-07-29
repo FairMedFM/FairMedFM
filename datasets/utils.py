@@ -153,6 +153,11 @@ def get_dataset(args, split):
             generator=g,
             pin_memory=True,
         )
+    
+    if args.cls_balance and hasattr(data, "class_weights_sa"):
+        data_loader.class_weights_sa = data.class_weights_sa
+    if args.cls_balance and hasattr(data, "class_weights_y"):
+        data_loader.class_weights_y = data.class_weights_y
 
     return data, data_loader, meta
 
@@ -352,15 +357,10 @@ class BoxPromptGenerator(object):
 
 class DataEngine2D(Dataset):
     def __init__(self, dataset=None, img_size=None) -> None:
-        # CACHE_DISK_DIR="/home1/quanquan/code/projects/medical-guangdong/cache/data2d_3/"
         super().__init__()
         self.point_prompt_generator = PointPromptGenerator(img_size)
         self.box_prompt_generator = BoxPromptGenerator(img_size)
-        # self._get_dataset(dirpath=dirpath)
         self.dataset = dataset
-
-    # def _get_dataset(self, dirpath):
-    #     self.dataset = Dataset2D(dirpath=dirpath, is_train=True)
 
     def __len__(self):
         return len(self.dataset)
@@ -413,6 +413,5 @@ class DataEngine2D(Dataset):
         data['prompt_center'] = np.array(prompt_center).astype(np.float32)
         data['prompt_rands'] = np.array(prompt_rands).astype(np.float32)
 
-        # data['point_label'] = np.ones((1,)).astype(np.float32)
 
         return data

@@ -72,6 +72,7 @@ def collect_args():
                         default=False, help="if using test mode")
     parser.add_argument("--warmup_epochs", type=int, default=5)
     parser.add_argument("--no_cuda", dest="cuda", action="store_false")
+    parser.add_argument("--no_cls_balance", dest="cls_balance", action="store_false")
 
     # network
     parser.add_argument(

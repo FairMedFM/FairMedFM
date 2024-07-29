@@ -20,7 +20,7 @@ class BREST(BaseDataset):
             total_count_sa = len(sa_array)
             weight_class_0 = total_count_sa / (2 * class_0_count)
             weight_class_1 = total_count_sa / (2 * class_1_count)
-            self.class_weights = torch.tensor([weight_class_0, weight_class_1], dtype=torch.float32)
+            self.class_weights_sa = torch.tensor([weight_class_0, weight_class_1], dtype=torch.float32)
             return sa_array
         elif self.sens_name == "Age":
             # 0-60: 0, >60: 1
