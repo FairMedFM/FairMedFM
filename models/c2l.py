@@ -323,6 +323,7 @@ class C2L(nn.Module):
         super().__init__(*args, **kwargs)
 
         self.model = resnet18()
+        self.from_pretrained("./pretrained/C2L/res18_C2L.pth")
 
         self.feat_dim = 128
 

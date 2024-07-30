@@ -1,3 +1,4 @@
 {
-    "lora_targets": ["qkv"]
+    "lora_targets": ["qkv"],
+    "pretrained_path": "./pretrained/LVMMed/lvmmed_vit.pth"
 }

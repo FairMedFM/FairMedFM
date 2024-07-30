@@ -9,6 +9,7 @@ class MedMAE(nn.Module):
         super().__init__(*args, **kwargs)
 
         self.model = timm.models.vision_transformer.VisionTransformer()
+        self.from_pretrained(path="./pretrained/medmae/vit-b_CXR_0.5M_mae.pth")
         self.model.head = torch.nn.Identity()
 
         self.feat_dim = 768

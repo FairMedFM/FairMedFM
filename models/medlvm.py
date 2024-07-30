@@ -477,6 +477,7 @@ class MedLVM(nn.Module):
         super().__init__(*args, **kwargs)
 
         self.model = vit_encoder_b(num_classes=2)
+        self.from_pretrained("./pretrained/LVMMed/lvmmed_vit.pth")
 
         self.feat_dim = 768
 

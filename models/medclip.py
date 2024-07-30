@@ -10,6 +10,8 @@ class MedCLIP(nn.Module):
         super().__init__(*args, **kwargs)
 
         self.model = MedCLIPModel(vision_cls=MedCLIPVisionModelViT)
+        self.model.from_pretrained()
+        self.vision_model = self.model.vision_model
         self.feat_dim = 512
 
     def forward_clip(self, images, text_features):
@@ -35,4 +37,4 @@ class MedCLIP(nn.Module):
         return self.vision_model(images)
 
     def from_pretrained(self, path):
-        pass
+        self.model.from_pretrained() # cannot be used given path is not given

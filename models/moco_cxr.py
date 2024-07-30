@@ -220,6 +220,7 @@ class MoCoCXR(nn.Module):
         super().__init__(*args, **kwargs)
 
         self.model = MoCo(base_encoder=torchvision.models.resnet18)
+        self.from_pretrained("./pretrained/mococxr/r8w-00001-v2.pth.tar")
 
         self.feat_dim = 128
 
@@ -233,4 +234,6 @@ class MoCoCXR(nn.Module):
             if "fc" not in k:
                 name = k[7:] if k.startswith("module.") else k  # remove `module.`
                 new_state_dict[name] = v
-        self.model.load_state_dict(new_state_dict, strict=False)
+        msg = self.model.load_state_dict(new_state_dict, strict=False)
+        print("Loaded keys:", [key for key in checkpoint_model.keys() if ((key not in msg.missing_keys) and (key not in msg.unexpected_keys))])
+        self.model = self.model.encoder_q
