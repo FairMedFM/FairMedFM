@@ -115,7 +115,7 @@ We offer data downloading through the S3 link. We are working to build this feat
 |-----------------|------------------------------------------------------------------------------------------------------|
 | **CheXpert**    | TODO |
 | **MIMIC-CXR**   | TODO                   |
-| **PAPILA**      | TODO                            |
+| **PAPILA**      | [PAPILA](https://object-arbutus.cloud.computecanada.ca/rjin/PAPILA.zip)                            |
 | **HAM10000**    | [HAM10000](https://object-arbutus.cloud.computecanada.ca/rjin/HAM10000.zip)         |
 | **OCT**         | TODO                                |
 | **OL3I**        | TODO         |
