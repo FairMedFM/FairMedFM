@@ -1,11 +1,11 @@
 {
-    "train_meta_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k/train.csv",
-    "test_sex_meta_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k/test.csv",
-    "test_age_meta_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k/test_age.csv",
-    "test_race_meta_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k/test_race.csv",
-    "test_language_meta_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k/test_language.csv",
-    "image_train_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k",
-    "image_test_path": "/research/d5/gds/yzhong22/datasets/Harvard-FairVLMed10k",
+    "train_meta_path": "./data/FairVLMed10k/split/train.csv",
+    "test_sex_meta_path": "./data/FairVLMed10k/split/test.csv",
+    "test_age_meta_path": "./data/FairVLMed10k/split/test_age.csv",
+    "test_race_meta_path": "./data/FairVLMed10k/split/test_race.csv",
+    "test_language_meta_path": "./data/FairVLMed10k/split/test_language.csv",
+    "image_train_path": "./data/FairVLMed10k",
+    "image_test_path": "./data/FairVLMed10k",
     "text_template": "a scanning laser ophthalmoscope fundus image of a {}",
     "class_names": ["normal", "glaucoma"]
 }
