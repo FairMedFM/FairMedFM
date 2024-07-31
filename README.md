@@ -128,7 +128,7 @@ We offer some examples of how to use our package through the notebook.
 | Feature | Notebook  |
 |-----------------|------------------------------------------------------------------------------------------------------|
 | **Linear Probing**    | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/linear_probing.ipynb) |
-| **CLIP-Adaptor**   | TODO |
+| **CLIP Zero-shot and Adaptor**   | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/clip_downstream.ipynb) |
 | **More Coming Soon**   | TODO |
 
 ## Running Experiment
