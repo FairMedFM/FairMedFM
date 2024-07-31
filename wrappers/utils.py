@@ -19,7 +19,7 @@ def get_warpped_model(args, model, data_engine=None):
             from wrappers import CLIPWrapper
 
             text = tokenize_text(args, args.data_setting["class_names"])
-            text_features = model.encode_text(text.to(model.device))
+            text_features = model.encode_text(text.to(args.device))
 
             model_warpped = CLIPWrapper(model, text_features)
         elif args.usage == "lora":

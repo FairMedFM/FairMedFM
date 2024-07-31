@@ -94,9 +94,17 @@ if __name__ == "__main__":
     trainer = get_trainer(args, model, logger, test_dataloader)
 
     if args.usage == "clip-zs":
-        logger.info("Zero-shot performance:")
+        logger.info("CLIP Zero-shot performance:")
         trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "zs"))
+            args.save_folder, "clip_zs_final"))
+        exit(0)
+    
+    elif args.usage == "clip-adapt":
+        logger.info("CLIP-Adaptor performance:")
+        trainer.init_optimizers()
+        trainer.train(train_dataloader)
+        trainer.evaluate(test_dataloader, save_path=os.path.join(
+            args.save_folder, "clip_adaptor_final"))
         exit(0)
 
     elif args.usage == "lp":
