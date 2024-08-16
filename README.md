@@ -150,9 +150,36 @@ Please refer to [parse_args.py](./parse_args.py) for more details.
 python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path ./weights/SAM.pth --img_size 1024 --prompt center
 ```
 
+
 ## Acknowledgement
 
 We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering works on benchmarking fairness for medical image analysis, and [Slide-SAM](https://github.com/Curli-quan/Slide-SAM) for the SAM inference framework.
+
+<details>
+<summary>Guidelines for Responsible Use of the Benchmark</summary>
+
+### 1. Understanding the Scope and Limitations
+- **Comprehend the Benchmark's Design**: Before utilizing the benchmark, ensure a thorough understanding of its design, including the datasets, models, tasks, and metrics involved. Be aware of its intended scope, as well as any limitations or biases inherent in the datasets and models.
+- **Acknowledge**: The benchmark uses publically available data, where some of the data needs users' license in order to download. We acknowledge that the these data belongs to the original owner, where FairMedFM uses them under the constraint set by these owners.
+
+### 2. Ethical Considerations
+- **Fairness and Bias Awareness**: The benchmark includes fairness metrics to assess the performance of AI models. Users should carefully consider these metrics to avoid perpetuating or amplifying biases in AI systems, especially in sensitive domains like healthcare.
+
+### 3. Reproducibility
+- **Use the Provided Codebase**: The benchmark comes with a codebase designed to facilitate reproducibility. Users are encouraged to utilize and contribute to this codebase to maintain a consistent standard of experimentation.
+- **Document Any Changes**: If modifications are made to the benchmark, such as adjusting datasets or metrics, these changes should be well-documented and justified. This ensures that results can be accurately interpreted and compared.
+
+### 4. Collaborative and Open Science
+- **Engage with the Community**: Users are encouraged to engage with the research community by sharing findings, discussing potential improvements, and collaborating on extensions of the benchmark.
+- **Attribution and Acknowledgment**: When using the benchmark in research or applications, proper attribution should be given to the creators of the benchmark and the original datasets. Acknowledge the sources of any third-party data or models used.
+
+### 5. Continuous Improvement
+- **Feedback and Contributions**: Provide feedback to the benchmark’s maintainers regarding any issues or potential improvements. Contributions in the form of new datasets, metrics, or models are encouraged to enhance the benchmark's utility and relevance.
+- **Stay Updated**: Keep abreast of updates to the benchmark or related research. This ensures that you are using the most current and validated version, which may include important improvements or corrections.
+
+By following these guidelines, users can ensure that they are utilizing the benchmark responsibly, contributing to ethical AI development, and fostering a collaborative research environment.
+
+</details>
 
 ## License
 
