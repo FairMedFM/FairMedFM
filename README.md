@@ -69,7 +69,7 @@ Our notebook tutorials also contains how to setup the environment in Colab. [![O
 
 ## Data
 
-You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data your self. 
+You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data your self. However, not all dataset we used permit us to release the data on our end (e.g., dataset like MIMIC and ADNI requires the user go through their data usage application first). In such case, we cannot provide the download link of our preprocessed dataset for them, but we have the original dataset downloading link and our pre-process scripts released.
 
 ### Preprocess data on your own
 We provide data preprocessing scripts for each datasets [here](./notebooks/preprocess). The data preprocessing contains 3 steps:
@@ -113,14 +113,14 @@ We offer data downloading through the S3 link. We are working to build this feat
 
 | Dataset         | Link                                                                                               |
 |-----------------|------------------------------------------------------------------------------------------------------|
-| **CheXpert**    | TODO |
-| **MIMIC-CXR**   | TODO                   |
+| **CheXpert**    | Requires application on original data provider. |
+| **MIMIC-CXR**   | Requires application on original data provider.                   |
 | **PAPILA**      | [PAPILA](https://object-arbutus.cloud.computecanada.ca/rjin/PAPILA.zip)                            |
 | **HAM10000**    | [HAM10000](https://object-arbutus.cloud.computecanada.ca/rjin/HAM10000.zip)         |
 | **OCT**         | TODO                                |
 | **OL3I**        | TODO         |
 | **COVID-CT-MD** | TODO                                       |
-| **ADNI**   | TODO
+| **ADNI**   | Requires application on original data provider.
 
 ## Notebook Tutorial
 We offer some examples of how to use our package through the notebook.
