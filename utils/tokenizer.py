@@ -26,6 +26,6 @@ def tokenize_text(args, class_names):
         # BLIP receive raw texts as inputs
         text_tokens = texts
     else:
-        text_tokens = clip.tokenize(texts, context_length=args["context_length"])
+        text_tokens = clip.tokenize(texts, context_length=args.context_length)
 
     return text_tokens
