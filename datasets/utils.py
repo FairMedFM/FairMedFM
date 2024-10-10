@@ -14,8 +14,7 @@ from albumentations.core.composition import Compose
 from einops import rearrange
 from icecream import ic
 from matplotlib import pyplot as plt
-from torch.utils.data import Dataset, WeightedRandomSampler
-from torchvision.transforms._transforms_video import NormalizeVideo
+from torch.utils.data import Dataset
 
 import datasets
 
@@ -160,7 +159,7 @@ def get_dataset(args, split):
             generator=g,
             pin_memory=True,
         )
-    
+
     if args.cls_balance and hasattr(data, "class_weights_sa"):
         data_loader.class_weights_sa = data.class_weights_sa
     if args.cls_balance and hasattr(data, "class_weights_y"):

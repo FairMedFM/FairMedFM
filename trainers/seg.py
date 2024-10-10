@@ -75,7 +75,7 @@ class SegTrainer(BaseTrainer):
         self.logger.info("-----------------meta info-------------------")
         self.logger.info(
             "metrics: {}".format(
-                ", ".join("{}: {}".format(k, v)
+                ", ".join("{}: {:.4f}".format(k, v)
                           for k, v in organized_metrics.items()),
             )
         )

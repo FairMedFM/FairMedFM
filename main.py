@@ -98,7 +98,7 @@ if __name__ == "__main__":
         trainer.evaluate(test_dataloader, save_path=os.path.join(
             args.save_folder, "clip_zs_final"))
         exit(0)
-    
+
     elif args.usage == "clip-adapt":
         logger.info("CLIP-Adaptor performance:")
         trainer.init_optimizers()
@@ -121,17 +121,17 @@ if __name__ == "__main__":
             args.save_folder, args.prompt))
         exit(0)
 
-    elif args.usage == "seg2d-rands":
-        logger.info("2D SegFM using 5 random points prompt performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folders, "rands"))
-        exit(0)
+    # elif args.usage == "seg2d-rands":
+    #     logger.info("2D SegFM using 5 random points prompt performance:")
+    #     trainer.evaluate(test_dataloader, save_path=os.path.join(
+    #         args.save_folders, "rands"))
+    #     exit(0)
 
-    elif args.usage == "seg2d-bbox":
-        logger.info("2D SegFM using 1 bounding box prompt performance:")
-        trainer.evaluate(test_dataloader, save_path=os.path.join(
-            args.save_folder, "bbox"))
-        exit(0)
+    # elif args.usage == "seg2d-bbox":
+    #     logger.info("2D SegFM using 1 bounding box prompt performance:")
+    #     trainer.evaluate(test_dataloader, save_path=os.path.join(
+    #         args.save_folder, "bbox"))
+    #     exit(0)
 
     elif args.usage == "seg3d-center":
         # TODO
@@ -139,6 +139,6 @@ if __name__ == "__main__":
         trainer.evaluate(test_dataloader, save_path=os.path.join(
             args.save_folder, "center"))
         exit(0)
-    
+
     else:
         raise NotImplementedError

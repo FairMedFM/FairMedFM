@@ -1,14 +1,15 @@
-import os
+import csv
 import json
+import logging
+import os
 import pickle
+import random
+import time
+from importlib import import_module
+
 import numpy as np
 import pandas as pd
 import torch
-from importlib import import_module
-import random
-import time
-import logging
-import csv
 
 
 def save_results(t_predictions, tol_target, s_prediction, tol_sensitive, path):
@@ -50,9 +51,11 @@ def avg_eval(val_df, opt, mode="val"):
     mean_df = pd.DataFrame(mean_df).transpose()
     std_df = pd.DataFrame(std_df).transpose()
 
-    stat = pd.concat([mean_df, std_df, ci95_hi, ci95_lo]).reset_index(drop=True)
+    stat = pd.concat([mean_df, std_df, ci95_hi, ci95_lo]
+                     ).reset_index(drop=True)
     stat = stat.rename(index={0: "mean", 1: "std", 2: "ci95_hi", 3: "ci95_lo"})
-    save_path = os.path.join(opt["save_folder"], opt["experiment"] + "_" + opt["hash"] + "_" + mode + "_pred_stat.csv")
+    save_path = os.path.join(opt["save_folder"], opt["experiment"] +
+                             "_" + opt["hash"] + "_" + mode + "_pred_stat.csv")
     stat.to_csv(save_path)
     return stat
 
@@ -96,10 +99,12 @@ def get_timestamp():
 
 def setup_logger(logger_name, root, phase, level=logging.INFO, screen=False, tofile=False):
     lg = logging.getLogger(logger_name)
-    formatter = logging.Formatter("%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s", datefmt="%y-%m-%d %H:%M:%S")
+    formatter = logging.Formatter(
+        "%(asctime)s.%(msecs)03d - %(levelname)s: %(message)s", datefmt="%y-%m-%d %H:%M:%S")
     lg.setLevel(level)
     if tofile:
-        log_file = os.path.join(root, phase + "_{}.log".format(get_timestamp()))
+        log_file = os.path.join(
+            root, phase + "_{}.log".format(get_timestamp()))
         fh = logging.FileHandler(log_file, mode="w")
         fh.setFormatter(formatter)
         lg.addHandler(fh)
