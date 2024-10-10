@@ -1,8 +1,8 @@
 {
-    "train_sex_meta_path": "/data/zikangxu/Documents/NeurIPS2024_FairFM/dataset/TUSC/metadata.csv",
-    "train_meta_path": "/data/zikangxu/Documents/NeurIPS2024_FairFM/dataset/TUSC/metadata.csv",
-    "test_sex_meta_path": "/data/zikangxu/Documents/NeurIPS2024_FairFM/dataset/TUSC/metadata.csv",
-    "image_train_path": "/data/zikangxu/Documents/NeurIPS2024_FairFM/dataset/TUSC/image",
-    "image_test_path": "/data/zikangxu/Documents/NeurIPS2024_FairFM/dataset/TUSC/image",
-    "data_path": "/data/zikangxu/Documents/NeurIPS2024_FairFM/dataset/TUSC/"
+    "train_sex_meta_path": "./data/TUSC/metadata.csv",
+    "train_meta_path": "./data/TUSC/metadata.csv",
+    "test_sex_meta_path": "./data/TUSC/metadata.csv",
+    "image_train_path": "./data/TUSC/image",
+    "image_test_path": "./data/TUSC/image",
+    "data_path": "./data/TUSC/"
 }
