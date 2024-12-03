@@ -28,18 +28,19 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 - [x] Release the classification tasks.
 
-- [ ] Release the segmentation tasks.
+- [x] Release the segmentation tasks.
   - [x] 2D dataset + 2D SAMs
   - [x] 3D dataset + 2D SAMs
-  - [ ] 3D dataset + 3D SAMs
+  - [x] 3D dataset + 3D SAMs
 
-- [ ] Release more models 
+- [x] Release more models 
 
-- [ ] Release the preprocessed datasets.
+- [x] Release the preprocessed datasets for classification.
+
+- [x] Release examples and tutorials.
 
 - [ ] Integration of the classic strategies.
 
-- [ ] Release examples and tutorials.
 
 ## Installation
 The installation requires three steps.
