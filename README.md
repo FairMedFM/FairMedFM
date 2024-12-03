@@ -118,9 +118,9 @@ We offer data downloading through the S3 link. We are working to build this feat
 | **MIMIC-CXR**   | Requires application on original data provider.                   |
 | **PAPILA**      | [PAPILA](https://object-arbutus.cloud.computecanada.ca/rjin/PAPILA.zip)                            |
 | **HAM10000**    | [HAM10000](https://object-arbutus.cloud.computecanada.ca/rjin/HAM10000.zip)         |
-| **OCT**         | TODO                                |
-| **OL3I**        | TODO         |
-| **COVID-CT-MD** | TODO                                       |
+| **OCT**         | Waiting for more storage resources                   |
+| **OL3I**        | Waiting for more storage resources         |
+| **COVID-CT-MD** | Waiting for more storage resources                |
 | **ADNI**   | Requires application on original data provider.
 
 ## Notebook Tutorial
