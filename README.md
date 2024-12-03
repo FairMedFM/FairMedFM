@@ -162,6 +162,8 @@ We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering work
 This project is released under the CC BY 4.0 license. Please see the LICENSE file for more information.
 
 ## Citation
+If you think our project is helpful and love our project, it's nice if you can cite us or just star our repo. Such supports will help us secure resources for further developing similar projects.
+
 ```
 @article{jin2024fairmedfm,
   title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
