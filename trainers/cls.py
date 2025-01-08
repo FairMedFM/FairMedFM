@@ -75,7 +75,6 @@ class CLSTrainer(BaseTrainer):
             indices = torch.argmax(prob_sliced[:, :, 1], dim=1)
 
             logits = torch.stack([logits_sliced[i, idx] for i, idx in enumerate(indices)])
-            breakpoint()
             if class_weights is not None:
                 loss = F.cross_entropy(logits, y.long().squeeze(-1), weight=class_weights.to(self.device))
             else:
