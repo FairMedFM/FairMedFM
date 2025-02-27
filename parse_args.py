@@ -83,6 +83,7 @@ def collect_args():
             "BiomedCLIP",
             "PubMedCLIP",
             "MedCLIP",
+            "PLIP",
             "CLIP",
             "BLIP",
             "BLIP2",

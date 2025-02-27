@@ -46,7 +46,7 @@ def get_transform(args, split, augment=False):
         mean = [0.5056, 0.5056, 0.5056]
         std = [0.252, 0.252, 0.252]
     elif args.dataset == "GF3300":
-        mean = [0.2756, 0.2756, 0.2756],
+        mean = [0.2756, 0.2756, 0.2756]
         std = [0.1708, 0.1708, 0.1708]
     else:
         mean = [0.48145466, 0.4578275, 0.40821073]
@@ -154,7 +154,7 @@ def get_dataset(args, split):
             data,
             batch_size=args.batch_size,
             shuffle=False,
-            num_workers=6,
+            num_workers=0,
             worker_init_fn=seed_worker,
             generator=g,
             pin_memory=True,
