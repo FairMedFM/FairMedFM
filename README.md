@@ -19,7 +19,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 |        Tasks         | Supported Usages                                        |                       Supported Models                       |                      Supported Datasets                      |
 | :------------------: | ------------------------------------------------------- | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| Image Classification | Linear probe, zero-shot, CLIP adaptaion, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, C2L, LVM-Med, MedMAE, MoCo-CXR | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
+| Image Classification | Linear probe, zero-shot, CLIP adaptaion, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, C2L, LVM-Med, MedMAE, MoCo-CXR, PLIP, SigLIP, MedSigLIP | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
 |  Image Segmentation  | Interactive segmentation prompted with boxes and points | SAM, MobileSAM, TinySAM, MedSAM, SAM-Med2D, FT-SAM, SAM-Med3D, FastSAM3D, SegVol | HAM10000, TUSC, FairSeg, Montgomery County X-ray, KiTS, CANDI, IRCADb, SPIDER |
 
 
@@ -39,8 +39,8 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 - [x] Release examples and tutorials.
 
-- [ ] Integration of the classic strategies.
-
+## Evolving
+Your are welcome to post your thoughts about updated features and we will try to make this repo evolving as the development of more FMs.
 
 ## Installation
 The installation requires three steps.

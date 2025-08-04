@@ -12,5 +12,8 @@ from models.medmae import MedMAE
 from models.moco_cxr import MoCoCXR
 from models.pubmed_clip import PubMedCLIP
 from models.plip import PLIP
+from models.siglip import MedSigLIP
+from models.medsiglip import MedSigLIP
+
 
 # from models.medklip.model_MedKLIP import MedKLIP

@@ -12,14 +12,7 @@ class PLIP(nn.Module):
         self.feat_dim = 768
 
     def forward_clip(self, images, text_features):
-        image_features = self.model.get_image_features(images)
-
-        image_features = F.normalize(image_features, dim=-1)
-        text_features = F.normalize(text_features, dim=-1)
-
-        logits = 100.0 * image_features @ text_features.T
-
-        return logits
+        return self.model.forward(input_ids=text_features, pixel_values=images, return_loss=False).logits_per_image
 
     def encode_text(self, text):
         return self.model.get_text_features(text.to(next(self.model.parameters()).device))
