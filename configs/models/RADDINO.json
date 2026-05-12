@@ -1,0 +1,4 @@
+{
+    "pretrained_path": "microsoft/rad-dino",
+    "lora_targets": ["query", "key", "value"]
+}

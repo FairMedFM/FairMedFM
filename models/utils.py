@@ -7,6 +7,7 @@ from segment_anything.build_sam import sam_model_registry
 import models
 from models.sam_builder.build_sammed2d import sam_model_registry1
 from models.sam_builder.build_tinysam import sam_model_registry2
+from models.medsam2 import build_medsam2
 
 
 def get_model(args):
@@ -32,6 +33,8 @@ def get_model(args):
             model = sam_model_registry1['vit_b'](args)
         elif args.model in ["TinySAM", "MobileSAM"]:
             model = sam_model_registry2['vit_t'](checkpoint=sam_checkpoint)
+        elif args.model == "MedSAM2":
+            model = build_medsam2(args)
         else:
             raise ValueError("Invalid model name!")
 

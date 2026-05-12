@@ -88,12 +88,16 @@ def collect_args():
             "BLIP",
             "BLIP2",
             "DINOv2",
+            "RADDINO",
+            "SigLIP",
+            "MedSigLIP",
             "MedLVM",
             "C2L",
             "MedMAE",
             "MoCoCXR",
             "SAM",
             "MedSAM",
+            "MedSAM2",
             "SAMMed2D",
             "FT-SAM",
             "TinySAM",
@@ -125,6 +129,7 @@ def collect_args():
     parser.add_argument("--pos_class", type=int, default=None)
     parser.add_argument("--img_size", type=int, default=256)
     parser.add_argument("--sam_ckpt_path", type=str)
+    parser.add_argument("--sam2_model_cfg", type=str, default=None)
     parser.add_argument("--prompt", type=str,
                         choices=["bbox", "rand", "rands", "center"])
 
