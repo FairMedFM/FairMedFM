@@ -2,8 +2,55 @@
 ## <div align =center> Fairness Benchmarking for Medical Imaging Foundation Models
 ![main](./figs/main.png)
 
+<p align="center">
+  <a href="https://arxiv.org/abs/2407.00983"><img src="https://img.shields.io/badge/arXiv-2407.00983-b31b1b.svg" alt="arXiv"></a>
+  <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg" alt="License"></a>
+  <img src="https://img.shields.io/badge/Python-3.8%2B-green.svg" alt="Python">
+  <img src="https://img.shields.io/github/stars/FairMedFM/FairMedFM?style=social" alt="Stars">
+  <a href="https://github.com/ubc-tea/MedVLMBench"><img src="https://img.shields.io/badge/Companion-MedVLMBench-orange.svg" alt="MedVLMBench"></a>
+</p>
+
+## Table of Contents
+
+- [Abstract](#abstract)
+- [Key Findings](#key-findings)
+- [Companion Benchmark: MedVLMBench](#companion-benchmark-medvlmbench)
+- [Structure](#structure)
+- [Schedule](#schedule)
+- [Installation](#installation)
+- [Data](#data)
+- [Notebook Tutorial](#notebook-tutorial)
+- [Running Experiment](#running-experiment)
+- [Citation](#citation)
+
+---
+
 ## Abstract
 The advent of foundation models (FMs) in healthcare offers unprecedented opportunities to enhance medical diagnostics through automated classification and segmentation tasks. However, these models also raise significant concerns about their fairness, especially when applied to diverse and underrepresented populations in healthcare applications. Currently, there is a lack of comprehensive benchmarks, standardized pipelines, and easily adaptable libraries to evaluate and understand the fairness performance of FMs in medical imaging, leading to considerable challenges in formulating and implementing solutions that ensure equitable outcomes across diverse patient populations. To fill this gap, we introduce FairMedFM, a fairness benchmark for FM research in medical imaging. FairMedFM integrates with 17 popular medical imaging datasets, encompassing different modalities, dimensionalities, and sensitive attributes. It explores 20 widely used FMs, with various usages such as zero-shot learning, linear probing, parameter-efficient fine-tuning, and prompting in various downstream tasks -- classification and segmentation. Our exhaustive analysis evaluates the fairness performance over different evaluation metrics from multiple perspectives, revealing the existence of bias, varied utility-fairness trade-offs on different FMs, consistent disparities on the same datasets regardless FMs, and limited effectiveness of existing unfairness mitigation methods. 
+
+## Key Findings
+
+- **Bias is pervasive**: All 20 evaluated medical FMs exhibit measurable fairness disparities across sex, race, and age.
+- **Utility–fairness trade-offs vary**: No single FM dominates both accuracy and fairness — the best-performing model is often not the fairest.
+- **Dataset effect dominates model choice**: Disparities on the same dataset remain consistent regardless of which FM is used, pointing to data-driven rather than model-driven bias.
+- **Mitigation has limited impact**: State-of-the-art debiasing algorithms provide only marginal fairness improvements.
+
+## Companion Benchmark: MedVLMBench
+
+> **Evaluating capability of medical VLMs?** See our companion benchmark [**MedVLMBench**](https://github.com/ubc-tea/MedVLMBench) — the first unified benchmark covering 30+ generalist and specialist VLMs (LLaVA, MedGemma, Qwen2-VL, o3, Gemini 2.5 Pro …) on VQA, diagnosis, and captioning tasks.
+
+FairMedFM and MedVLMBench form a **two-part evaluation suite** for medical foundation models — capability and fairness, measured on the same models and datasets.
+
+| | FairMedFM | [MedVLMBench](https://github.com/ubc-tea/MedVLMBench) |
+|---|---|---|
+| **Focus** | Fairness across sex, race, age | Capability: accuracy, AUROC, VQA scores |
+| **Model paradigm** | Discriminative FMs (CLIP, SAM variants) | Generative VLMs + discriminative models |
+| **Tasks** | Classification, Segmentation | VQA, Diagnosis, Captioning |
+| **Scale** | 20 FMs · 17 datasets | 30+ VLMs · 14 datasets |
+
+**Models evaluated in both**: BioMedCLIP · MedCLIP · PLIP · SigLIP · MedSigLIP · CLIP · BLIP · BLIP2 · PubMedCLIP
+
+**Datasets in both**: HAM10000 · CheXpert · MIMIC-CXR · FairVLMed10k · GF3300 · PAPILA
 
 ## Structure
 
@@ -170,5 +217,16 @@ If you think our project is helpful and love our project, it's nice if you can c
   author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qiongsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
   journal={arXiv preprint arXiv:2407.00983},
   year={2024}
+}
+```
+
+If you also use our companion benchmark **MedVLMBench** for capability evaluation, please cite:
+
+```
+@article{zhong2025can,
+  title={Can Common VLMs Rival Medical VLMs? Evaluation and Strategic Insights},
+  author={Zhong, Yuan and Jin, Ruinan and Li, Xiaoxiao and Dou, Qi},
+  journal={arXiv preprint arXiv:2506.17337},
+  year={2025}
 }
 ```
