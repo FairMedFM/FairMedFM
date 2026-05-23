@@ -211,7 +211,7 @@ This project is released under the CC BY 4.0 license. Please see the LICENSE fil
 ## Citation
 If you think our project is helpful and love our project, it's nice if you can cite us. Such supports will help us secure resources for further developing similar projects.
 
-```
+```bibtex
 @article{jin2024fairmedfm,
   title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
   author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qiongsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
@@ -222,7 +222,7 @@ If you think our project is helpful and love our project, it's nice if you can c
 
 If you also use our companion benchmark **MedVLMBench** for capability evaluation, please cite:
 
-```
+```bibtex
 @article{zhong2025can,
   title={Can Common VLMs Rival Medical VLMs? Evaluation and Strategic Insights},
   author={Zhong, Yuan and Jin, Ruinan and Li, Xiaoxiao and Dou, Qi},
