@@ -108,7 +108,7 @@ The installation requires three steps.
 3. Download Pretrained FMs
 
     ```
-    wget https://object-arbutus.cloud.computecanada.ca:443/rjin/pretrained.zip
+    wget https://object-arbutus.alliancecan.ca/swift/v1/86581f3bb67c4c04bbccbcb839de730a/rjin/pretrained.zip
     unzip pretrained.zip
     rm -f pretrained.zip
     ```
@@ -163,8 +163,8 @@ We offer data downloading through the S3 link. We are working to build this feat
 |-----------------|------------------------------------------------------------------------------------------------------|
 | **CheXpert**    | Requires application on original data provider. |
 | **MIMIC-CXR**   | Requires application on original data provider.                   |
-| **PAPILA**      | [PAPILA](https://object-arbutus.cloud.computecanada.ca/rjin/PAPILA.zip)                            |
-| **HAM10000**    | [HAM10000](https://object-arbutus.cloud.computecanada.ca/rjin/HAM10000.zip)         |
+| **PAPILA**      | [PAPILA](https://object-arbutus.alliancecan.ca/swift/v1/86581f3bb67c4c04bbccbcb839de730a/rjin/PAPILA.zip)                            |
+| **HAM10000**    | [HAM10000](https://object-arbutus.alliancecan.ca/swift/v1/86581f3bb67c4c04bbccbcb839de730a/rjin/HAM10000.zip)         |
 | **OCT**         | Waiting for more storage resources                   |
 | **OL3I**        | Waiting for more storage resources         |
 | **COVID-CT-MD** | Waiting for more storage resources                |
