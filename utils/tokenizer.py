@@ -34,6 +34,13 @@ def tokenize_text(args, class_names):
     elif args.model == "MedSigLIP":
         tokenizer = AutoTokenizer.from_pretrained("google/medsiglip-448")
         text_tokens = tokenizer(texts, return_tensors="pt", padding=True, truncation=True)
+    elif args.model == "SigLIP2":
+        tokenizer = AutoTokenizer.from_pretrained("google/siglip2-base-patch16-224")
+        text_tokens = tokenizer(texts, return_tensors="pt", padding=True, truncation=True)
+    elif args.model == "CONCH":
+        from conch.open_clip_custom import get_tokenizer, tokenize
+
+        text_tokens = tokenize(texts=texts, tokenizer=get_tokenizer())
     else:
         text_tokens = clip.tokenize(texts, context_length=args.context_length)
 

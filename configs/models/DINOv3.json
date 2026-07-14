@@ -1,0 +1,4 @@
+{
+    "pretrained_path": "facebook/dinov3-vitb16-pretrain-lvd1689m",
+    "lora_targets": ["q_proj", "k_proj", "v_proj"]
+}

@@ -7,5 +7,7 @@ CLIP_MODELS = [
     "BLIP",
     "BLIP2",
     "SigLIP",
+    "SigLIP2",
     "MedSigLIP",
+    "CONCH",
 ]

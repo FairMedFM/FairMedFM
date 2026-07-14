@@ -12,12 +12,17 @@ def get_model(args):
         if model_setting is not None and "pretrained_path" in model_setting.keys():
             pretrained_path = model_setting["pretrained_path"]
 
-        if args.model in ["SigLIP", "MedSigLIP", "RADDINO"] and pretrained_path is not None:
+        backbone_kwarg_models = [
+            "SigLIP", "MedSigLIP", "RADDINO", "DINOv3", "MedGemma",
+            "SigLIP2", "AIMv2", "Virchow2", "UNI2", "ProvGigaPath", "CONCH",
+        ]
+
+        if args.model in backbone_kwarg_models and pretrained_path is not None:
             model = model_name(backbone=pretrained_path)
         else:
             model = model_name()
 
-        if pretrained_path is not None and args.model not in ["SigLIP", "MedSigLIP", "RADDINO"]:
+        if pretrained_path is not None and args.model not in backbone_kwarg_models:
             model.from_pretrained(model_setting["pretrained_path"])
 
     elif args.task == "seg":
@@ -35,7 +40,7 @@ def get_model(args):
         elif args.model in ["TinySAM", "MobileSAM"]:
             from models.sam_builder.build_tinysam import sam_model_registry2
             model = sam_model_registry2['vit_t'](checkpoint=sam_checkpoint)
-        elif args.model == "MedSAM2":
+        elif args.model in ["MedSAM2", "SAM2"]:
             model = build_medsam2(args)
         else:
             raise ValueError("Invalid model name!")

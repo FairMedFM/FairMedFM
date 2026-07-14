@@ -66,8 +66,22 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 
 |        Tasks         | Supported Usages                                        |                       Supported Models                       |                      Supported Datasets                      |
 | :------------------: | ------------------------------------------------------- | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| Image Classification | Linear probe, zero-shot, CLIP adaptaion, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, RAD-DINO, C2L, LVM-Med, MedMAE, MoCo-CXR, PLIP, SigLIP, MedSigLIP | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
-|  Image Segmentation  | Interactive segmentation prompted with boxes and points | SAM, MobileSAM, TinySAM, MedSAM, MedSAM2, SAM-Med2D, FT-SAM, SAM-Med3D, FastSAM3D, SegVol | HAM10000, TUSC, FairSeg, Montgomery County X-ray, KiTS, CANDI, IRCADb, SPIDER |
+| Image Classification | Linear probe, zero-shot, CLIP adaptaion, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, **DINOv3**, **AIMv2**, RAD-DINO, **RETFound**, C2L, LVM-Med, MedMAE, MoCo-CXR, PLIP, SigLIP, **SigLIP2**, MedSigLIP, **MedGemma**, **UNI2-h**, **Virchow2**, **Prov-GigaPath**, **CONCH**, **Merlin** | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
+|  Image Segmentation  | Interactive segmentation prompted with boxes and points | SAM, MobileSAM, TinySAM, MedSAM, MedSAM2, **SAM2**, SAM-Med2D, FT-SAM | HAM10000, TUSC, FairSeg, Montgomery County X-ray, KiTS, CANDI, IRCADb, SPIDER |
+
+> **Newly integrated foundation models (2023-2025)**
+>
+> - **General vision**: [DINOv3](https://huggingface.co/facebook/dinov3-vitb16-pretrain-lvd1689m) (Meta), [SAM2](https://github.com/facebookresearch/sam2) (Meta — vanilla checkpoint, shares the MedSAM2 build path; point `--sam_ckpt_path`/`--sam2_model_cfg` at the official SAM2.1 weights/config), [SigLIP2](https://huggingface.co/google/siglip2-base-patch16-224) (Google), [AIMv2](https://huggingface.co/apple/aimv2-large-patch14-native) (Apple)
+> - **Medical VLM**: [MedGemma](https://huggingface.co/google/medgemma-4b-pt) (Google — feature extraction via its SigLIP-based vision tower)
+> - **Pathology foundation models** (new domain for this repo): [UNI2-h](https://huggingface.co/MahmoodLab/UNI2-h) (Mahmood Lab), [Virchow2](https://huggingface.co/paige-ai/Virchow2) (Paige), [Prov-GigaPath](https://huggingface.co/prov-gigapath/prov-gigapath) (Providence), [CONCH](https://huggingface.co/MahmoodLab/conch) (Mahmood Lab, vision-language)
+> - **Ophthalmology**: [RETFound](https://github.com/rmaphoh/RETFound_MAE) (Nature, 2023/2024) — pairs naturally with the existing PAPILA/GF3300 eye datasets
+> - **3D CT**: [Merlin](https://github.com/StanfordMIMI/Merlin) (Stanford, 2024) — volumetric CT feature extractor for ADNI/COVID-CT-MD/KiTS-style 3D data
+>
+> **Gated repos** (request access on the model page, then `huggingface-cli login` / set `HF_TOKEN`): DINOv3, MedGemma, UNI2-h, Virchow2, Prov-GigaPath, CONCH, RETFound.
+> **Extra install required**: SAM2 needs the [`sam2`](https://github.com/facebookresearch/sam2) package; UNI2-h/Virchow2/Prov-GigaPath need `timm>=1.0`; CONCH needs `pip install git+https://github.com/Mahmoodlab/CONCH.git`; Merlin needs `pip install merlin-vlm`.
+> **RETFound checkpoints**: unlike the other gated models here, RETFound ships raw `.pth` files (not a `transformers`-loadable repo) — download manually after access is granted and point `configs/models/RETFound.json`'s `pretrained_path` at the local file, the same convention used for MedMAE/MoCo-CXR/C2L.
+>
+> **Not integrated (previously miscredited in this table)**: SAM-Med3D, FastSAM3D, and SegVol were listed here before but had no corresponding code anywhere in the repo. We looked into adding them: SAM-Med3D is loadable via the third-party [`medim`](https://pypi.org/project/medim/) package, and SegVol via `AutoModel.from_pretrained("BAAI/SegVol", trust_remote_code=True)`, but both expose custom, undocumented inference APIs (3D sliding-window prompting, `forward_test()` with joint text/point/box prompts) that don't match this repo's `encode()`/`decode()` segmentation wrapper contract (see `wrappers/sam_model.py`, `wrappers/medsam2.py`). Wiring them in correctly needs a new wrapper/trainer path built against their actual source, not just their README — left as follow-up work rather than shipped half-verified. FastSAM3D additionally has no documented Python inference API at all.
 
 
 
