@@ -37,7 +37,11 @@ def get_warpped_model(args, model, data_engine=None):
             raise NotImplementedError()
 
     elif args.task == "seg":
-        if args.model in ["MedSAM2", "SAM2"]:
+        if args.model in ["SAM3", "MedicalSAM3"]:
+            from wrappers.sam3 import SAM3Wrapper
+            model_warpped = SAM3Wrapper(
+                model, data_engine=data_engine, medical=args.model == "MedicalSAM3")
+        elif args.model in ["MedSAM2", "SAM2"]:
             from wrappers import MedSAM2Wrapper
             model_warpped = MedSAM2Wrapper(model, data_engine=data_engine)
         else:

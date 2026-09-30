@@ -67,9 +67,9 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 |        Tasks         | Supported Usages                                        |                       Supported Models                       |                      Supported Datasets                      |
 | :------------------: | ------------------------------------------------------- | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | Image Classification | Linear probe, zero-shot, CLIP adaptaion, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, **DINOv3**, **AIMv2**, RAD-DINO, **RETFound**, C2L, LVM-Med, MedMAE, MoCo-CXR, PLIP, SigLIP, **SigLIP2**, MedSigLIP, **MedGemma**, **UNI2-h**, **Virchow2**, **Prov-GigaPath**, **CONCH**, **Merlin** | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
-|  Image Segmentation  | Interactive segmentation prompted with boxes and points | SAM, MobileSAM, TinySAM, MedSAM, MedSAM2, **SAM2**, SAM-Med2D, FT-SAM | HAM10000, TUSC, FairSeg, Montgomery County X-ray, KiTS, CANDI, IRCADb, SPIDER |
+|  Image Segmentation  | Interactive segmentation prompted with boxes and points | SAM, MobileSAM, TinySAM, MedSAM, MedSAM2, **SAM2**, **SAM3**, **MedicalSAM3 (box)**, SAM-Med2D, FT-SAM | HAM10000, TUSC, FairSeg, Montgomery County X-ray, KiTS, CANDI, IRCADb, SPIDER |
 
-> **Newly integrated foundation models (2023-2025)**
+> **Newly integrated foundation models (2023-2026)**
 >
 > - **General vision**: [DINOv3](https://huggingface.co/facebook/dinov3-vitb16-pretrain-lvd1689m) (Meta), [SAM2](https://github.com/facebookresearch/sam2) (Meta — vanilla checkpoint, shares the MedSAM2 build path; point `--sam_ckpt_path`/`--sam2_model_cfg` at the official SAM2.1 weights/config), [SigLIP2](https://huggingface.co/google/siglip2-base-patch16-224) (Google), [AIMv2](https://huggingface.co/apple/aimv2-large-patch14-native) (Apple)
 > - **Medical VLM**: [MedGemma](https://huggingface.co/google/medgemma-4b-pt) (Google — feature extraction via its SigLIP-based vision tower)
@@ -79,6 +79,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 >
 > **Gated repos** (request access on the model page, then `huggingface-cli login` / set `HF_TOKEN`): DINOv3, MedGemma, UNI2-h, Virchow2, Prov-GigaPath, CONCH, RETFound.
 > **Extra install required**: SAM2 needs the [`sam2`](https://github.com/facebookresearch/sam2) package; UNI2-h/Virchow2/Prov-GigaPath need `timm>=1.0`; CONCH needs `pip install git+https://github.com/Mahmoodlab/CONCH.git`; Merlin needs `pip install merlin-vlm`.
+> **SAM3 / MedicalSAM3 (2D)**: These use the official [SAM 3 image model](https://github.com/facebookresearch/sam3) API. SAM3 supports the existing point and box prompts; MedicalSAM3 currently supports boxes only. Meta's package requires Python 3.12+, PyTorch 2.7+, and a compatible CUDA setup, so use a separate environment if the main FairMedFM environment is older. Download [Medical SAM3's `checkpoint_2D.pt`](https://huggingface.co/ChongCong/Medical-SAM3/blob/main/checkpoint_2D.pt) separately. Neither checkpoint is part of `pretrained.zip`.
 > **RETFound checkpoints**: unlike the other gated models here, RETFound ships raw `.pth` files (not a `transformers`-loadable repo) — download manually after access is granted and point `configs/models/RETFound.json`'s `pretrained_path` at the local file, the same convention used for MedMAE/MoCo-CXR/C2L.
 >
 > **Not integrated (previously miscredited in this table)**: SAM-Med3D, FastSAM3D, and SegVol were listed here before but had no corresponding code anywhere in the repo. We looked into adding them: SAM-Med3D is loadable via the third-party [`medim`](https://pypi.org/project/medim/) package, and SegVol via `AutoModel.from_pretrained("BAAI/SegVol", trust_remote_code=True)`, but both expose custom, undocumented inference APIs (3D sliding-window prompting, `forward_test()` with joint text/point/box prompts) that don't match this repo's `encode()`/`decode()` segmentation wrapper contract (see `wrappers/sam_model.py`, `wrappers/medsam2.py`). Wiring them in correctly needs a new wrapper/trainer path built against their actual source, not just their README — left as follow-up work rather than shipped half-verified. FastSAM3D additionally has no documented Python inference API at all.
@@ -212,6 +213,20 @@ Please refer to [parse_args.py](./parse_args.py) for more details.
 ```bash
 python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path ./weights/SAM.pth --img_size 1024 --prompt center
 ```
+
+For the newer 2D models, install the official `sam3` package in a compatible environment with `pip install git+https://github.com/facebookresearch/sam3.git`, then run one of:
+
+```bash
+# SAM3: downloads Meta's gated checkpoint after Hugging Face access is granted.
+python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM3 --img_size 1024 --prompt center
+
+# MedicalSAM3: use the 2D Medical SAM3 checkpoint (not its 3D V2 checkpoint).
+python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model MedicalSAM3 --sam_ckpt_path /path/to/checkpoint_2D.pt --img_size 1024 --prompt bbox
+```
+
+The existing segmentation trainer is single-image only (`--batch_size 1`). Box and point prompts are derived from the ground-truth mask, so results are interactive segmentation scores, not unprompted segmentation scores. The new adapters restore the dataset's normalized BGR tensors to RGB pixels before SAM3 preprocessing.
+
+MedicalSAM3 keeps detections above confidence 0.1 and uses the highest-scoring mask; an empty detection produces an empty mask. Run `python -m pytest -q tests/test_sam3.py` for checkpoint-free regression checks. These cover image conversion, prompt geometry, mask selection, empty detections, and checkpoint loading; actual checkpoint inference still needs validation in a SAM3-compatible environment.
 
 
 ## Acknowledgement

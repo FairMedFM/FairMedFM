@@ -27,7 +27,7 @@ def get_model(args):
 
     elif args.task == "seg":
         sam_checkpoint = args.sam_ckpt_path
-        if sam_checkpoint == None:
+        if sam_checkpoint == None and args.model not in ["SAM3"]:
             raise ValueError(
                 "SAM checkpoint path is required for segmentation task!")
         # ic(sam_checkpoint)
@@ -42,6 +42,9 @@ def get_model(args):
             model = sam_model_registry2['vit_t'](checkpoint=sam_checkpoint)
         elif args.model in ["MedSAM2", "SAM2"]:
             model = build_medsam2(args)
+        elif args.model in ["SAM3", "MedicalSAM3"]:
+            from models.sam3 import build_sam3
+            model = build_sam3(args)
         else:
             raise ValueError("Invalid model name!")
 

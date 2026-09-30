@@ -109,6 +109,8 @@ def collect_args():
             "MedSAM",
             "MedSAM2",
             "SAM2",
+            "SAM3",
+            "MedicalSAM3",
             "SAMMed2D",
             "FT-SAM",
             "TinySAM",
