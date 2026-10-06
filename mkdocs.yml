@@ -1,0 +1,108 @@
+site_name: FairMedFM
+site_url: https://fairmedfm.github.io/FairMedFM/
+site_description: Fairness evaluation for any classification or segmentation model, and a fairness benchmark of medical imaging foundation models.
+site_author: FairMedFM authors
+repo_url: https://github.com/FairMedFM/FairMedFM
+repo_name: FairMedFM/FairMedFM
+edit_uri: edit/main/docs/
+copyright: FairMedFM authors · CC BY 4.0
+docs_dir: docs
+site_dir: site
+strict: true
+exclude_docs: |
+  /overrides/
+  /requirements.txt
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/icon.png
+  favicon: assets/favicon.png
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.tracking
+    - content.code.copy
+    - content.action.edit
+    - search.suggest
+    - search.highlight
+    - toc.follow
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 3
+            docstring_style: google
+            members_order: source
+            separate_signature: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+extra_css:
+  - stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Installation: installation.md
+      - Evaluate your model: evaluate-your-model.md
+  - Reference:
+      - Fairness metrics: metrics.md
+      - Command line: cli.md
+      - Python API: api.md
+  - Benchmark:
+      - Run experiments: benchmark.md
+      - Models: models.md
+      - Datasets: datasets.md
+      - Reproduce the paper: reproduce.md
+  - Project:
+      - FAQ: faq.md
+      - Cite FairMedFM: citation.md
+      - Changelog: https://github.com/FairMedFM/FairMedFM/blob/main/CHANGELOG.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/FairMedFM/FairMedFM
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/fairmedfm/
+    - icon: fontawesome/solid/file-lines
+      link: https://arxiv.org/abs/2407.00983

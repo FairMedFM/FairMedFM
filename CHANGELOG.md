@@ -13,6 +13,8 @@
   and segmentation summaries cover every group instead of only groups 0 and 1.
 - Fix zero-shot tokenization for BiomedCLIP, which raised `UnboundLocalError` since the CONCH integration.
 - Remove `ipdb` and `icecream` imports from library code.
+- Add a documentation website, https://fairmedfm.github.io/FairMedFM/, with installation, evaluation, metric,
+  command line, Python API, benchmark, model, dataset and FAQ pages, plus search and social metadata.
 
 ## 0.1.0 (2026-10-06)
 

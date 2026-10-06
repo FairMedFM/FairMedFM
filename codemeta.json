@@ -6,6 +6,7 @@
   "softwareVersion": "0.1.0",
   "identifier": "https://pypi.org/project/fairmedfm/",
   "codeRepository": "https://github.com/FairMedFM/FairMedFM",
+  "url": "https://fairmedfm.github.io/FairMedFM/",
   "issueTracker": "https://github.com/FairMedFM/FairMedFM/issues",
   "license": "https://spdx.org/licenses/CC-BY-4.0",
   "programmingLanguage": "Python",

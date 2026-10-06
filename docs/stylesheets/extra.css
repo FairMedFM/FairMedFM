@@ -1,0 +1,30 @@
+.md-typeset .hero {
+  padding: 1rem 0 0.5rem;
+}
+.md-typeset .hero h1 {
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+.md-typeset .hero .lead {
+  font-size: 1.05rem;
+  max-width: 46rem;
+}
+.md-typeset .grid.cards > ul > li {
+  border-radius: 0.4rem;
+}
+.md-typeset table:not([class]) {
+  font-size: 0.72rem;
+}
+.md-typeset h1 {
+  color: var(--md-default-fg-color);
+}
+.md-typeset code {
+  font-size: 0.9em;
+  color: var(--md-default-fg-color);
+}
+.md-typeset table:not([class]) td:first-child code {
+  white-space: nowrap;
+}
+.md-typeset pre > code {
+  color: var(--md-code-fg-color);
+}
