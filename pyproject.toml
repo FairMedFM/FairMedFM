@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fairmedfm"
+version = "0.1.0"
+description = "Fairness metrics for any binary classification or segmentation model: subgroup AUC, accuracy, calibration and Dice gaps, equalized odds and equity-scaled Dice"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "CC0-1.0"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Ruinan Jin", email = "ruinanjin@alumni.ubc.ca" },
+  { name = "Zikang Xu" },
+  { name = "Yuan Zhong" },
+  { name = "Qiongsong Yao" },
+  { name = "Qi Dou" },
+  { name = "S. Kevin Zhou" },
+  { name = "Xiaoxiao Li" },
+]
+keywords = [
+  "fairness", "fairness metrics", "algorithmic fairness", "bias evaluation", "subgroup analysis",
+  "equalized odds", "AUC gap", "calibration", "expected calibration error", "segmentation fairness",
+  "Dice", "medical imaging", "foundation models", "responsible AI", "benchmark",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Healthcare Industry",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Image Recognition",
+  "Topic :: Scientific/Engineering :: Medical Science Apps.",
+  "Typing :: Typed",
+]
+dependencies = ["numpy>=1.23", "pandas>=1.5", "scikit-learn>=1.1"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+dev = ["fairmedfm[test]", "build>=1.2", "twine>=5"]
+
+[project.urls]
+Homepage = "https://github.com/FairMedFM/FairMedFM"
+Documentation = "https://github.com/FairMedFM/FairMedFM#pip-package-fairness-metrics-for-any-model"
+Repository = "https://github.com/FairMedFM/FairMedFM"
+Issues = "https://github.com/FairMedFM/FairMedFM/issues"
+Paper = "https://arxiv.org/abs/2407.00983"
+Changelog = "https://github.com/FairMedFM/FairMedFM/blob/main/CHANGELOG.md"
+
+[project.scripts]
+fairmedfm = "fairmedfm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+fairmedfm = ["py.typed"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

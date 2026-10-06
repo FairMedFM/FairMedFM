@@ -1,0 +1,27 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": "SoftwareSourceCode",
+  "name": "FairMedFM",
+  "description": "Fairness metrics for any binary classification or segmentation model: subgroup AUC, accuracy, calibration and Dice gaps, equal opportunity, equalized odds and equity-scaled Dice. Also a fairness benchmark of 20 medical imaging foundation models on 17 datasets.",
+  "softwareVersion": "0.1.0",
+  "identifier": "https://pypi.org/project/fairmedfm/",
+  "codeRepository": "https://github.com/FairMedFM/FairMedFM",
+  "issueTracker": "https://github.com/FairMedFM/FairMedFM/issues",
+  "license": "https://spdx.org/licenses/CC0-1.0",
+  "programmingLanguage": "Python",
+  "runtimePlatform": "Python 3.10+",
+  "softwareRequirements": ["numpy", "pandas", "scikit-learn"],
+  "applicationCategory": "Machine learning fairness evaluation",
+  "keywords": ["fairness", "fairness metrics", "algorithmic fairness", "bias evaluation", "segmentation fairness",
+               "equalized odds", "medical imaging", "foundation models", "benchmark"],
+  "referencePublication": "https://arxiv.org/abs/2407.00983",
+  "author": [
+    {"@type": "Person", "givenName": "Ruinan", "familyName": "Jin"},
+    {"@type": "Person", "givenName": "Zikang", "familyName": "Xu"},
+    {"@type": "Person", "givenName": "Yuan", "familyName": "Zhong"},
+    {"@type": "Person", "givenName": "Qiongsong", "familyName": "Yao"},
+    {"@type": "Person", "givenName": "Qi", "familyName": "Dou"},
+    {"@type": "Person", "givenName": "S. Kevin", "familyName": "Zhou"},
+    {"@type": "Person", "givenName": "Xiaoxiao", "familyName": "Li"}
+  ]
+}

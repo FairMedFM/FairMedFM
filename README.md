@@ -1,17 +1,97 @@
-# <div align =center><img src=./figs/icon.png width=40> FairMedFM
+# <div align =center><img src=https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/icon.png width=40> FairMedFM
 ## <div align =center> Fairness Benchmarking for Medical Imaging Foundation Models
-![main](./figs/main.png)
+![main](https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/main.png)
 
 <p align="center">
+  <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/v/fairmedfm.svg" alt="PyPI"></a>
   <a href="https://arxiv.org/abs/2407.00983"><img src="https://img.shields.io/badge/arXiv-2407.00983-b31b1b.svg" alt="arXiv"></a>
   <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg" alt="License"></a>
-  <img src="https://img.shields.io/badge/Python-3.8%2B-green.svg" alt="Python">
+  <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/pyversions/fairmedfm.svg" alt="Python versions"></a>
   <img src="https://img.shields.io/github/stars/FairMedFM/FairMedFM?style=social" alt="Stars">
   <a href="https://github.com/ubc-tea/MedVLMBench"><img src="https://img.shields.io/badge/Companion-MedVLMBench-orange.svg" alt="MedVLMBench"></a>
 </p>
 
+**FairMedFM measures the fairness of any binary classification or segmentation model.** Give it per-sample
+predictions and a sensitive attribute (sex, age group, race, site, ...) and it reports subgroup AUC, accuracy and
+calibration gaps, equalized odds, and Dice disparities. The metrics come from the FairMedFM benchmark of 20
+medical imaging foundation models, but they work for any model and any domain.
+
+## Pip package: fairness metrics for any model
+
+```bash
+pip install fairmedfm
+```
+
+The package needs only NumPy, pandas and scikit-learn: no PyTorch, no GPU and no FairMedFM checkout. Run
+your model in its own environment, save one row per sample, then score it. Results match the code used for the
+FairMedFM paper.
+
+### Classification fairness
+
+Save a CSV with the positive-class probability, the ground-truth label (0/1) and one column per sensitive
+attribute:
+
+```text
+prob,label,sex,age
+0.91,1,F,60+
+0.12,0,M,<60
+```
+
+```bash
+fairmedfm score --task cls --input predictions.csv --sensitive sex age --output fairness.json
+```
+
+```python
+from fairmedfm import classification_fairness
+
+result = classification_fairness(prob, label, sex)
+result["summary"]   # overall-auc, worst-auc, auc-gap, acc-gap, ece-gap, bce-gap, eod, eo, ...
+result["groups"]    # the same metrics for each group, with sample counts
+```
+
+### Segmentation fairness
+
+Save a CSV with the Dice score of each image or volume and its sensitive attributes:
+
+```text
+dice,sex
+0.87,F
+0.79,M
+```
+
+```bash
+fairmedfm score --task seg --input dice.csv --sensitive sex
+```
+
+```python
+from fairmedfm import segmentation_fairness
+
+segmentation_fairness(dice, sex)["summary"]   # mean_dice, min_dice, delta_dice, es_dice, ...
+```
+
+### Metrics
+
+| Task | Metric | Definition |
+| --- | --- | --- |
+| Classification | `overall-auc`, `overall-acc`, `overall-bce`, `overall-ece` | AUC, accuracy, binary cross-entropy and expected calibration error (10 bins) on all samples |
+| Classification | `worst-auc` | Lowest group AUC |
+| Classification | `auc-gap`, `acc-gap`, `bce-gap`, `ece-gap` | Largest minus smallest group value |
+| Classification | `eo` | Equal opportunity gap: largest minus smallest group true positive rate |
+| Classification | `eod` | Equalized odds score: `1 - (TPR gap + TNR gap) / 2`; 1 means equal rates |
+| Segmentation | `mean_dice` | Mean Dice over all samples |
+| Segmentation | `min_dice`, `max_dice`, `delta_dice` | Worst and best group mean Dice, and their difference |
+| Segmentation | `std_dice`, `skewness_dice` | Standard deviation of group means; `(1 - min_dice) / (1 - max_dice)` |
+| Segmentation | `es_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` |
+
+Accuracy, `eo` and `eod` use the decision threshold with the best overall F1; `result["overall"]` and
+`result["groups"]` also report every metric at threshold 0.5. Sensitive attributes can have two or more groups,
+and every classification group needs both positive and negative samples. Multi-class classification is not
+supported yet: score each class one-vs-rest. To reproduce the benchmark itself (foundation models, datasets,
+training), use the repository as described in [Installation](#installation).
+
 ## Table of Contents
 
+- [Pip package: fairness metrics for any model](#pip-package-fairness-metrics-for-any-model)
 - [Abstract](#abstract)
 - [Key Findings](#key-findings)
 - [Companion Benchmark: MedVLMBench](#companion-benchmark-medvlmbench)
@@ -56,7 +136,7 @@ FairMedFM and MedVLMBench form a **two-part evaluation suite** for medical found
 
 FairMedFM captures comprehensive modules for benchmarking the fairness of foundation models in medical image analysis.
 
-![main](./figs/package.png)
+![main](https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/package.png)
 
 - **Dataloader**: provides a consistent interface for loading and processing imaging data across various modalities and dimensions, supporting both classification and segmentation tasks.
 - **Model**: a one-stop library that includes implementations of the most popular pre-trained foundation models for medical image analysis.
@@ -116,7 +196,7 @@ The installation requires three steps.
 2. Creating conda environment
 
    ```
-   conda env create -f environment.yaml
+   conda env create -f environment.yml
    conda activate fairmedfm
    ```
 

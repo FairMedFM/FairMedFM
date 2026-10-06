@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: "If you use FairMedFM, please cite the paper."
+title: "FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models"
+type: software
+version: 0.1.0
+abstract: "Fairness metrics for any binary classification or segmentation model (subgroup AUC, accuracy, calibration and Dice gaps, equal opportunity, equalized odds and equity-scaled Dice), and a fairness benchmark of medical imaging foundation models."
+authors:
+  - family-names: Jin
+    given-names: Ruinan
+  - family-names: Xu
+    given-names: Zikang
+  - family-names: Zhong
+    given-names: Yuan
+  - family-names: Yao
+    given-names: Qiongsong
+  - family-names: Dou
+    given-names: Qi
+  - family-names: Zhou
+    given-names: S. Kevin
+  - family-names: Li
+    given-names: Xiaoxiao
+repository-code: "https://github.com/FairMedFM/FairMedFM"
+url: "https://pypi.org/project/fairmedfm/"
+license: CC0-1.0
+keywords:
+  - fairness
+  - fairness metrics
+  - algorithmic fairness
+  - bias evaluation
+  - segmentation fairness
+  - equalized odds
+  - medical imaging
+  - foundation models
+  - benchmark
+preferred-citation:
+  type: article
+  title: "FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models"
+  authors:
+    - family-names: Jin
+      given-names: Ruinan
+    - family-names: Xu
+      given-names: Zikang
+    - family-names: Zhong
+      given-names: Yuan
+    - family-names: Yao
+      given-names: Qiongsong
+    - family-names: Dou
+      given-names: Qi
+    - family-names: Zhou
+      given-names: S. Kevin
+    - family-names: Li
+      given-names: Xiaoxiao
+  journal: "arXiv preprint arXiv:2407.00983"
+  year: 2024
+  url: "https://arxiv.org/abs/2407.00983"
