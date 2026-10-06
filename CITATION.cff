@@ -21,7 +21,7 @@ authors:
     given-names: Xiaoxiao
 repository-code: "https://github.com/FairMedFM/FairMedFM"
 url: "https://pypi.org/project/fairmedfm/"
-license: CC0-1.0
+license: CC-BY-4.0
 keywords:
   - fairness
   - fairness metrics
