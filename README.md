@@ -192,7 +192,7 @@ To score your own model's predictions, `pip install fairmedfm` is all you need (
 1. Install the benchmark runner (Python 3.10+). Install PyTorch for your CUDA version first if needed.
 
    ```bash
-   pip install "fairmedfm[cls]"   # classification: linear probing, zero-shot, CLIP adaptation, LoRA
+   pip install "fairmedfm[cls]"   # classification: linear probing, CLIP zero-shot and CLIP adaptation
    pip install "fairmedfm[seg]"   # segmentation with SAM-family models (includes [cls])
    ```
 
