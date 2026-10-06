@@ -1,4 +1,4 @@
-"""Command line interface: ``fairmedfm score``."""
+"""Command line interface: ``fairmedfm score`` and ``fairmedfm run``."""
 from __future__ import annotations
 
 import argparse
@@ -36,7 +36,19 @@ def _parser() -> argparse.ArgumentParser:
     score.add_argument("--label-col", default="label", help="ground-truth label column (cls; default: label)")
     score.add_argument("--dice-col", default="dice", help="Dice score column (seg; default: dice)")
     score.add_argument("--output", type=Path, help="also write the full result to this JSON file")
+    commands.add_parser("run", add_help=False,
+                        help="Run a benchmark experiment with a built-in foundation model (needs fairmedfm[cls] or "
+                             "fairmedfm[seg]); see fairmedfm run --help.")
     return parser
+
+
+def _run(argv: List[str]) -> None:
+    try:
+        from .run import main as run_main
+        run_main(argv)
+    except ModuleNotFoundError as exc:
+        sys.exit(f"fairmedfm: error: missing module {exc.name!r}. fairmedfm run needs the benchmark dependencies: "
+                 "pip install 'fairmedfm[cls]' for classification or 'fairmedfm[seg]' for segmentation.")
 
 
 def score(task: str, input_path: Path, sensitive: List[str], prob_col: str = "prob", label_col: str = "label",
@@ -63,6 +75,11 @@ def score(task: str, input_path: Path, sensitive: List[str], prob_col: str = "pr
 
 
 def main(argv: Optional[List[str]] = None) -> None:
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv[:1] == ["run"]:
+        # The benchmark runner has its own argument parser.
+        _run(argv[1:])
+        return
     parser = _parser()
     args = parser.parse_args(argv)
     try:

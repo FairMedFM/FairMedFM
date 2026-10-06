@@ -64,6 +64,14 @@ def test_skewness_is_none_when_a_group_is_perfect():
     summary = metrics.segmentation_fairness([1.0, 1.0, 0.8, 0.6], [0, 0, 1, 1])["summary"]
     assert summary["skewness_dice"] is None
     assert summary["delta_dice"] == pytest.approx(0.3)
+    assert metrics.evaluate_seg([1.0, 1.0, 0.8, 0.6], [0, 0, 1, 1])["skewness_dice"] == float("inf")
+
+
+def test_trainer_interface_keeps_nan_dice_like_the_original():
+    summary = metrics.evaluate_seg([0.9, float("nan"), 0.7, 0.5], [[0], [0], [1], [1]])
+    assert np.isnan(summary["mean_dice"])
+    with pytest.raises(ValueError, match=r"in \[0, 1\]"):
+        metrics.segmentation_fairness([0.9, float("nan"), 0.7, 0.5], [0, 0, 1, 1])
 
 
 def test_bce_clamps_saturated_probabilities_like_torch():

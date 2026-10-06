@@ -185,28 +185,38 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 Your are welcome to post your thoughts about updated features and we will try to make this repo evolving as the development of more FMs.
 
 ## Installation
-The installation requires three steps.
-1. Download from github
 
-   ```git
-   git clone https://github.com/FairMedFM/FairMedFM.git
-   cd FairMedFM
+To score your own model's predictions, `pip install fairmedfm` is all you need (see
+[above](#pip-package-fairness-metrics-for-any-model)). To run the benchmark with the built-in foundation models:
+
+1. Install the benchmark runner (Python 3.10+). Install PyTorch for your CUDA version first if needed.
+
+   ```bash
+   pip install "fairmedfm[cls]"   # classification: linear probing, zero-shot, CLIP adaptation, LoRA
+   pip install "fairmedfm[seg]"   # segmentation with SAM-family models (includes [cls])
    ```
 
-2. Creating conda environment
+   A few models need packages that are not on PyPI: BLIP/BLIP2 (`salesforce-lavis`, which pins older
+   dependencies, so use a separate environment), CONCH (`pip install git+https://github.com/Mahmoodlab/CONCH.git`),
+   Merlin (`pip install merlin-vlm`), SAM2 (`sam2`) and SAM3 (`sam3`). The runner reports which package is missing.
 
+2. Work in a directory that holds your data and checkpoints. Dataset and model configs refer to `./data/...` and
+   `./pretrained/...`; a `configs/` folder in the working directory overrides the packaged configs.
+
+   ```bash
+   wget https://object-arbutus.alliancecan.ca/swift/v1/86581f3bb67c4c04bbccbcb839de730a/rjin/pretrained.zip
+   unzip pretrained.zip && rm -f pretrained.zip
    ```
-   conda env create -f environment.yml
-   conda activate fairmedfm
-   ```
 
-3. Download Pretrained FMs
+3. Run an experiment with `fairmedfm run` (examples under [Running Experiment](#running-experiment)).
 
-    ```
-    wget https://object-arbutus.alliancecan.ca/swift/v1/86581f3bb67c4c04bbccbcb839de730a/rjin/pretrained.zip
-    unzip pretrained.zip
-    rm -f pretrained.zip
-    ```
+To use the environment from the paper instead, clone the repository and create the conda environment
+(Python 3.8); `python main.py` then runs the same experiments as `fairmedfm run`:
+
+```bash
+git clone https://github.com/FairMedFM/FairMedFM.git && cd FairMedFM
+conda env create -f environment.yml && conda activate fairmedfm
+```
 
 Our notebook tutorials also contains how to setup the environment in Colab. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/linear_probing.ipynb)
 
@@ -279,29 +289,29 @@ We offer some examples of how to use our package through the notebook.
 
 ### Classification
 
-We provide an example of running a linear-probe (classification) experiment of the CLIP model on the MIMIC-CXR dataset to evaluate fairness on sex. Please refer to [parse_args.py](./parse_args.py) for more details.
+We provide an example of running a linear-probe (classification) experiment of the CLIP model on the MIMIC-CXR dataset to evaluate fairness on sex. Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options. In a source checkout, `python main.py` accepts the same arguments.
 
 ```bash
-python main.py --task cls --usage lp --dataset CXP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
+fairmedfm run --task cls --usage lp --dataset CXP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
 ```
 
 ### Segmentation (2D SAMs)
 
 We also provide an example of using SAM with center point prompt on the TUSC dataset to evaluate fairness on sex.
-Please refer to [parse_args.py](./parse_args.py) for more details.
+Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options. In a source checkout, `python main.py` accepts the same arguments.
 
 ```bash
-python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path ./weights/SAM.pth --img_size 1024 --prompt center
+fairmedfm run --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path ./weights/SAM.pth --img_size 1024 --prompt center
 ```
 
 For the newer 2D models, install the official `sam3` package in a compatible environment with `pip install git+https://github.com/facebookresearch/sam3.git`, then run one of:
 
 ```bash
 # SAM3: downloads Meta's gated checkpoint after Hugging Face access is granted.
-python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM3 --img_size 1024 --prompt center
+fairmedfm run --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM3 --img_size 1024 --prompt center
 
 # MedicalSAM3: use the 2D Medical SAM3 checkpoint (not its 3D V2 checkpoint).
-python main.py --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model MedicalSAM3 --sam_ckpt_path /path/to/checkpoint_2D.pt --img_size 1024 --prompt bbox
+fairmedfm run --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model MedicalSAM3 --sam_ckpt_path /path/to/checkpoint_2D.pt --img_size 1024 --prompt bbox
 ```
 
 The existing segmentation trainer is single-image only (`--batch_size 1`). Box and point prompts are derived from the ground-truth mask, so results are interactive segmentation scores, not unprompted segmentation scores. The new adapters restore the dataset's normalized BGR tensors to RGB pixels before SAM3 preprocessing.

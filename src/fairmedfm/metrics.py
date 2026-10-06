@@ -192,25 +192,34 @@ def segmentation_fairness(dice: Sequence[float], group: Sequence[Any]) -> Dict[s
         ``groups``: mean Dice and sample count per group, keyed by group value as a string.
     """
     dice_array = np.asarray(dice, dtype=np.float64).ravel()
-    group_array = np.asarray(group).ravel()
-    if len(dice_array) != len(group_array):
-        raise ValueError(f"dice and group must have the same length, got {len(dice_array)} and {len(group_array)}")
     if np.isnan(dice_array).any() or (dice_array < 0).any() or (dice_array > 1).any():
         raise ValueError("dice must contain values in [0, 1]")
+    result = _segmentation(dice_array, group)
+    if not np.isfinite(result["summary"]["skewness_dice"]):
+        result["summary"]["skewness_dice"] = None
+    return result
+
+
+def _segmentation(dice: np.ndarray, group: Sequence[Any]) -> Dict[str, Any]:
+    group_array = np.asarray(group).ravel()
+    if len(dice) != len(group_array):
+        raise ValueError(f"dice and group must have the same length, got {len(dice)} and {len(group_array)}")
     values = list(np.unique(group_array))
     if len(values) < 2:
         raise ValueError("the sensitive attribute needs at least two groups")
-    means = np.array([dice_array[group_array == value].mean() for value in values])
+    means = np.array([dice[group_array == value].mean() for value in values])
     min_dice, max_dice = float(means.min()), float(means.max())
     std_dice = float(means.std())
-    mean_dice = float(dice_array.mean())
+    mean_dice = float(dice.mean())
+    with np.errstate(divide="ignore", invalid="ignore"):
+        skewness = float(np.divide(1 - min_dice, 1 - max_dice))
     return {
         "summary": {
             "mean_dice": mean_dice,
             "min_dice": min_dice,
             "max_dice": max_dice,
             "delta_dice": max_dice - min_dice,
-            "skewness_dice": (1 - min_dice) / (1 - max_dice) if max_dice < 1 else None,
+            "skewness_dice": skewness,
             "std_dice": std_dice,
             "es_dice": mean_dice / (1 + std_dice),
         },
@@ -237,5 +246,9 @@ def organize_results(overall_metrics: Mapping[str, float], subgroup_metrics: Map
 
 
 def evaluate_seg(dsc_list: Sequence[float], sensitive_list: Sequence[Any]) -> Dict[str, Any]:
-    """Segmentation fairness summary; see :func:`segmentation_fairness`."""
-    return segmentation_fairness(dsc_list, sensitive_list)["summary"]
+    """Segmentation fairness summary as logged by the trainers; see :func:`segmentation_fairness`.
+
+    Unlike :func:`segmentation_fairness`, ``skewness_dice`` is ``inf`` when the best group has a mean Dice of 1,
+    and NaN Dice scores propagate into the means instead of raising.
+    """
+    return _segmentation(np.asarray(dsc_list, dtype=np.float64).ravel(), sensitive_list)["summary"]
