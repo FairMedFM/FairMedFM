@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use FairMedFM, please cite the paper."
 title: "FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models"
 type: software
-version: 0.2.0
+version: 0.3.0
 abstract: "Fairness metrics for any binary classification or segmentation model (subgroup AUC, accuracy, calibration and Dice gaps, equal opportunity, equalized odds and equity-scaled Dice), and a fairness benchmark of medical imaging foundation models."
 authors:
   - family-names: Jin

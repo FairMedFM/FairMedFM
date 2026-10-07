@@ -21,7 +21,7 @@ on 17 datasets.</p>
 
 ```bash
 pip install fairmedfm
-fairmedfm score --task cls --input predictions.csv --sensitive sex age
+fairmedfm score predictions.csv --metadata patients.csv --sensitive sex age --bins age=40,60
 ```
 
 <div class="grid cards" markdown>
@@ -30,8 +30,8 @@ fairmedfm score --task cls --input predictions.csv --sensitive sex age
 
     ---
 
-    Binary classifiers and segmentation models from any framework. Export one row per sample; FairMedFM does not
-    need to run your model.
+    Binary classifiers and segmentation models from any framework. Pass labels, probabilities, logits or masks
+    as you have them; FairMedFM does not need to run your model.
 
 -   **Lightweight**
 
@@ -65,8 +65,8 @@ See [Fairness metrics](metrics.md) for exact definitions.
 
 ## Two ways to use FairMedFM
 
-**Evaluate your own model.** Run your model anywhere, save a CSV of probabilities and labels (classification) or
-Dice scores (segmentation) with sensitive attributes, and run `fairmedfm score`. See
+**Evaluate your own model.** Run your model anywhere, then call `fairmedfm.evaluate` with its outputs, the
+ground truth and patient attributes, or point `fairmedfm score` at your prediction and metadata files. See
 [Evaluate your model](evaluate-your-model.md).
 
 **Run the benchmark.** Evaluate built-in foundation models such as CLIP, BiomedCLIP, MedCLIP, DINOv2, SigLIP,

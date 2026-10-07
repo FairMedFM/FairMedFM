@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fairmedfm"
-version = "0.2.0"
+version = "0.3.0"
 description = "Fairness metrics for any binary classification or segmentation model: subgroup AUC, accuracy, calibration and Dice gaps, equalized odds and equity-scaled Dice"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -54,6 +54,8 @@ cls = [
   "setuptools<81",
 ]
 seg = ["fairmedfm[cls]", "segment-anything>=1.0", "trans-utils>=0.2.1,<0.3"]
+# Reading Parquet/Feather tables and image or NIfTI masks.
+io = ["pyarrow>=14", "pillow>=9", "nibabel>=5", "openpyxl>=3.1"]
 test = ["pytest>=8"]
 dev = ["fairmedfm[test]", "build>=1.2", "twine>=5"]
 

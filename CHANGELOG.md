@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.3.0 (2026-10-06)
+
+- Add `fairmedfm.evaluate` and `fairmedfm.evaluate_segmentation`, which take data as users have it: lists, NumPy,
+  pandas or PyTorch; labels as 0/1, booleans, one-hot rows or class names (`pos_label`, one-vs-rest for more than
+  two classes); scores as probabilities, logits or softmax matrices; several sensitive attributes at once as a
+  DataFrame or dict, with `bins` for continuous attributes and optional intersectional groups; and segmentation
+  from per-sample Dice or from masks (arrays or `.npy`, `.npz`, `.png`, `.tif`, `.nii.gz` files). They return a
+  `FairnessReport` with pandas `summary` and `by_group` tables and JSON export. Groups with only one label and
+  missing attribute values are reported and left out instead of failing the whole evaluation.
+- `fairmedfm score` takes the predictions table as an argument, reads CSV, TSV, Parquet, Feather, JSON, JSON Lines
+  and Excel, recognizes common column names, joins a separate metadata table (`--metadata`, `--on`), and adds
+  `--pos-label`, multiple `--score` columns, `--bins`, `--intersectional`, mask columns, `--format table` and CSV
+  output. The earlier options still work.
+- Add the `io` extra (pyarrow, Pillow, nibabel, openpyxl) for Parquet, Feather and Excel tables and image and
+  NIfTI masks.
+- Remove the broken `test.py` and `run_test_seg.sh` scripts.
+
 ## 0.2.0 (2026-10-06)
 
 - The benchmark code is now part of the package: `datasets`, `models`, `trainers`, `wrappers`, `utils` and

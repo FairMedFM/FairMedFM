@@ -10,7 +10,7 @@ male patients. A **gap** is the largest group value minus the smallest one; 0 me
 
 ## Binary classification
 
-Computed by `fairmedfm score --task cls` and `fairmedfm.classification_fairness`.
+Computed by `fairmedfm.evaluate` and `fairmedfm score` for classification.
 
 | Metric | Definition | Fairer when |
 | --- | --- | --- |
@@ -38,7 +38,8 @@ Details:
 
 ## Segmentation
 
-Computed by `fairmedfm score --task seg` and `fairmedfm.segmentation_fairness` from per-sample Dice scores.
+Computed by `fairmedfm.evaluate_segmentation` and `fairmedfm score` for segmentation, from per-sample Dice scores
+(given directly or computed from masks).
 
 | Metric | Definition | Fairer when |
 | --- | --- | --- |
@@ -50,7 +51,15 @@ Computed by `fairmedfm score --task seg` and `fairmedfm.segmentation_fairness` f
 | `skewness_dice` | `(1 - min_dice) / (1 - max_dice)`: how much larger the worst group's error is than the best group's | closer to 1 |
 | `es_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` | higher |
 
-`skewness_dice` is `null` when the best group's mean Dice is exactly 1. Attributes can have any number of groups.
+`skewness_dice` is empty (`null` in JSON) when the best group's mean Dice is exactly 1. Attributes can have any
+number of groups.
+
+## Groups that cannot be evaluated
+
+A classification group whose samples all have the same label has no AUC, TPR or TNR. `evaluate` lists it in
+`by_group` with a `skipped` reason, leaves it out of the gaps and `worst-auc`, and adds a warning; the overall
+metrics still include its samples. If fewer than two groups remain, the attribute's summary is empty. Samples
+with a missing attribute value are left out for that attribute only.
 
 ## Consistency with the paper
 

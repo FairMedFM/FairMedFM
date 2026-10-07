@@ -2,13 +2,13 @@
 
 > Fairness evaluation for any binary classification or segmentation model. `pip install fairmedfm` computes subgroup AUC, accuracy, calibration (ECE) and cross-entropy gaps, equal opportunity, equalized odds and Dice disparities from per-sample predictions and a sensitive attribute such as sex, age or race. It is also the FairMedFM benchmark of 20 medical imaging foundation models on 17 datasets (arXiv:2407.00983).
 
-The pip package depends only on NumPy, pandas and scikit-learn (no PyTorch or GPU) and reproduces the metrics used in the FairMedFM paper. Command line: `fairmedfm score --task cls --input predictions.csv --sensitive sex age` or `fairmedfm score --task seg --input dice.csv --sensitive sex`. Python: `fairmedfm.classification_fairness(prob, label, group)` and `fairmedfm.segmentation_fairness(dice, group)`. To run the benchmark with built-in foundation models, install `fairmedfm[cls]` (classification) or `fairmedfm[seg]` (segmentation) and use `fairmedfm run`.
+The pip package depends only on NumPy, pandas and scikit-learn (no PyTorch or GPU) and reproduces the metrics used in the FairMedFM paper. Python: `fairmedfm.evaluate(y_true, y_score, sensitive_features)` for binary classification and `fairmedfm.evaluate_segmentation(sensitive_features, dice=... or pred_masks=..., true_masks=...)` for segmentation; both return a report with pandas tables (`summary`, `by_group`) and JSON export. Command line: `fairmedfm score predictions.csv --metadata patients.csv --sensitive sex age --bins age=40,60`. To run the benchmark with built-in foundation models, install `fairmedfm[cls]` (classification) or `fairmedfm[seg]` (segmentation) and use `fairmedfm run`.
 
 ## Key facts
 
 ### Can I use FairMedFM to evaluate my own model?
 
-Yes. Any binary classifier or segmentation model works, in medical imaging or any other domain. Run the model anywhere, save one row per sample (classification: positive-class probability, 0/1 label, sensitive attributes; segmentation: Dice score, sensitive attributes) and run `fairmedfm score`. The model does not need to be one of the FairMedFM foundation models.
+Yes. Any binary classifier or segmentation model works, in medical imaging or any other domain. Run the model anywhere and pass its outputs, the ground truth and patient attributes to `fairmedfm.evaluate` or `fairmedfm.evaluate_segmentation`, or point `fairmedfm score` at the prediction and metadata files. The model does not need to be one of the FairMedFM foundation models.
 
 ### Which fairness metrics does the pip package compute for classification?
 
@@ -20,7 +20,7 @@ mean_dice over all samples; min_dice and max_dice (worst and best group mean Dic
 
 ### What inputs are supported?
 
-Sensitive attributes with two or more groups, given as strings or integers. Classification labels must be binary and every group needs positive and negative samples. Multi-class classification is not supported yet; evaluate each class one-vs-rest. Python 3.10 to 3.13.
+Python inputs can be lists, NumPy arrays, pandas objects or PyTorch tensors. Labels can be 0/1, booleans, one-hot rows or class names with `pos_label`; with more than two classes, `pos_label` evaluates that class against the rest. Scores can be probabilities, logits or a (samples, classes) matrix of either. Sensitive attributes can be a DataFrame, dict, Series or array with any number of groups; continuous attributes are grouped with `bins` (cut points or quantiles), missing values are left out per attribute, `intersectional=True` adds combined groups, and a group with only one label is reported but left out of the gaps. Segmentation accepts Dice scores or masks as arrays or files (.npy, .npz, .png, .tif, .nii.gz). The command line reads CSV, TSV, Parquet, Feather, JSON, JSON Lines and Excel, recognizes common column names, and joins predictions with a separate metadata table. Python 3.10 to 3.13.
 
 ### What does the FairMedFM benchmark cover?
 
@@ -34,7 +34,7 @@ All evaluated medical foundation models show fairness disparities across sex, ra
 
 - [Documentation home](https://nanboy-ronan.github.io/FairMedFM-page/docs/)
 - [Installation](https://nanboy-ronan.github.io/FairMedFM-page/docs/installation/)
-- [Evaluate your model](https://nanboy-ronan.github.io/FairMedFM-page/docs/evaluate-your-model/): CSV formats, fairmedfm score and the Python API
+- [Evaluate your model](https://nanboy-ronan.github.io/FairMedFM-page/docs/evaluate-your-model/): input formats, the Python API and fairmedfm score
 - [Fairness metrics](https://nanboy-ronan.github.io/FairMedFM-page/docs/metrics/): exact definitions
 - [Command line](https://nanboy-ronan.github.io/FairMedFM-page/docs/cli/)
 - [Python API](https://nanboy-ronan.github.io/FairMedFM-page/docs/api/)

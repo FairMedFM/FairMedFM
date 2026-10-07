@@ -14,7 +14,14 @@ pip install fairmedfm
 ```
 
 This installs the metrics, the `fairmedfm score` command and the Python API, with NumPy, pandas and
-scikit-learn as the only dependencies. It is all you need to [evaluate your own model](evaluate-your-model.md),
+scikit-learn as the only dependencies. To read Parquet, Feather or Excel tables and PNG, TIFF or NIfTI masks, add
+the `io` extra:
+
+```bash
+pip install "fairmedfm[io]"
+```
+
+The base install is all you need to [evaluate your own model](evaluate-your-model.md),
 on any operating system and without a GPU.
 
 ## Benchmark runner
