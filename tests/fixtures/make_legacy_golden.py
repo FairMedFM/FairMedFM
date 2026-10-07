@@ -1,13 +1,21 @@
-"""Regenerate tests/fixtures/legacy_golden.json from the legacy utils/metrics.py (the code behind the paper results).
+"""Regenerate tests/fixtures/legacy_golden.json from the original utils/metrics.py (the code behind the paper results).
 
-Run from the repository root in the FairMedFM training environment with a CUDA GPU (the legacy BCE uses CUDA):
+The original file is read from Git (commit aa8325a, before it moved into the package). Run from the repository
+root in an environment with PyTorch and a CUDA GPU, since the original BCE runs on CUDA:
     python tests/fixtures/make_legacy_golden.py
 """
-import json, sys, types
+import json
+import subprocess
+import sys
+import types
+
 import numpy as np
+
 sys.modules["ipdb"] = types.ModuleType("ipdb")
-sys.path.insert(0, ".")
-from utils import metrics as legacy
+legacy = types.ModuleType("legacy_metrics")
+source = subprocess.run(["git", "show", "aa8325a:utils/metrics.py"], capture_output=True, text=True, check=True).stdout
+exec(compile(source, "utils/metrics.py@aa8325a", "exec"), legacy.__dict__)
+
 
 def plain(d):
     out = {}

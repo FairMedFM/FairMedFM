@@ -9,8 +9,8 @@ import pytest
 import torch
 from torch import nn
 
-from models.sam3 import build_sam3
-from wrappers.sam3 import SAM3Learner, _points, _rgb_image
+from fairmedfm.models.sam3 import build_sam3
+from fairmedfm.wrappers.sam3 import SAM3Learner, _points, _rgb_image
 
 
 class ImageModel(nn.Module):

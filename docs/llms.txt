@@ -1,0 +1,51 @@
+# FairMedFM
+
+> Fairness evaluation for any binary classification or segmentation model. `pip install fairmedfm` computes subgroup AUC, accuracy, calibration (ECE) and cross-entropy gaps, equal opportunity, equalized odds and Dice disparities from per-sample predictions and a sensitive attribute such as sex, age or race. It is also the FairMedFM benchmark of 20 medical imaging foundation models on 17 datasets (arXiv:2407.00983).
+
+The pip package depends only on NumPy, pandas and scikit-learn (no PyTorch or GPU) and reproduces the metrics used in the FairMedFM paper. Command line: `fairmedfm score --task cls --input predictions.csv --sensitive sex age` or `fairmedfm score --task seg --input dice.csv --sensitive sex`. Python: `fairmedfm.classification_fairness(prob, label, group)` and `fairmedfm.segmentation_fairness(dice, group)`. To run the benchmark with built-in foundation models, install `fairmedfm[cls]` (classification) or `fairmedfm[seg]` (segmentation) and use `fairmedfm run`.
+
+## Key facts
+
+### Can I use FairMedFM to evaluate my own model?
+
+Yes. Any binary classifier or segmentation model works, in medical imaging or any other domain. Run the model anywhere, save one row per sample (classification: positive-class probability, 0/1 label, sensitive attributes; segmentation: Dice score, sensitive attributes) and run `fairmedfm score`. The model does not need to be one of the FairMedFM foundation models.
+
+### Which fairness metrics does the pip package compute for classification?
+
+overall-auc, overall-acc, overall-bce and overall-ece on all samples; worst-auc (lowest group AUC); auc-gap, acc-gap, bce-gap and ece-gap (largest minus smallest group value); eo, the equal opportunity gap (largest minus smallest group true positive rate); and eod, an equalized odds score defined as 1 - (TPR gap + TNR gap) / 2, where 1 means equal rates. Accuracy, eo and eod use the threshold with the best overall F1. Per-group values are reported at threshold 0.5 and at the best-F1 threshold. ECE uses 10 equal-width bins over the range of the predicted probabilities.
+
+### Which fairness metrics does it compute for segmentation?
+
+mean_dice over all samples; min_dice and max_dice (worst and best group mean Dice); delta_dice (their difference); std_dice (standard deviation of the group means); skewness_dice ((1 - min_dice) / (1 - max_dice)); and es_dice, the equity-scaled Dice mean_dice / (1 + std_dice).
+
+### What inputs are supported?
+
+Sensitive attributes with two or more groups, given as strings or integers. Classification labels must be binary and every group needs positive and negative samples. Multi-class classification is not supported yet; evaluate each class one-vs-rest. Python 3.10 to 3.13.
+
+### What does the FairMedFM benchmark cover?
+
+The paper evaluates 20 foundation models on 17 medical imaging datasets (including CheXpert, MIMIC-CXR, HAM10000, PAPILA, FairVLMed10k, GF3300, ADNI, TUSC and FairSeg) with linear probing, zero-shot, CLIP adaptation, parameter-efficient fine-tuning and prompted segmentation, and compares unfairness mitigation methods. The repository has since added newer models such as DINOv3, SigLIP2, AIMv2, MedGemma, RETFound, UNI2-h, Virchow2, Prov-GigaPath, CONCH, Merlin, SAM2, SAM3 and MedicalSAM3. The benchmark runs with `pip install "fairmedfm[cls]"` or `"fairmedfm[seg]"` and `fairmedfm run`, or from the GitHub repository with `python main.py` in the paper's environment.
+
+### What did the FairMedFM benchmark find?
+
+All evaluated medical foundation models show fairness disparities across sex, race and age; the most accurate model is often not the fairest; disparities on a dataset stay similar across models; and existing unfairness mitigation methods give only marginal improvements.
+
+## Documentation
+
+- [Home](https://fairmedfm.github.io/FairMedFM/)
+- [Installation](https://fairmedfm.github.io/FairMedFM/installation/)
+- [Evaluate your model](https://fairmedfm.github.io/FairMedFM/evaluate-your-model/): CSV formats, fairmedfm score and the Python API
+- [Fairness metrics](https://fairmedfm.github.io/FairMedFM/metrics/): exact definitions
+- [Command line](https://fairmedfm.github.io/FairMedFM/cli/)
+- [Python API](https://fairmedfm.github.io/FairMedFM/api/)
+- [Run experiments](https://fairmedfm.github.io/FairMedFM/benchmark/): fairmedfm run, configs and outputs
+- [Models](https://fairmedfm.github.io/FairMedFM/models/) and [Datasets](https://fairmedfm.github.io/FairMedFM/datasets/)
+- [Reproduce the paper](https://fairmedfm.github.io/FairMedFM/reproduce/)
+- [FAQ](https://fairmedfm.github.io/FairMedFM/faq/)
+
+## Links
+
+- [PyPI package](https://pypi.org/project/fairmedfm/)
+- [GitHub repository](https://github.com/FairMedFM/FairMedFM)
+- [Paper: FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models](https://arxiv.org/abs/2407.00983)
+- [Companion capability benchmark: MedVLMBench](https://github.com/ubc-tea/MedVLMBench)
