@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {%- set title = page.meta.title if page and page.meta and page.meta.title else (page.title ~ " - " ~ config.site_name if page and page.title and not page.is_homepage else config.site_name) %}
+  {%- set description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
+  {%- set image = config.site_url ~ "assets/social-card.png" %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:url" content="{{ page.canonical_url }}">
+  <meta property="og:image" content="{{ image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <meta name="twitter:image" content="{{ image }}">
+  {%- if page and page.is_homepage %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "{{ config.site_url }}#software",
+        "name": "FairMedFM",
+        "description": "Fairness evaluation for any binary classification or segmentation model: subgroup AUC, accuracy, calibration and Dice gaps, equal opportunity, equalized odds and equity-scaled Dice. Also a fairness benchmark of medical imaging foundation models.",
+        "url": "{{ config.site_url }}",
+        "codeRepository": "https://github.com/FairMedFM/FairMedFM",
+        "programmingLanguage": "Python",
+        "runtimePlatform": "Python 3.10+",
+        "license": "https://creativecommons.org/licenses/by/4.0/",
+        "applicationCategory": "Machine learning fairness evaluation",
+        "keywords": "fairness, fairness metrics, algorithmic fairness, bias evaluation, segmentation fairness, equalized odds, medical imaging, foundation models",
+        "sameAs": ["https://pypi.org/project/fairmedfm/", "https://github.com/FairMedFM/FairMedFM"],
+        "citation": {"@id": "https://arxiv.org/abs/2407.00983"}
+      },
+      {
+        "@type": "ScholarlyArticle",
+        "@id": "https://arxiv.org/abs/2407.00983",
+        "headline": "FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models",
+        "url": "https://arxiv.org/abs/2407.00983",
+        "datePublished": "2024",
+        "author": [
+          {"@type": "Person", "name": "Ruinan Jin"}, {"@type": "Person", "name": "Zikang Xu"},
+          {"@type": "Person", "name": "Yuan Zhong"}, {"@type": "Person", "name": "Qiongsong Yao"},
+          {"@type": "Person", "name": "Qi Dou"}, {"@type": "Person", "name": "S. Kevin Zhou"},
+          {"@type": "Person", "name": "Xiaoxiao Li"}
+        ]
+      }
+    ]
+  }
+  </script>
+  {%- endif %}
+{% endblock %}

@@ -1,0 +1,6 @@
+# Documentation site build (independent of the benchmark environment).
+mkdocs==1.6.1
+mkdocs-material==9.7.6
+mkdocstrings==0.30.1
+mkdocstrings-python==2.0.9
+ruff==0.14.0
