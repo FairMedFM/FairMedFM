@@ -12,10 +12,10 @@
   <a href="https://github.com/ubc-tea/MedVLMBench"><img src="https://img.shields.io/badge/Companion-MedVLMBench-orange.svg" alt="MedVLMBench"></a>
 </p>
 
-**FairMedFM measures the fairness of any binary classification or segmentation model.** Give it per-sample
-predictions and a sensitive attribute (sex, age group, race, site, ...) and it reports subgroup AUC, accuracy and
-calibration gaps, equalized odds, and Dice disparities. The metrics come from the FairMedFM benchmark of 20
-medical imaging foundation models, but they work for any model and any domain.
+**FairMedFM measures the fairness of any binary classification or segmentation model.** Give it your model's
+predictions and the group of each sample, and it reports how performance differs across groups: AUC, accuracy and
+calibration gaps, equal opportunity, equalized odds, and Dice disparities. The metrics come from the FairMedFM
+benchmark of 20 medical imaging foundation models, but they work for any model and any data.
 
 ## Pip package: fairness metrics for any model
 
@@ -23,60 +23,72 @@ medical imaging foundation models, but they work for any model and any domain.
 pip install fairmedfm
 ```
 
-The package needs only NumPy, pandas and scikit-learn: no PyTorch, no GPU and no FairMedFM checkout. Pass your
-data as it is: labels as 0/1, booleans or class names; scores as probabilities, logits or a softmax matrix; NumPy
-arrays, pandas objects or PyTorch tensors; sensitive attributes as a DataFrame, with continuous ones such as age
-grouped by `bins`. Results match the code used for the FairMedFM paper. Full documentation:
-**[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**.
-
-### Classification fairness
-
 ```python
 import fairmedfm as fm
 
-report = fm.evaluate(y_true=labels, y_score=probs, sensitive_features=meta[["sex", "age"]],
-                     pos_label="malignant", bins={"age": [40, 60]})
-report.summary    # one row per attribute: auc-gap, worst-auc, acc-gap, ece-gap, eod, eo, ...
-report.by_group   # metrics and sample count for every group
+fm.auc_gap(y_true, y_score, sensitive_features=group)            # largest minus smallest group AUC
+fm.equalized_odds_score(y_true, y_score, sensitive_features=group)
+fm.dice_gap(dice, sensitive_features=group)                       # segmentation
+```
+
+Each metric works like `sklearn.metrics`: arrays in, one number out. `y_true` and `y_score` are your model's
+labels and outputs, and `group` is any attribute you want to compare across (sex, age group, hospital, scanner,
+skin tone, ...). Lists, NumPy, pandas and PyTorch all work; labels can be class names (`pos_label=`), scores can be
+probabilities, logits or `predict_proba`/softmax output. The package needs only NumPy, pandas and scikit-learn, and
+its numbers match the FairMedFM paper. Documentation: **[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**.
+
+**All metrics at once**, as pandas tables, for several attributes:
+
+```python
+report = fm.evaluate(y_true, y_score, sensitive_features=df[["sex", "age"]], bins={"age": [40, 60]})
+report.summary     # one row per attribute: auc-gap, worst-auc, acc-gap, ece-gap, eod, eo, ...
+report.by_group    # every group's sample count and metrics
 report.to_json("fairness.json")
 ```
 
-Or from the command line, with predictions and patient metadata in separate files (CSV, TSV, Parquet, JSON,
-JSON Lines or Excel). Common column names are recognized; otherwise name them with `--label` and `--score`:
-
-```bash
-fairmedfm score predictions.csv --metadata patients.csv --on image_id --sensitive sex age --bins age=40,60
-```
-
-### Segmentation fairness
-
-Give per-sample Dice scores, or predicted and ground-truth masks (arrays, tensors, or `.npy`, `.png`, `.nii.gz`
-files) and FairMedFM computes Dice for you:
+**During training**, log a fairness metric next to the loss:
 
 ```python
-report = fm.evaluate_segmentation(meta["sex"], pred_masks=pred_paths, true_masks=gt_paths)
-report = fm.evaluate_segmentation(meta["sex"], dice=dice_scores)
+probs = torch.softmax(model(x_val), dim=1)     # tensors on any device are fine
+wandb.log({"val_auc_gap": fm.auc_gap(y_val, probs, sensitive_features=sex_val)})
 ```
 
+**In scikit-learn model selection** (scikit-learn 1.4+, metadata routing):
+
+```python
+sklearn.set_config(enable_metadata_routing=True)
+scorer = make_scorer(fm.auc_gap, response_method="predict_proba", greater_is_better=False)
+cross_validate(model, X, y, scoring=scorer.set_score_request(sensitive_features=True),
+               params={"sensitive_features": group})
+```
+
+**Segmentation** from Dice scores or directly from masks (arrays, or `.npy`, `.png`, `.nii.gz` files):
+
+```python
+fm.evaluate_segmentation(group, pred_masks=pred_masks, true_masks=true_masks).summary
+```
+
+**From the command line**, for prediction files, optionally joined with a separate metadata file:
+
 ```bash
-fairmedfm score masks.csv --pred-mask pred_path --true-mask gt_path --sensitive sex
+fairmedfm score predictions.csv --sensitive group
 ```
 
 Image and NIfTI masks and Parquet tables need `pip install "fairmedfm[io]"`.
 
 ### Metrics
 
-| Task | Metric | Definition |
-| --- | --- | --- |
-| Classification | `overall-auc`, `overall-acc`, `overall-bce`, `overall-ece` | AUC, accuracy, binary cross-entropy and expected calibration error (10 bins) on all samples |
-| Classification | `worst-auc` | Lowest group AUC |
-| Classification | `auc-gap`, `acc-gap`, `bce-gap`, `ece-gap` | Largest minus smallest group value |
-| Classification | `eo` | Equal opportunity gap: largest minus smallest group true positive rate |
-| Classification | `eod` | Equalized odds score: `1 - (TPR gap + TNR gap) / 2`; 1 means equal rates |
-| Segmentation | `mean_dice` | Mean Dice over all samples |
-| Segmentation | `min_dice`, `max_dice`, `delta_dice` | Worst and best group mean Dice, and their difference |
-| Segmentation | `std_dice`, `skewness_dice` | Standard deviation of group means; `(1 - min_dice) / (1 - max_dice)` |
-| Segmentation | `es_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` |
+| Task | Function | Report column | Definition |
+| --- | --- | --- | --- |
+| Classification | | `overall-auc`, `overall-acc`, `overall-bce`, `overall-ece` | AUC, accuracy, binary cross-entropy and expected calibration error (10 bins) on all samples |
+| Classification | `worst_group_auc` | `worst-auc` | Lowest group AUC |
+| Classification | `auc_gap`, `accuracy_gap`, `bce_gap`, `ece_gap` | `auc-gap`, `acc-gap`, `bce-gap`, `ece-gap` | Largest minus smallest group value |
+| Classification | `equal_opportunity_difference` | `eo` | Largest minus smallest group true positive rate |
+| Classification | `equalized_odds_score` | `eod` | `1 - (TPR gap + TNR gap) / 2`; 1 means equal rates |
+| Segmentation | | `mean_dice`, `max_dice` | Mean Dice over all samples; best group mean Dice |
+| Segmentation | `worst_group_dice`, `dice_gap` | `min_dice`, `delta_dice` | Worst group mean Dice; best minus worst |
+| Segmentation | `dice_std`, `dice_skewness` | `std_dice`, `skewness_dice` | Standard deviation of group means; `(1 - min_dice) / (1 - max_dice)` |
+| Segmentation | `equity_scaled_dice` | `es_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` |
 
 Accuracy, `eo` and `eod` use the decision threshold with the best overall F1; `report.by_group` also reports
 every metric at threshold 0.5. Attributes can have any number of groups; a classification group with only one

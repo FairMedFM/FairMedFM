@@ -1,6 +1,6 @@
 ---
 title: FairMedFM Python API
-description: Python API reference for fairmedfm.evaluate, fairmedfm.evaluate_segmentation and FairnessReport, plus the lower-level fairness metric functions.
+description: Python API reference for FairMedFM - sklearn-style fairness metrics such as auc_gap and equalized_odds_score, evaluate, evaluate_segmentation and FairnessReport.
 ---
 
 # Python API
@@ -8,6 +8,7 @@ description: Python API reference for fairmedfm.evaluate, fairmedfm.evaluate_seg
 ```python
 import fairmedfm as fm
 
+fm.auc_gap(y_true, y_score, sensitive_features=group)                      # one metric, one number
 report = fm.evaluate(y_true, y_score, sensitive_features)                  # binary classification
 report = fm.evaluate_segmentation(sensitive_features, dice=dice)           # segmentation from Dice scores
 report = fm.evaluate_segmentation(sensitive_features, pred_masks=p, true_masks=t)   # ... or from masks
@@ -17,7 +18,36 @@ Both return a [`FairnessReport`](#fairmedfm.evaluation.FairnessReport) with pand
 `by_group`) and JSON export. See [Evaluate your model](evaluate-your-model.md) for examples and
 [Fairness metrics](metrics.md) for the definitions.
 
-## Fairness evaluation
+## Single metrics
+
+Each function returns one float and accepts the same inputs and options as `evaluate` or
+`evaluate_segmentation`. With several sensitive attributes, their combinations are compared.
+
+::: fairmedfm.group_metrics.auc_gap
+
+::: fairmedfm.group_metrics.worst_group_auc
+
+::: fairmedfm.group_metrics.accuracy_gap
+
+::: fairmedfm.group_metrics.bce_gap
+
+::: fairmedfm.group_metrics.ece_gap
+
+::: fairmedfm.group_metrics.equal_opportunity_difference
+
+::: fairmedfm.group_metrics.equalized_odds_score
+
+::: fairmedfm.group_metrics.dice_gap
+
+::: fairmedfm.group_metrics.worst_group_dice
+
+::: fairmedfm.group_metrics.dice_std
+
+::: fairmedfm.group_metrics.dice_skewness
+
+::: fairmedfm.group_metrics.equity_scaled_dice
+
+## Full reports
 
 ::: fairmedfm.evaluation.evaluate
 

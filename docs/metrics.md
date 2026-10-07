@@ -6,25 +6,27 @@ description: Definitions of the FairMedFM fairness metrics - AUC, accuracy, BCE 
 # Fairness metrics
 
 FairMedFM compares a model's performance across the groups of one sensitive attribute, for example female and
-male patients. A **gap** is the largest group value minus the smallest one; 0 means all groups perform the same.
+male patients. A **gap** is the largest group value minus the smallest one; 0 means all groups perform the same. Each metric is
+available as a function (`fm.auc_gap(y_true, y_score, sensitive_features=group)`) and as a column of
+`fm.evaluate(...).summary`.
 
 ## Binary classification
 
 Computed by `fairmedfm.evaluate` and `fairmedfm score` for classification.
 
-| Metric | Definition | Fairer when |
-| --- | --- | --- |
-| `overall-auc` | ROC AUC on all samples | - |
-| `overall-acc` | Accuracy on all samples at the best-F1 threshold | - |
-| `overall-bce` | Binary cross-entropy on all samples | - |
-| `overall-ece` | Expected calibration error on all samples | - |
-| `worst-auc` | Lowest AUC among the groups | higher |
-| `auc-gap` | Largest minus smallest group AUC | lower |
-| `acc-gap` | Largest minus smallest group accuracy, at the best-F1 threshold | lower |
-| `bce-gap` | Largest minus smallest group binary cross-entropy | lower |
-| `ece-gap` | Largest minus smallest group expected calibration error | lower |
-| `eo` | Equal opportunity gap: largest minus smallest group true positive rate (TPR) | lower |
-| `eod` | Equalized odds score: `1 - (TPR gap + TNR gap) / 2`, where TNR is the true negative rate | higher (1 = equal) |
+| Metric | Function | Definition | Fairer when |
+| --- | --- | --- | --- |
+| `overall-auc` | | ROC AUC on all samples | - |
+| `overall-acc` | | Accuracy on all samples at the best-F1 threshold | - |
+| `overall-bce` | | Binary cross-entropy on all samples | - |
+| `overall-ece` | | Expected calibration error on all samples | - |
+| `worst-auc` | `worst_group_auc` | Lowest AUC among the groups | higher |
+| `auc-gap` | `auc_gap` | Largest minus smallest group AUC | lower |
+| `acc-gap` | `accuracy_gap` | Largest minus smallest group accuracy, at the best-F1 threshold | lower |
+| `bce-gap` | `bce_gap` | Largest minus smallest group binary cross-entropy | lower |
+| `ece-gap` | `ece_gap` | Largest minus smallest group expected calibration error | lower |
+| `eo` | `equal_opportunity_difference` | Equal opportunity gap: largest minus smallest group true positive rate (TPR) | lower |
+| `eod` | `equalized_odds_score` | Equalized odds score: `1 - (TPR gap + TNR gap) / 2`, where TNR is the true negative rate | higher (1 = equal) |
 
 Details:
 
@@ -41,15 +43,15 @@ Details:
 Computed by `fairmedfm.evaluate_segmentation` and `fairmedfm score` for segmentation, from per-sample Dice scores
 (given directly or computed from masks).
 
-| Metric | Definition | Fairer when |
-| --- | --- | --- |
-| `mean_dice` | Mean Dice over all samples | - |
-| `min_dice` | Lowest group mean Dice (worst group) | higher |
-| `max_dice` | Highest group mean Dice (best group) | - |
-| `delta_dice` | `max_dice - min_dice` | lower |
-| `std_dice` | Standard deviation of the group mean Dice scores | lower |
-| `skewness_dice` | `(1 - min_dice) / (1 - max_dice)`: how much larger the worst group's error is than the best group's | closer to 1 |
-| `es_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` | higher |
+| Metric | Function | Definition | Fairer when |
+| --- | --- | --- | --- |
+| `mean_dice` | | Mean Dice over all samples | - |
+| `min_dice` | `worst_group_dice` | Lowest group mean Dice (worst group) | higher |
+| `max_dice` | | Highest group mean Dice (best group) | - |
+| `delta_dice` | `dice_gap` | `max_dice - min_dice` | lower |
+| `std_dice` | `dice_std` | Standard deviation of the group mean Dice scores | lower |
+| `skewness_dice` | `dice_skewness` | `(1 - min_dice) / (1 - max_dice)`: how much larger the worst group's error is than the best group's | closer to 1 |
+| `es_dice` | `equity_scaled_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` | higher |
 
 `skewness_dice` is empty (`null` in JSON) when the best group's mean Dice is exactly 1. Attributes can have any
 number of groups.

@@ -61,7 +61,7 @@ The `--output` JSON has this structure:
 
 ```json
 {
-  "fairmedfm_version": "0.3.0",
+  "fairmedfm_version": "0.4.0",
   "task": "cls",
   "metadata": {"n_samples": 1000, "input": "predictions.csv"},
   "overall": {"auc": 0.91, "acc@best_f1": 0.83, "...": "..."},

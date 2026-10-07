@@ -9,9 +9,9 @@ hide:
 
 # Fairness evaluation for any classification or segmentation model
 
-<p class="lead">FairMedFM measures how a model's performance differs across groups such as sex, age or race.
-Give it per-sample predictions and a sensitive attribute; it reports subgroup AUC, accuracy and calibration gaps,
-equalized odds, and Dice disparities. It is also the FairMedFM benchmark of 20 medical imaging foundation models
+<p class="lead">FairMedFM measures how a model's performance differs across groups such as sex, age, hospital or
+scanner. Give it your model's predictions and the group of each sample; it reports subgroup AUC, accuracy and
+calibration gaps, equal opportunity, equalized odds, and Dice disparities. It is also the FairMedFM benchmark of 20 medical imaging foundation models
 on 17 datasets.</p>
 
 [Get started](installation.md){ .md-button .md-button--primary }
@@ -19,9 +19,12 @@ on 17 datasets.</p>
 
 </div>
 
-```bash
-pip install fairmedfm
-fairmedfm score predictions.csv --metadata patients.csv --sensitive sex age --bins age=40,60
+```python
+# pip install fairmedfm
+import fairmedfm as fm
+
+fm.auc_gap(y_true, y_score, sensitive_features=group)      # one number, like sklearn.metrics
+report = fm.evaluate(y_true, y_score, sensitive_features=df[["sex", "age"]], bins={"age": [40, 60]})
 ```
 
 <div class="grid cards" markdown>
@@ -33,11 +36,12 @@ fairmedfm score predictions.csv --metadata patients.csv --sensitive sex age --bi
     Binary classifiers and segmentation models from any framework. Pass labels, probabilities, logits or masks
     as you have them; FairMedFM does not need to run your model.
 
--   **Lightweight**
+-   **Fits your workflow**
 
     ---
 
-    The metrics need only NumPy, pandas and scikit-learn: no PyTorch, no GPU. Python 3.10 to 3.13.
+    sklearn-style functions for training loops and model selection, pandas reports, or a command line for
+    prediction files. Needs only NumPy, pandas and scikit-learn.
 
 -   **Same numbers as the paper**
 
@@ -65,8 +69,8 @@ See [Fairness metrics](metrics.md) for exact definitions.
 
 ## Two ways to use FairMedFM
 
-**Evaluate your own model.** Run your model anywhere, then call `fairmedfm.evaluate` with its outputs, the
-ground truth and patient attributes, or point `fairmedfm score` at your prediction and metadata files. See
+**Evaluate your own model.** Run your model anywhere, then call a metric such as `fm.auc_gap` or the full
+`fm.evaluate` on its outputs, use them as scikit-learn scorers, or point `fairmedfm score` at prediction files. See
 [Evaluate your model](evaluate-your-model.md).
 
 **Run the benchmark.** Evaluate built-in foundation models such as CLIP, BiomedCLIP, MedCLIP, DINOv2, SigLIP,

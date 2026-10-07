@@ -39,6 +39,14 @@ Yes, one class at a time. Pass the class with `pos_label` (`--pos-label`): that 
 others, and with a (samples, classes) score matrix FairMedFM uses that class's column. For multi-label tasks,
 evaluate each label separately.
 
+## Can I use FairMedFM during training or for model selection?
+
+Yes. Every metric is a function that returns one number, like `sklearn.metrics`:
+`fm.auc_gap(y_true, y_score, sensitive_features=group)`. Call it on validation predictions to log fairness next to
+the loss, or wrap it with `sklearn.metrics.make_scorer` for cross-validation and hyperparameter search (with
+scikit-learn's metadata routing, each fold receives its own groups). See
+[Evaluate your model](evaluate-your-model.md#model-selection-with-scikit-learn).
+
 ## What input formats does FairMedFM accept?
 
 In Python: lists, NumPy arrays, pandas objects and PyTorch tensors; labels as 0/1, booleans, one-hot rows or

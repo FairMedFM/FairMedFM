@@ -1,20 +1,65 @@
 ---
 title: Evaluate the fairness of your own classification or segmentation model
-description: Score any binary classifier or segmentation model for fairness across sex, age, race or other groups. Pass labels, probabilities, logits, masks and metadata as you have them, in Python or from the command line.
+description: Measure the fairness of any binary classifier or segmentation model across groups - single sklearn-style metrics, full reports, training-loop logging, scikit-learn scorers and a command line.
 ---
 
 # Evaluate your model
 
-FairMedFM evaluates predictions, not models: run your model in its own environment and give FairMedFM its
-outputs, the ground truth and the patients' attributes. This works for any binary classifier or segmentation
-model, in medical imaging or any other domain.
+FairMedFM evaluates predictions, not models: run your model however you like and give FairMedFM its outputs,
+the ground truth and the group of each sample. This works for any binary classifier or segmentation model, in
+medical imaging or any other domain.
 
 ```bash
 pip install fairmedfm
 pip install "fairmedfm[io]"   # optional: Parquet/Excel tables and PNG, TIFF or NIfTI masks
 ```
 
-## Classification in Python
+## One metric at a time
+
+Every fairness metric is a function in the style of `sklearn.metrics`: arrays in, one number out.
+
+```python
+import fairmedfm as fm
+
+fm.auc_gap(y_true, y_score, sensitive_features=group)                # largest minus smallest group AUC
+fm.worst_group_auc(y_true, y_score, sensitive_features=group)
+fm.equalized_odds_score(y_true, y_score, sensitive_features=group)   # 1 means equal TPR and TNR
+fm.dice_gap(dice, sensitive_features=group)                          # segmentation
+```
+
+`group` is whatever you want to compare across: sex, age group, hospital, scanner, skin tone, or a DataFrame of
+several attributes (their combinations are compared). See [Fairness metrics](metrics.md) for the full list.
+
+## During training
+
+Log a fairness metric next to the loss to see how it changes over epochs or to choose a checkpoint. Tensors on any
+device are accepted:
+
+```python
+model.eval()
+with torch.no_grad():
+    probs = torch.softmax(model(x_val), dim=1)
+wandb.log({"val_auc": roc_auc_score(y_val, probs[:, 1].cpu()),
+           "val_auc_gap": fm.auc_gap(y_val, probs, sensitive_features=sex_val)})
+```
+
+## Model selection with scikit-learn
+
+The metrics work as scikit-learn scorers. With metadata routing (scikit-learn 1.4+), each cross-validation fold
+receives the groups of its own samples:
+
+```python
+import sklearn
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import cross_validate
+
+sklearn.set_config(enable_metadata_routing=True)
+auc_gap = make_scorer(fm.auc_gap, response_method="predict_proba", greater_is_better=False)
+results = cross_validate(model, X, y, cv=5, params={"sensitive_features": group},
+                         scoring={"auc": "roc_auc", "auc_gap": auc_gap.set_score_request(sensitive_features=True)})
+```
+
+## All metrics at once
 
 ```python
 import fairmedfm as fm
