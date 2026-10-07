@@ -87,8 +87,8 @@ segmentation_fairness(dice, sex)["summary"]   # mean_dice, min_dice, delta_dice,
 Accuracy, `eo` and `eod` use the decision threshold with the best overall F1; `result["overall"]` and
 `result["groups"]` also report every metric at threshold 0.5. Sensitive attributes can have two or more groups,
 and every classification group needs both positive and negative samples. Multi-class classification is not
-supported yet: score each class one-vs-rest. To reproduce the benchmark itself (foundation models, datasets,
-training), use the repository as described in [Installation](#installation).
+supported yet: score each class one-vs-rest. To run the benchmark itself with the built-in foundation models,
+install `fairmedfm[cls]` or `fairmedfm[seg]` and use `fairmedfm run` (see [Installation](#installation)).
 
 ## Table of Contents
 
@@ -159,7 +159,7 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 > - **3D CT**: [Merlin](https://github.com/StanfordMIMI/Merlin) (Stanford, 2024) — volumetric CT feature extractor for ADNI/COVID-CT-MD/KiTS-style 3D data
 >
 > **Gated repos** (request access on the model page, then `huggingface-cli login` / set `HF_TOKEN`): DINOv3, MedGemma, UNI2-h, Virchow2, Prov-GigaPath, CONCH, RETFound.
-> **Extra install required**: SAM2 needs the [`sam2`](https://github.com/facebookresearch/sam2) package; UNI2-h/Virchow2/Prov-GigaPath need `timm>=1.0`; CONCH needs `pip install git+https://github.com/Mahmoodlab/CONCH.git`; Merlin needs `pip install merlin-vlm`.
+> **Not covered by `fairmedfm[cls]`/`[seg]`**: SAM2 needs the [`sam2`](https://github.com/facebookresearch/sam2) package; CONCH needs `pip install git+https://github.com/Mahmoodlab/CONCH.git`; Merlin needs `pip install merlin-vlm`.
 > **SAM3 / MedicalSAM3 (2D)**: These use the official [SAM 3 image model](https://github.com/facebookresearch/sam3) API. SAM3 supports the existing point and box prompts; MedicalSAM3 currently supports boxes only. Meta's package requires Python 3.12+, PyTorch 2.7+, and a compatible CUDA setup, so use a separate environment if the main FairMedFM environment is older. Download [Medical SAM3's `checkpoint_2D.pt`](https://huggingface.co/ChongCong/Medical-SAM3/blob/main/checkpoint_2D.pt) separately. Neither checkpoint is part of `pretrained.zip`.
 > **RETFound checkpoints**: unlike the other gated models here, RETFound ships raw `.pth` files (not a `transformers`-loadable repo) — download manually after access is granted and point `configs/models/RETFound.json`'s `pretrained_path` at the local file, the same convention used for MedMAE/MoCo-CXR/C2L.
 >
@@ -288,18 +288,19 @@ We offer some examples of how to use our package through the notebook.
 
 ## Running Experiment
 
+Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options; in a source checkout, `python main.py` accepts the same arguments. The [documentation](https://nanboy-ronan.github.io/FairMedFM-page/docs/benchmark/) covers working directories, configs, outputs and every model.
+
 ### Classification
 
-We provide an example of running a linear-probe (classification) experiment of the CLIP model on the MIMIC-CXR dataset to evaluate fairness on sex. Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options. In a source checkout, `python main.py` accepts the same arguments.
+We provide an example of running a linear-probe (classification) experiment of the CLIP model on the CheXpert dataset to evaluate fairness on sex.
 
 ```bash
-fairmedfm run --task cls --usage lp --dataset CXP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
+fairmedfm run --task cls --usage lp --dataset CXP --model CLIP --sensitive_name Sex --method erm --total_epochs 100 --warmup_epochs 5 --blr 2.5e-4 --batch_size 128 --optimizer adamw --min_lr 1e-5 --weight_decay 0.05
 ```
 
 ### Segmentation (2D SAMs)
 
 We also provide an example of using SAM with center point prompt on the TUSC dataset to evaluate fairness on sex.
-Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options. In a source checkout, `python main.py` accepts the same arguments.
 
 ```bash
 fairmedfm run --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --method erm --batch_size 1 --pos_class 255 --model SAM --sam_ckpt_path ./weights/SAM.pth --img_size 1024 --prompt center
