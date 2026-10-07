@@ -1,4 +1,6 @@
-name: Documentation site
+name: Documentation
+# Checks that the documentation builds. The site is published from
+# https://github.com/Nanboy-Ronan/FairMedFM-page, which builds these docs from main at /docs/.
 on:
   push:
     branches: [main]
@@ -7,10 +9,6 @@ on:
 
 permissions:
   contents: read
-
-concurrency:
-  group: docs-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   build:
@@ -25,20 +23,3 @@ jobs:
       # The API reference reads docstrings from the package source; no package install is needed.
       - run: python -m pip install -r docs/requirements.txt
       - run: mkdocs build --strict
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: site
-  deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy the documentation site
-        id: deployment
-        uses: actions/deploy-pages@v4

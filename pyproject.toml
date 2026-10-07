@@ -58,8 +58,8 @@ test = ["pytest>=8"]
 dev = ["fairmedfm[test]", "build>=1.2", "twine>=5"]
 
 [project.urls]
-Homepage = "https://fairmedfm.github.io/FairMedFM/"
-Documentation = "https://fairmedfm.github.io/FairMedFM/"
+Homepage = "https://nanboy-ronan.github.io/FairMedFM-page/"
+Documentation = "https://nanboy-ronan.github.io/FairMedFM-page/docs/"
 Repository = "https://github.com/FairMedFM/FairMedFM"
 Issues = "https://github.com/FairMedFM/FairMedFM/issues"
 Paper = "https://arxiv.org/abs/2407.00983"
