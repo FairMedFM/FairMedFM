@@ -1,6 +1,6 @@
 ---
 title: FairMedFM command line reference
-description: Reference for the fairmedfm score command (fairness metrics from a CSV of predictions) and the fairmedfm run command (benchmark experiments).
+description: Reference for the fairmedfm score command (fairness metrics from tables of predictions, labels, masks and patient metadata) and the fairmedfm run command (benchmark experiments).
 ---
 
 # Command line
@@ -11,42 +11,75 @@ and `run`, which runs a benchmark experiment with a built-in foundation model.
 ## `fairmedfm score`
 
 ```text
-fairmedfm score --task {cls,seg} --input INPUT --sensitive COLUMN [COLUMN ...]
-                [--prob-col PROB_COL] [--label-col LABEL_COL] [--dice-col DICE_COL]
-                [--output OUTPUT]
+fairmedfm score PREDICTIONS [--metadata FILE] [--on COLUMN] [--sensitive COLUMN ...] [options]
 ```
+
+Reads a table with one row per sample (CSV, TSV, Parquet, Feather, JSON, JSON Lines or Excel; Parquet, Feather
+and Excel need `fairmedfm[io]`), finds the prediction columns, evaluates every sensitive attribute and prints the
+summaries as JSON. It prints which columns it used, and any warnings, to standard error.
+
+### Data
 
 | Option | Description |
 | --- | --- |
-| `--task` | `cls` for binary classification, `seg` for segmentation |
-| `--input` | CSV file with one row per sample |
-| `--sensitive` | One or more sensitive attribute columns; each is evaluated separately |
-| `--prob-col` | Positive-class probability column (`cls`; default `prob`) |
-| `--label-col` | Ground-truth 0/1 label column (`cls`; default `label`) |
-| `--dice-col` | Dice score column (`seg`; default `dice`) |
-| `--output` | Also write the full result, including per-group metrics, to this JSON file |
+| `PREDICTIONS` | The predictions table (`--input` and `--predictions` also work) |
+| `--metadata FILE` | A second table with the sensitive attributes, joined to the predictions |
+| `--on COLUMN` | Join column; `PRED_COLUMN=METADATA_COLUMN` when the names differ. Default: the single shared ID-like column (`id`, `image_id`, `filename`, `patient_id`, ...). Predictions without metadata are left out and counted. |
+| `--sensitive COLUMN ...` | Sensitive attribute columns. Default: columns named `sex`, `gender`, `age`, `race`, `ethnicity`, `language`, `site`, `hospital`, `scanner`, ... |
+| `--bins COLUMN=SPEC` | Group a numeric attribute: `age=40,60` (cut points: `<40`, `40-60`, `>=60`) or `age=q4` (quartiles). Repeatable. Required for numeric attributes with more than 20 distinct values. |
+| `--intersectional` | Also evaluate the combination of the attributes |
+| `--task` | `cls` or `seg`; by default inferred from the columns |
 
-The command prints the fairness summary of each attribute as JSON. For each attribute, rows with an empty value in
-the prediction, label or attribute column are left out. The `--output` file has this structure:
+### Classification
+
+| Option | Description |
+| --- | --- |
+| `--label COLUMN` | Ground truth. Default: a column named `label`, `target`, `y_true`, `gt`, `ground_truth`, `truth` or `y` |
+| `--score COLUMN ...` | One column of positive-class probabilities or logits, or one column per class (e.g. softmax output). Default: a column named `prob`, `probability`, `score`, `y_score`, `y_prob`, `pred`, `logit`, ..., or numbered columns such as `prob_0 prob_1` |
+| `--pos-label VALUE` | The positive class, when labels are not 0/1 (e.g. `malignant`). With more than two classes, that class is evaluated against the rest. |
+| `--score-column INDEX` | Position (from 0) of the positive class among several `--score` columns. Default: the column whose name contains `--pos-label`, otherwise sorted class order as in scikit-learn. |
+| `--score-type` | `auto` (default: probabilities if all scores are in [0, 1], otherwise logits), `probability` or `logit` |
+
+### Segmentation
+
+| Option | Description |
+| --- | --- |
+| `--dice COLUMN` | Per-sample Dice scores. Default: a column named `dice`, `dsc` or `dice_score` |
+| `--pred-mask COLUMN`, `--true-mask COLUMN` | Columns of mask file paths, relative to the table's folder (`.npy`, `.npz`; `.png`, `.jpg`, `.tif`, `.nii`, `.nii.gz` with `fairmedfm[io]`). Defaults: `pred_mask`, `pred_path` and `gt_mask`, `true_mask`, `gt_path`, `mask`. |
+| `--mask-label VALUE` | Class to evaluate in multi-class masks (default: any non-zero value) |
+| `--mask-threshold` | Threshold for probability masks (default 0.5) |
+| `--empty-score` | Dice when both masks are empty (default 1; the benchmark trainer uses 0) |
+
+### Output
+
+| Option | Description |
+| --- | --- |
+| `--output FILE` | `.json`: the full result with per-group metrics and warnings; `.csv`: the per-group table |
+| `--format` | `json` (default) prints the summaries as JSON; `table` prints a readable table |
+
+The `--output` JSON has this structure:
 
 ```json
 {
-  "fairmedfm_version": "0.2.0",
+  "fairmedfm_version": "0.3.0",
   "task": "cls",
-  "input": "predictions.csv",
+  "metadata": {"n_samples": 1000, "input": "predictions.csv"},
+  "overall": {"auc": 0.91, "acc@best_f1": 0.83, "...": "..."},
   "attributes": {
     "sex": {
       "n": 1000,
       "summary": {"overall-auc": 0.91, "auc-gap": 0.05, "eod": 0.96, "...": "..."},
-      "overall": {"auc": 0.91, "acc@best_f1": 0.83, "...": "..."},
-      "groups": {"F": {"n": 512, "auc": 0.93, "...": "..."}, "M": {"n": 488, "auc": 0.88, "...": "..."}}
+      "overall": {"auc": 0.91, "...": "..."},
+      "groups": {"F": {"n": 512, "auc": 0.93, "...": "...", "skipped": null}, "M": {"...": "..."}}
     }
-  }
+  },
+  "warnings": []
 }
 ```
 
-The exit status is 2 when the input is invalid, for example a missing column or a group with only one label.
-See [Fairness metrics](metrics.md) for the definitions.
+The exit status is 2 when the input cannot be used, for example a missing or ambiguous column; the message lists
+the table's columns and the option to use. See [Evaluate your model](evaluate-your-model.md) for examples and
+[Fairness metrics](metrics.md) for the definitions.
 
 ## `fairmedfm run`
 

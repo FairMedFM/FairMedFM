@@ -23,52 +23,46 @@ medical imaging foundation models, but they work for any model and any domain.
 pip install fairmedfm
 ```
 
-The package needs only NumPy, pandas and scikit-learn: no PyTorch, no GPU and no FairMedFM checkout. Run
-your model in its own environment, save one row per sample, then score it. Results match the code used for the
-FairMedFM paper. Full documentation: **[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**.
+The package needs only NumPy, pandas and scikit-learn: no PyTorch, no GPU and no FairMedFM checkout. Pass your
+data as it is: labels as 0/1, booleans or class names; scores as probabilities, logits or a softmax matrix; NumPy
+arrays, pandas objects or PyTorch tensors; sensitive attributes as a DataFrame, with continuous ones such as age
+grouped by `bins`. Results match the code used for the FairMedFM paper. Full documentation:
+**[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**.
 
 ### Classification fairness
 
-Save a CSV with the positive-class probability, the ground-truth label (0/1) and one column per sensitive
-attribute:
+```python
+import fairmedfm as fm
 
-```text
-prob,label,sex,age
-0.91,1,F,60+
-0.12,0,M,<60
+report = fm.evaluate(y_true=labels, y_score=probs, sensitive_features=meta[["sex", "age"]],
+                     pos_label="malignant", bins={"age": [40, 60]})
+report.summary    # one row per attribute: auc-gap, worst-auc, acc-gap, ece-gap, eod, eo, ...
+report.by_group   # metrics and sample count for every group
+report.to_json("fairness.json")
 ```
+
+Or from the command line, with predictions and patient metadata in separate files (CSV, TSV, Parquet, JSON,
+JSON Lines or Excel). Common column names are recognized; otherwise name them with `--label` and `--score`:
 
 ```bash
-fairmedfm score --task cls --input predictions.csv --sensitive sex age --output fairness.json
-```
-
-```python
-from fairmedfm import classification_fairness
-
-result = classification_fairness(prob, label, sex)
-result["summary"]   # overall-auc, worst-auc, auc-gap, acc-gap, ece-gap, bce-gap, eod, eo, ...
-result["groups"]    # the same metrics for each group, with sample counts
+fairmedfm score predictions.csv --metadata patients.csv --on image_id --sensitive sex age --bins age=40,60
 ```
 
 ### Segmentation fairness
 
-Save a CSV with the Dice score of each image or volume and its sensitive attributes:
+Give per-sample Dice scores, or predicted and ground-truth masks (arrays, tensors, or `.npy`, `.png`, `.nii.gz`
+files) and FairMedFM computes Dice for you:
 
-```text
-dice,sex
-0.87,F
-0.79,M
+```python
+report = fm.evaluate_segmentation(meta["sex"], pred_masks=pred_paths, true_masks=gt_paths)
+report = fm.evaluate_segmentation(meta["sex"], dice=dice_scores)
 ```
 
 ```bash
-fairmedfm score --task seg --input dice.csv --sensitive sex
+fairmedfm score masks.csv --pred-mask pred_path --true-mask gt_path --sensitive sex
 ```
 
-```python
-from fairmedfm import segmentation_fairness
-
-segmentation_fairness(dice, sex)["summary"]   # mean_dice, min_dice, delta_dice, es_dice, ...
-```
+Image and NIfTI masks and Parquet tables need `pip install "fairmedfm[io]"`.
 
 ### Metrics
 
@@ -84,10 +78,10 @@ segmentation_fairness(dice, sex)["summary"]   # mean_dice, min_dice, delta_dice,
 | Segmentation | `std_dice`, `skewness_dice` | Standard deviation of group means; `(1 - min_dice) / (1 - max_dice)` |
 | Segmentation | `es_dice` | Equity-scaled Dice: `mean_dice / (1 + std_dice)` |
 
-Accuracy, `eo` and `eod` use the decision threshold with the best overall F1; `result["overall"]` and
-`result["groups"]` also report every metric at threshold 0.5. Sensitive attributes can have two or more groups,
-and every classification group needs both positive and negative samples. Multi-class classification is not
-supported yet: score each class one-vs-rest. To run the benchmark itself with the built-in foundation models,
+Accuracy, `eo` and `eod` use the decision threshold with the best overall F1; `report.by_group` also reports
+every metric at threshold 0.5. Attributes can have any number of groups; a classification group with only one
+label is reported but left out of the gaps. For multi-class models, `pos_label` evaluates one class against the
+rest. To run the benchmark itself with the built-in foundation models,
 install `fairmedfm[cls]` or `fairmedfm[seg]` and use `fairmedfm run` (see [Installation](#installation)).
 
 ## Table of Contents

@@ -9,7 +9,8 @@ description: Answers to common questions about evaluating model fairness with Fa
 
 Yes. FairMedFM evaluates any binary classifier or segmentation model, from any framework and in any domain,
 including non-medical data. Run your model, save per-sample predictions with sensitive attributes, and run
-`fairmedfm score`. Your model does not need to be one of the benchmark's foundation models. See
+`fairmedfm score`. Your model does not need to be one of the benchmark's foundation models. Labels can be class
+names, scores can be probabilities, logits or softmax matrices, and segmentation can start from masks. See
 [Evaluate your model](evaluate-your-model.md).
 
 ## Does FairMedFM need PyTorch or a GPU?
@@ -29,12 +30,21 @@ Dice. See [Fairness metrics](metrics.md).
 
 Any categorical attribute: sex, age group, race, ethnicity, language, hospital or scanner. Values can be strings
 or integers, and an attribute can have two or more groups. Bin continuous attributes such as age before scoring.
-`fairmedfm score --sensitive sex age race` evaluates several attributes at once, each separately.
+`fairmedfm score --sensitive sex age race` evaluates several attributes at once, each separately; group
+continuous attributes with `bins`, and add `intersectional=True` (`--intersectional`) for combined groups.
 
 ## Does it support multi-class or multi-label classification?
 
-Not directly. Score each class one-vs-rest: use the probability of that class as `prob` and whether the sample
-belongs to it as `label`. Multi-label tasks work the same way, one label at a time.
+Yes, one class at a time. Pass the class with `pos_label` (`--pos-label`): that class is evaluated against all
+others, and with a (samples, classes) score matrix FairMedFM uses that class's column. For multi-label tasks,
+evaluate each label separately.
+
+## What input formats does FairMedFM accept?
+
+In Python: lists, NumPy arrays, pandas objects and PyTorch tensors; labels as 0/1, booleans, one-hot rows or
+class names; scores as probabilities, logits or softmax matrices; masks as arrays or file paths. On the command
+line: CSV, TSV, Parquet, Feather, JSON, JSON Lines and Excel tables, with predictions and patient metadata in one
+file or two. See [Evaluate your model](evaluate-your-model.md).
 
 ## Why is `eod` higher-is-better while the gaps are lower-is-better?
 
