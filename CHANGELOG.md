@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 (2026-10-06)
+
+- Add one function per fairness metric, in the style of `sklearn.metrics`: `auc_gap`, `worst_group_auc`,
+  `accuracy_gap`, `bce_gap`, `ece_gap`, `equal_opportunity_difference`, `equalized_odds_score`, `dice_gap`,
+  `worst_group_dice`, `dice_std`, `dice_skewness` and `equity_scaled_dice`. Each takes
+  `(y_true, y_score, *, sensitive_features)` (or Dice scores or masks), returns a float equal to the matching
+  `evaluate` column, compares combined groups when given several attributes, and works as a scikit-learn scorer
+  with metadata routing.
+- Lead the README and documentation with these functions on plain arrays, training-loop logging and scikit-learn
+  model selection; the command line is presented as one option for prediction files.
+
 ## 0.3.0 (2026-10-06)
 
 - Add `fairmedfm.evaluate` and `fairmedfm.evaluate_segmentation`, which take data as users have it: lists, NumPy,
