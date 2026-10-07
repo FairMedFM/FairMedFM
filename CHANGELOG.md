@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-10-06)
 
 - The benchmark code is now part of the package: `datasets`, `models`, `trainers`, `wrappers`, `utils` and
   `configs` moved under `src/fairmedfm/`. Import them as `fairmedfm.models`, `fairmedfm.datasets`, etc.; the old
