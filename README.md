@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/v/fairmedfm.svg" alt="PyPI"></a>
-  <a href="https://fairmedfm.github.io/FairMedFM/"><img src="https://img.shields.io/badge/docs-fairmedfm.github.io-teal.svg" alt="Documentation"></a>
+  <a href="https://nanboy-ronan.github.io/FairMedFM-page/docs/"><img src="https://img.shields.io/badge/docs-online-teal.svg" alt="Documentation"></a>
   <a href="https://arxiv.org/abs/2407.00983"><img src="https://img.shields.io/badge/arXiv-2407.00983-b31b1b.svg" alt="arXiv"></a>
   <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg" alt="License"></a>
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/pyversions/fairmedfm.svg" alt="Python versions"></a>
@@ -25,7 +25,7 @@ pip install fairmedfm
 
 The package needs only NumPy, pandas and scikit-learn: no PyTorch, no GPU and no FairMedFM checkout. Run
 your model in its own environment, save one row per sample, then score it. Results match the code used for the
-FairMedFM paper. Full documentation: **[fairmedfm.github.io/FairMedFM](https://fairmedfm.github.io/FairMedFM/)**.
+FairMedFM paper. Full documentation: **[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**.
 
 ### Classification fairness
 
