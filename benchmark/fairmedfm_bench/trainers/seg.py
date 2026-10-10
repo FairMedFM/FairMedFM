@@ -80,7 +80,7 @@ class SegTrainer(BaseTrainer):
         )
 
         self.logger.info(
-            "----------------------------------------------".format(self.epoch))
+            "----------------------------------------------")
         if save_path is not None:
             creat_folder(save_path)
 

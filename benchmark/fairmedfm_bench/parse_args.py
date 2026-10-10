@@ -2,6 +2,15 @@ import argparse
 import os
 
 
+def _boolean(value):
+    """Parse True/False; argparse's type=bool would read "False" as True."""
+    if value.lower() in ("true", "1", "yes"):
+        return True
+    if value.lower() in ("false", "0", "no"):
+        return False
+    raise argparse.ArgumentTypeError(f"expected True or False, got {value!r}")
+
+
 def collect_args(argv=None):
     parser = argparse.ArgumentParser(
         prog="fairmedfm run",
@@ -45,7 +54,7 @@ def collect_args(argv=None):
 
     parser.add_argument("--experiment_name", type=str, default="test")
     parser.add_argument("--wandb_name", type=str, default="baseline")
-    parser.add_argument("--if_wandb", type=bool, default=False)
+    parser.add_argument("--if_wandb", type=_boolean, default=False, metavar="{True,False}")
 
     parser.add_argument("--resume_path", type=str, default="",
                         help="explicitly indentify checkpoint path to resume.")

@@ -6,8 +6,8 @@ import numpy as np
 import torch
 from einops import rearrange
 from torch.nn import functional as F
+from torch import nn
 from torchvision.transforms.functional import resize, to_pil_image
-from tutils.trainer import LearnerModule, Trainer
 
 
 class ResizeLongestSide:
@@ -101,7 +101,7 @@ class ResizeLongestSide:
         return (newh, neww)
 
 
-class SamLearner(LearnerModule):
+class SamLearner(nn.Module):
     def __init__(
         self,
         sam_model,

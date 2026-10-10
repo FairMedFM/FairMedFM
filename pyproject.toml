@@ -77,7 +77,3 @@ extend-exclude = ["notebooks", "pre-processing", "build"]
 [tool.ruff.lint]
 # Baseline: syntax errors, undefined names and other definite mistakes.
 select = ["E9", "F63", "F7", "F82"]
-
-[tool.ruff.lint.per-file-ignores]
-# Known defect: the ResNet constructors reference torchvision's removed model_urls when pretrained=True.
-"benchmark/fairmedfm_bench/models/c2l.py" = ["F821"]

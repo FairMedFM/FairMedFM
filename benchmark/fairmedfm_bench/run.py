@@ -38,24 +38,26 @@ def create_exerpiment_setting(args):
     args.resume_path = args.save_folder
     basics.creat_folder(args.save_folder)
 
-    try:
-        with open(config_path("datasets", args.dataset), "r") as f:
-            data_setting = json.load(f)
-            data_setting["augment"] = False
-            data_setting["test_meta_path"] = data_setting[
-                f"test_{str.lower(args.sensitive_name)}_meta_path"]
-            args.data_setting = data_setting
+    data_path = config_path("datasets", args.dataset)
+    if not data_path.exists():
+        raise FileNotFoundError(f"no dataset config for {args.dataset}: add configs/datasets/{args.dataset}.json "
+                                "in the working directory (see the benchmark documentation)")
+    data_setting = json.loads(data_path.read_text())
+    data_setting["augment"] = False
+    split_key = f"test_{args.sensitive_name.lower()}_meta_path"
+    if split_key not in data_setting:
+        available = sorted(k[len("test_"):-len("_meta_path")] for k in data_setting
+                           if k.startswith("test_") and k.endswith("_meta_path") and k != "test_meta_path")
+        raise ValueError(f"{data_path} has no {split_key!r}: {args.dataset} has test splits for "
+                         f"{', '.join(available) or 'no sensitive attribute'}, not {args.sensitive_name}")
+    data_setting["test_meta_path"] = data_setting[split_key]
+    if args.pos_class is not None:
+        data_setting["pos_class"] = args.pos_class
+    args.data_setting = data_setting
 
-            if args.pos_class is not None:
-                args.data_setting["pos_class"] = args.pos_class
-    except:
-        args.data_setting = None
-
-    try:
-        with open(config_path("models", args.model), "r") as f:
-            args.model_setting = json.load(f)
-    except:
-        args.model_setting = None
+    # Models without a config (for example CLIP) need no pretrained path or LoRA targets.
+    model_path = config_path("models", args.model)
+    args.model_setting = json.loads(model_path.read_text()) if model_path.exists() else None
 
     return args
 

@@ -134,7 +134,7 @@ class CLSTrainer(BaseTrainer):
 
             self.last_five_auc.append(overall_metrics["auc"])
 
-        self.logger.info("----------------------------------------------".format(self.epoch))
+        self.logger.info("----------------------------------------------")
         self.logger.info("----------------eva epoch {}------------------".format(self.epoch))
         self.logger.info(
             "{}".format(
@@ -152,7 +152,7 @@ class CLSTrainer(BaseTrainer):
                 ", ".join("{}: {}".format(k, v) for k, v in subgroup_metrics.items()),
             )
         )
-        self.logger.info("----------------------------------------------".format(self.epoch))
+        self.logger.info("----------------------------------------------")
 
         # save predictions
         if save_path is not None:

@@ -1,26 +1,20 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-
-# This source code is licensed under the license found in the
-# LICENSE file in the root directory of this source tree.
-
+"""Learning-rate schedule of the benchmark trainers: linear warmup, then half-cosine decay to ``min_lr``."""
 import math
 
 
-def adjust_learning_rate(optimizer, epoch, args):
-    """Decay the learning rate with half-cycle cosine after warmup"""
+def scheduled_lr(epoch, args):
+    """Learning rate at a (possibly fractional) epoch."""
     if epoch < args.warmup_epochs:
-        lr = args.lr * epoch / args.warmup_epochs
-    else:
-        if args.fixed_lr:
-            lr = args.lr
-        else:
-            lr = args.min_lr + (args.blr - args.min_lr) * 0.5 * (
-                1.0 + math.cos(math.pi * (epoch - args.warmup_epochs) / (args.total_epochs - args.warmup_epochs))
-            )
-    for param_group in optimizer.param_groups:
-        if "lr_scale" in param_group:
-            param_group['lr'] = lr * param_group.lr_scale
-        else:
-            param_group['lr'] = lr
+        return args.lr * epoch / args.warmup_epochs
+    if args.fixed_lr:
+        return args.lr
+    progress = (epoch - args.warmup_epochs) / (args.total_epochs - args.warmup_epochs)
+    return args.min_lr + (args.blr - args.min_lr) * (1 + math.cos(math.pi * progress)) / 2
+
+
+def adjust_learning_rate(optimizer, epoch, args):
+    """Set each parameter group's learning rate for ``epoch`` (scaled by its ``lr_scale``, if any); return it."""
+    lr = scheduled_lr(epoch, args)
+    for group in optimizer.param_groups:
+        group["lr"] = lr * group.get("lr_scale", 1.0)
     return lr

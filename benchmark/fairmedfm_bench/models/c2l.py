@@ -10,6 +10,12 @@ Taken from https://github.com/funnyzhou/C2L_MICCAI2020/blob/master/models/resnet
 """
 
 
+def _imagenet_url(arch):
+    """URL of torchvision's original ImageNet weights for a ResNet (torchvision's former model_urls)."""
+    from torchvision import models
+    return getattr(models, f"ResNet{arch[len('resnet'):]}_Weights").IMAGENET1K_V1.url
+
+
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
     return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
@@ -191,7 +197,7 @@ def resnet34(pretrained=False, **kwargs):
     """
     model = ResNet(BasicBlock, [3, 4, 6, 3], **kwargs)
     if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls["resnet34"]))
+        model.load_state_dict(model_zoo.load_url(_imagenet_url("resnet34")))
     return model
 
 
@@ -202,7 +208,7 @@ def resnet50(pretrained=False, **kwargs):
     """
     model = ResNet(Bottleneck, [3, 4, 6, 3], **kwargs)
     if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls["resnet50"]))
+        model.load_state_dict(model_zoo.load_url(_imagenet_url("resnet50")))
     return model
 
 
@@ -213,7 +219,7 @@ def resnet101(pretrained=False, **kwargs):
     """
     model = ResNet(Bottleneck, [3, 4, 23, 3], **kwargs)
     if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls["resnet101"]))
+        model.load_state_dict(model_zoo.load_url(_imagenet_url("resnet101")))
     return model
 
 
@@ -224,7 +230,7 @@ def resnet152(pretrained=False, **kwargs):
     """
     model = ResNet(Bottleneck, [3, 8, 36, 3], **kwargs)
     if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls["resnet152"]))
+        model.load_state_dict(model_zoo.load_url(_imagenet_url("resnet152")))
     return model
 
 
