@@ -48,7 +48,7 @@ otherwise pip installs the default PyTorch build. A separate environment is reco
 
 Always use the full GitHub URL: `fairmedfm-bench` is not published on PyPI. The runner installs `fairmedfm` as a
 dependency and keeps transformers below 5, albumentations below 2, torchmetrics below 1.7 and setuptools below 81,
-because the benchmark code uses APIs that later versions removed. Until version 0.4, the runner was part of the pip
+because the benchmark code uses APIs that later versions removed. Until version 0.4.0, the runner was part of the pip
 package as `fairmedfm[cls]` and `fairmedfm[seg]`.
 
 ### Models with separate installs

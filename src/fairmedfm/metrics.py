@@ -181,7 +181,7 @@ def classification_fairness(prob: ArrayLike, label: ArrayLike, group: Sequence[A
         group: sensitive attribute value for each sample, e.g. ``"F"``/``"M"`` or age bins. Two or more
             groups; every group must contain both labels.
 
-    Deprecated since 0.5 and to be removed in 1.0: use :func:`fairmedfm.evaluate`, which accepts more input forms
+    Deprecated since 0.4.1 and to be removed in 1.0: use :func:`fairmedfm.evaluate`, which accepts more input forms
     and reports groups it cannot evaluate instead of failing, or a single metric such as :func:`fairmedfm.auc_gap`.
 
     Returns:
@@ -215,7 +215,7 @@ def segmentation_fairness(dice: ArrayLike, group: Sequence[Any]) -> Dict[str, An
         dice: Dice similarity coefficient in [0, 1] for each sample (image or volume).
         group: sensitive attribute value for each sample; two or more groups.
 
-    Deprecated since 0.5 and to be removed in 1.0: use :func:`fairmedfm.evaluate_segmentation` or a single metric
+    Deprecated since 0.4.1 and to be removed in 1.0: use :func:`fairmedfm.evaluate_segmentation` or a single metric
     such as :func:`fairmedfm.dice_gap`.
 
     Returns:

@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "name": "FairMedFM",
   "description": "Fairness metrics for any binary classification or segmentation model: subgroup AUC, accuracy, calibration and Dice gaps, equal opportunity, equalized odds and equity-scaled Dice. Also a fairness benchmark of 20 medical imaging foundation models on 17 datasets.",
-  "softwareVersion": "0.5.0",
+  "softwareVersion": "0.4.1",
   "identifier": "https://pypi.org/project/fairmedfm/",
   "codeRepository": "https://github.com/FairMedFM/FairMedFM",
   "url": "https://nanboy-ronan.github.io/FairMedFM-page/",
