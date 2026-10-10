@@ -4,13 +4,13 @@ from __future__ import annotations
 import json
 import math
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 
 import numpy as np
 import pandas as pd
 
 from . import _inputs
-from .metrics import _segmentation, _summary, binary_classification_report, find_threshold
+from .metrics import _segmentation, _summary, _threshold_reports
 
 __all__ = ["FairnessReport", "evaluate", "evaluate_segmentation"]
 
@@ -96,8 +96,22 @@ def evaluate(y_true: Any, y_score: Any, sensitive_features: Any, *, pos_label: A
     Returns:
         A :class:`FairnessReport`. ``report.summary`` has, per attribute, ``overall-auc``, ``overall-acc``,
         ``overall-bce``, ``overall-ece``, ``worst-auc``, ``auc-gap``, ``acc-gap``, ``bce-gap``, ``ece-gap``, ``eo``
-        (TPR gap) and ``eod`` (``1 - (TPR gap + TNR gap) / 2``), as in the FairMedFM paper.
+        (TPR gap) and ``eod`` (``1 - (TPR gap + TNR gap) / 2``, where 1 is fair), as in the FairMedFM paper.
     """
+    return _evaluate(y_true, y_score, sensitive_features, pos_label=pos_label, score_type=score_type,
+                     score_column=score_column, bins=bins, intersectional=intersectional)
+
+
+def _evaluate(y_true: Any, y_score: Any, sensitive_features: Any, *, pos_label: Any = None, score_type: str = "auto",
+              score_column: Optional[int] = None, bins: Optional[_inputs.Bins] = None, intersectional: bool = False,
+              wanted: Optional[Set[str]] = None) -> FairnessReport:
+    """:func:`evaluate`, computing only the per-group metrics in ``wanted`` (e.g. ``{"auc"}``) if given.
+
+    With ``wanted``, ``summary`` has only the columns those metrics determine and ``overall`` is empty.
+    """
+    warnings: List[str] = []
+    y_true, y_score, sensitive_features = _inputs.align_by_index(
+        {"y_true": y_true, "y_score": y_score, "sensitive_features": sensitive_features}, warnings)
     labels, label_info = _inputs.binary_labels(y_true, pos_label)
     if score_column is None and pos_label is not None:
         score_column = _inputs.class_column(y_true, y_score, pos_label)
@@ -108,14 +122,15 @@ def evaluate(y_true: Any, y_score: Any, sensitive_features: Any, *, pos_label: A
     if intersectional and table.shape[1] > 1:
         combined = _inputs.intersect(table)
         table[combined.name] = combined
-    warnings: List[str] = []
     if score_info.get("score_transform"):
         warnings.append(f"y_score was read as logits and converted with {score_info['score_transform']}; "
                         "pass score_type='probability' if these are probabilities")
     _require_both_labels(labels, "y_true")
-    overall = _classification_reports(scores, labels, groups=None)[0]
+    overall = _threshold_reports(scores, labels)[0] if wanted is None else {}
 
-    summaries, group_rows, attribute_overall = {}, [], {}
+    summaries: Dict[str, Dict[str, Any]] = {}
+    group_rows: List[Dict[str, Any]] = []
+    attribute_overall: Dict[str, Dict[str, Any]] = {}
     for attribute in table.columns:
         order = _inputs.group_order(table[attribute])
         group = _inputs.as_groups(table[attribute])
@@ -136,15 +151,15 @@ def evaluate(y_true: Any, y_score: Any, sensitive_features: Any, *, pos_label: A
             if len(valid) < 2:
                 warnings.append(f"{attribute}: fewer than two groups could be evaluated; its summary is empty")
             summaries[attribute] = {"n": len(y), "n_groups": len(valid)}
-            reports = {}
+            reports: Dict[Any, Dict[str, Any]] = {}
             attribute_overall[attribute] = {}
         else:
-            attribute_overall[attribute], reports = _classification_reports(p, y, groups=(g, valid))
+            attribute_overall[attribute], reports = _threshold_reports(p, y, g, valid, wanted)
             subgroup = {key: [reports[v][key] for v in valid] for key in reports[valid[0]]}
             summaries[attribute] = {"n": len(y), "n_groups": len(valid), **_summary(attribute_overall[attribute],
                                                                                      subgroup)}
         for value in order:
-            row = {"attribute": attribute, "group": value, "n": int((g == value).sum())}
+            row: Dict[str, Any] = {"attribute": attribute, "group": value, "n": int((g == value).sum())}
             row.update(reports.get(value, {}))
             row["skipped"] = skipped.get(value)
             group_rows.append(row)
@@ -182,6 +197,10 @@ def evaluate_segmentation(sensitive_features: Any, *, dice: Any = None, pred_mas
     """
     if dice is not None and (pred_masks is not None or true_masks is not None):
         raise ValueError("give either dice or pred_masks and true_masks, not both")
+    warnings: List[str] = []
+    dice, pred_masks, true_masks, sensitive_features = _inputs.align_by_index(
+        {"dice": dice, "pred_masks": pred_masks, "true_masks": true_masks, "sensitive_features": sensitive_features},
+        warnings)
     metadata: Dict[str, Any] = {}
     if dice is not None:
         scores = _inputs.to_numpy(dice, "dice").astype(np.float64).ravel()
@@ -191,7 +210,6 @@ def evaluate_segmentation(sensitive_features: Any, *, dice: Any = None, pred_mas
         metadata.update({"dice_from_masks": True, "empty_score": empty_score, "label": label})
     else:
         raise ValueError("give dice, or both pred_masks and true_masks")
-    warnings: List[str] = []
     finite = ~np.isnan(scores)
     if (~finite).any():
         warnings.append(f"{int((~finite).sum())} samples with a NaN Dice score were left out")
@@ -229,23 +247,6 @@ def evaluate_segmentation(sensitive_features: Any, *, dice: Any = None, pred_mas
                                "mean_dice": means[value], "skipped": None})
     return FairnessReport("seg", _summary_frame(summaries), _group_frame(group_rows), overall, {},
                           warnings, metadata)
-
-
-def _classification_reports(scores, labels, groups):
-    """Overall metrics at 0.5 and the best-F1 threshold, and the same metrics for each group (FairMedFM paper)."""
-    thresholds = [(0.5, ""), (find_threshold(scores, labels), "@best_f1")]
-    overall: Dict[str, Any] = {}
-    for threshold, suffix in thresholds:
-        overall.update(binary_classification_report(scores, labels, threshold, suffix))
-    if groups is None:
-        return overall, {}
-    group, valid = groups
-    reports: Dict[Any, Dict[str, Any]] = {v: {} for v in valid}
-    for threshold, suffix in thresholds:
-        for value in valid:
-            mask = group == value
-            reports[value].update(binary_classification_report(scores[mask], labels[mask], threshold, suffix))
-    return overall, reports
 
 
 def _require_both_labels(labels: np.ndarray, name: str) -> None:

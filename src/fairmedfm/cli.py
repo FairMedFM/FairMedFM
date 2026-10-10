@@ -139,6 +139,7 @@ def score(args: argparse.Namespace):
 
     if task == "cls":
         label = label or _find(columns, "label")
+        assert label is not None  # _find raises when the column is required and missing
         if not scores:
             raise ValueError(f"no score column found; name it with --score. Columns: {columns}")
         _require(columns, [label, *scores], "--label/--score")

@@ -31,6 +31,53 @@ def to_numpy(values: Any, name: str) -> np.ndarray:
     return array
 
 
+def align_by_index(named: Dict[str, Any], notes: List[str]) -> Tuple[Any, ...]:
+    """The values of ``named``, with pandas inputs reordered to the first one's index where that is clearly meant.
+
+    Inputs are paired by position, as in scikit-learn. The exception: when two pandas inputs have the same unique
+    index labels in a different order (e.g. predictions in one order and a metadata table in another), they are
+    paired by index, as pandas would, and a note says so. Indexes with different labels stay positional.
+    """
+    values = dict(named)
+    reference_name = next((name for name, value in values.items() if pandas_index(value) is not None), None)
+    if reference_name is None:
+        return tuple(values.values())
+    reference = pandas_index(values[reference_name])
+    if reference is None or not reference.is_unique:
+        return tuple(values.values())
+    for name, value in values.items():
+        if name == reference_name:
+            continue
+        if isinstance(value, Mapping):
+            reordered: Any = {key: _reorder(item, reference) for key, item in value.items()}
+            changed = any(reordered[key] is not item for key, item in value.items())
+        else:
+            reordered = _reorder(value, reference)
+            changed = reordered is not value
+        if changed:
+            notes.append(f"{name} was reordered to match the index of {reference_name} (same index labels in a "
+                         "different order); samples are paired by index")
+            values[name] = reordered
+    return tuple(values.values())
+
+
+def pandas_index(value: Any) -> Optional[pd.Index]:
+    if isinstance(value, (pd.Series, pd.DataFrame)):
+        return value.index
+    if isinstance(value, Mapping):
+        return next((item.index for item in value.values() if isinstance(item, (pd.Series, pd.DataFrame))), None)
+    return None
+
+
+def _reorder(value: Any, reference: pd.Index) -> Any:
+    if not isinstance(value, (pd.Series, pd.DataFrame)):
+        return value
+    index = value.index
+    if index.equals(reference) or len(index) != len(reference) or not index.is_unique or not index.isin(reference).all():
+        return value
+    return value.loc[reference]
+
+
 def binary_labels(y_true: Any, pos_label: Any = None) -> Tuple[np.ndarray, Dict[str, Any]]:
     """0/1 labels from booleans, 0/1, any two labels plus pos_label, or several classes plus pos_label."""
     labels = to_numpy(y_true, "y_true")
@@ -278,8 +325,10 @@ def _bin(values: pd.Series, spec: Union[int, Sequence[float]], column: str) -> p
     if isinstance(spec, (int, np.integer)):
         if spec < 2:
             raise ValueError(f"bins for {column!r} must be at least 2 quantile groups")
-        spec = np.unique(np.quantile(numeric.dropna(), np.linspace(0, 1, int(spec) + 1)[1:-1]))
-    edges = sorted(float(e) for e in spec)
+        cut_points: Any = np.unique(np.quantile(numeric.dropna(), np.linspace(0, 1, int(spec) + 1)[1:-1]))
+    else:
+        cut_points = spec
+    edges = sorted(float(e) for e in cut_points)
     if not edges:
         raise ValueError(f"bins for {column!r} must contain at least one cut point")
     labels = [f"<{edges[0]:.4g}"] + [f"{a:.4g}-{b:.4g}" for a, b in zip(edges, edges[1:])] + [f">={edges[-1]:.4g}"]

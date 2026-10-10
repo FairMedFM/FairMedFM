@@ -22,7 +22,9 @@ def test_matches_the_paper_implementation(case):
     data = GOLDEN[case]
     report = fm.evaluate(data["label"], data["prob"], data["group"])
     assert summary(report) == pytest.approx(data["summary"], abs=1e-6)
-    assert summary(report) == metrics.classification_fairness(data["prob"], data["label"], data["group"])["summary"]
+    with pytest.warns(FutureWarning):
+        legacy = metrics.classification_fairness(data["prob"], data["label"], data["group"])
+    assert summary(report) == legacy["summary"]
 
 
 def test_segmentation_matches_the_paper_implementation():
@@ -217,3 +219,28 @@ def test_nan_dice_is_left_out_with_a_warning():
     report = fm.evaluate_segmentation(["a", "a", "b", "b"], dice=[0.9, np.nan, 0.7, 0.5])
     assert report.by_group["mean_dice"].tolist() == pytest.approx([0.9, 0.6])
     assert "NaN" in report.warnings[0]
+
+
+def test_pandas_inputs_with_the_same_index_in_another_order_are_paired_by_index():
+    rng = np.random.default_rng(0)
+    frame = pd.DataFrame({"label": rng.integers(0, 2, 300), "sex": rng.choice(["F", "M"], 300)})
+    frame["prob"] = np.clip(0.3 + 0.4 * frame["label"] + rng.normal(0, 0.2, 300), 0, 1)
+    expected = fm.evaluate(frame["label"], frame["prob"], frame[["sex"]])
+    shuffled = frame.sample(frac=1, random_state=1)
+    report = fm.evaluate(shuffled["label"], shuffled["prob"], frame[["sex"]])
+    assert summary(report, "sex") == pytest.approx(summary(expected, "sex"))
+    assert any("reordered to match the index of y_true" in w for w in report.warnings)
+    with pytest.warns(UserWarning, match="paired by index"):
+        assert fm.auc_gap(shuffled["label"], shuffled["prob"], sensitive_features=frame["sex"]) == pytest.approx(
+            expected.summary.loc["sex", "auc-gap"])
+    # Different index labels (e.g. patient IDs and a fresh RangeIndex) are paired by position.
+    ids = shuffled.set_axis(np.arange(300) + 10_000)
+    report = fm.evaluate(ids["label"], ids["prob"], shuffled[["sex"]].reset_index(drop=True))
+    assert summary(report, "sex") == pytest.approx(summary(expected, "sex")) and not report.warnings
+
+
+def test_segmentation_inputs_are_paired_by_index():
+    frame = pd.DataFrame({"dice": [0.9, 0.8, 0.5, 0.4], "sex": ["F", "F", "M", "M"]}, index=[10, 11, 12, 13])
+    shuffled = frame.loc[[13, 10, 12, 11]]
+    with pytest.warns(UserWarning, match="paired by index"):
+        assert fm.dice_gap(shuffled["dice"], sensitive_features=frame["sex"]) == pytest.approx(0.4)
