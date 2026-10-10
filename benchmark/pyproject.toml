@@ -39,7 +39,7 @@ seg = ["segment-anything>=1.0"]
 test = ["pytest>=8"]
 
 [project.urls]
-Documentation = "https://nanboy-ronan.github.io/FairMedFM-page/docs/benchmark/"
+Documentation = "https://fairmedfm.github.io/FairMedFM/docs/benchmark/"
 Repository = "https://github.com/FairMedFM/FairMedFM"
 Paper = "https://arxiv.org/abs/2407.00983"
 

@@ -20,7 +20,7 @@ authors:
   - family-names: Li
     given-names: Xiaoxiao
 repository-code: "https://github.com/FairMedFM/FairMedFM"
-url: "https://nanboy-ronan.github.io/FairMedFM-page/"
+url: "https://fairmedfm.github.io/FairMedFM/"
 license: Apache-2.0
 keywords:
   - fairness

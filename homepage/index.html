@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="FairMedFM: fairness evaluation for any binary classification or segmentation model (pip install fairmedfm) and a fairness benchmark of 20 medical imaging foundation models on 17 datasets.">
+  <meta name="keywords" content="fairness, fairness metrics, algorithmic fairness, bias evaluation, segmentation fairness, equalized odds, foundation models, medical image analysis, benchmark">
+  <link rel="canonical" href="https://fairmedfm.github.io/FairMedFM/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models">
+  <meta property="og:description" content="FairMedFM: fairness evaluation for any binary classification or segmentation model (pip install fairmedfm) and a fairness benchmark of 20 medical imaging foundation models on 17 datasets.">
+  <meta property="og:url" content="https://fairmedfm.github.io/FairMedFM/">
+  <meta property="og:image" content="https://fairmedfm.github.io/FairMedFM/docs/assets/social-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models",
+    "url": "https://arxiv.org/abs/2407.00983",
+    "datePublished": "2024",
+    "author": [
+      {"@type": "Person", "name": "Ruinan Jin"}, {"@type": "Person", "name": "Zikang Xu"},
+      {"@type": "Person", "name": "Yuan Zhong"}, {"@type": "Person", "name": "Qingsong Yao"},
+      {"@type": "Person", "name": "Qi Dou"}, {"@type": "Person", "name": "S. Kevin Zhou"},
+      {"@type": "Person", "name": "Xiaoxiao Li"}
+    ],
+    "isBasedOn": {"@type": "SoftwareSourceCode", "name": "FairMedFM", "codeRepository": "https://github.com/FairMedFM/FairMedFM", "url": "https://fairmedfm.github.io/FairMedFM/docs/", "license": "https://www.apache.org/licenses/LICENSE-2.0", "programmingLanguage": "Python", "downloadUrl": "https://pypi.org/project/fairmedfm/"}
+  }
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models</title>
+
+<!-- Google Tag Manager -->
+<script>(function (w, d, s, l, i) {
+    w[l] = w[l] || []; w[l].push({
+      'gtm.start':
+        new Date().getTime(), event: 'gtm.js'
+    }); var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+        'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+  })(window, document, 'script', 'dataLayer', 'GTM-MFCT45H');</script>
+<!-- End Google Tag Manager -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./docs/assets/favicon.png">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-BLEVG737MK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-BLEVG737MK');
+  </script>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MFCT45H" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+  
+
+      <div class="navbar-item is-hoverable">
+        <a class="navbar-item" href="#overview">
+          Overview
+        </a>
+          <a class="navbar-item" href="#pipeline">
+            Pipeline 
+          </a>
+          <a class="navbar-item" href="#codebase">
+            Codebase
+          </a>
+          <a class="navbar-item" href="#reference">
+            BibTeX
+          </a>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <img src="https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/icon.png" width="40" alt="FairMedFM logo"> <h1 class="title is-1 publication-title">FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              Ruinan Jin<sup>*</sup>,
+            </span>
+            <span class="author-block">
+              Zikang Xu<sup>*</sup>,
+            </span>
+            <span class="author-block">
+              Yuan Zhong<sup>*</sup>,
+            </span>
+            <span class="author-block">
+              Qingsong Yao,
+            </span>
+            <span class="author-block">
+              Qi Dou<sup>†</sup>,
+            </span>
+            <span class="author-block">
+              Kevin Zhou<sup>†</sup>,
+            </span>
+            <span class="author-block">
+              Xiaoxiao Li<sup>†</sup>
+            </span>
+          </div>
+          
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">The University of British Columbia</span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">The Chinese University of Hong Kong</span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">University of Science and Technology of China</span>
+          </div>
+          
+          <div class="is-size-5">
+            <span>* Equal contribution. Authors are listed in alphabetical order.</span><br>
+            <span>† Co-Corresponding authors.</span>
+          </div>          
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+            </span>
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/2407.00983"
+                 class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                </span>
+                <span>arXiv</span>
+              </a>
+            </span>
+              
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/FairMedFM/FairMedFM"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+
+              <!-- Documentation Link. -->
+              <span class="link-block">
+                <a href="https://fairmedfm.github.io/FairMedFM/docs/"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-book"></i>
+                  </span>
+                  <span>Docs</span>
+                  </a>
+              </span>
+
+              <!-- PyPI Link. -->
+              <span class="link-block">
+                <a href="https://pypi.org/project/fairmedfm/"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-python"></i>
+                  </span>
+                  <span>PyPI</span>
+                  </a>
+              </span>
+            </div>      
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+
+
+
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3" id="use">Evaluate the fairness of your model</h2>
+        <div class="content has-text-justified">
+          <p>FairMedFM works with <b>any binary classification or segmentation model</b>, not only the benchmarked
+            foundation models. Each fairness metric is a function in the style of <code>sklearn.metrics</code>:
+            pass your model's labels and outputs and the group of each sample (sex, age group, hospital, scanner,
+            ...) and get one number back.</p>
+          <pre style="text-align: left;">pip install fairmedfm
+
+import fairmedfm as fm
+fm.auc_gap(y_true, y_score, sensitive_features=group)           # largest minus smallest group AUC
+fm.equalized_odds_score(y_true, y_score, sensitive_features=group)
+fm.dice_gap(dice, sensitive_features=group)                      # segmentation
+report = fm.evaluate(y_true, y_score, sensitive_features=df[["sex", "age"]], bins={"age": [40, 60]})</pre>
+          <p>Labels, probabilities, logits, masks, NumPy arrays, pandas objects and PyTorch tensors all work, and the
+            metrics also serve as scikit-learn scorers and as training-time monitors. A command line handles
+            prediction files. The package is open source under the Apache-2.0 license and needs only NumPy, pandas and
+            scikit-learn. To run the benchmark itself, install the benchmark runner from GitHub and use
+            <code>fairmedfm run</code>. See the <a href="https://fairmedfm.github.io/FairMedFM/docs/">documentation</a>,
+            the <a href="https://fairmedfm.github.io/FairMedFM/docs/how-to/">how-to recipes</a>, the
+            <a href="https://fairmedfm.github.io/FairMedFM/docs/metrics/">metric definitions</a> and the
+            <a href="https://fairmedfm.github.io/FairMedFM/docs/comparison/">comparison with Fairlearn and AIF360</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3", id="overview">Overview</h2>
+        <div class="content has-text-justified">
+          
+        
+        <p> The advent of foundation models (FMs) in healthcare offers unprecedented opportunities to enhance medical diagnostics through automated classification and segmentation tasks. However, these models also raise significant concerns about their fairness, especially when applied to diverse and underrepresented populations in healthcare applications. Currently, there is a lack of comprehensive benchmarks, standardized pipelines, and easily adaptable libraries to evaluate and understand the fairness performance of FMs in medical imaging, leading to considerable challenges in formulating and implementing solutions that ensure equitable outcomes across diverse patient populations. To fill this gap, we introduce FairMedFM, a fairness benchmark for FM research in medical imaging. FairMedFM integrates with 17 popular medical imaging datasets, encompassing different modalities, dimensionalities, and sensitive attributes. It explores 20 widely used FMs, with various usages such as zero-shot learning, linear probing, parameter-efficient fine-tuning, and prompting in various downstream tasks -- classification and segmentation. Our exhaustive analysis evaluates the fairness performance over different evaluation metrics from multiple perspectives, revealing the existence of bias, varied utility-fairness trade-offs on different FMs, consistent disparities on the same datasets regardless FMs, and limited effectiveness of existing unfairness mitigation methods. 
+          <ul>
+            <li>We offer a comprehensive evaluation pipeline covering <span style="color: red;"><b>17 diverse medical imaging datasets, 20 FMs, and their usages</b></span>. This benchmark addresses the need for a consistent evaluation and standardized process to investigate FMs' fairness in medical imaging.</li>
+            <li>With FairMedFM, we conducted a thorough analysis from various perspectives, where we found that 
+              <ul>
+                <li>Bias is prevalent in using FMs for medical imaging tasks, and the fairness-utility trade-off in these tasks is influenced not only by the choice of FMs but also by how they are used;</li>
+                <li>There is significant dataset-aware disparities between SA groups in most FMs;</li>
+                <li>Consistent disparities in SA occur across various FMs on the same dataset; and</li>
+                <li>Existing bias mitigation strategies do not demonstrate strong effectiveness in FM parameter-efficient fine-tuning scenarios.</li>
+              </ul>
+            </li>
+          </ul>
+           
+        </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <!-- <section class="hero teaser"> -->
+      <div class="container is-max-desktop">
+        <div class="hero-body">
+    
+          <img src="https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/main.png" alt="Overview of the FairMedFM fairness benchmark: datasets, foundation models, usages, debiasing methods and fairness metrics">
+          Overview of the FairMedFM framework, a standardized pipeline to investigate fairness on diverse datasets (2D, 2.5D, and 3D), comprehensive functionalities (various FMs, tasks, usages, and debias algorithms), thorough evaluation metrics.      
+        </div>
+      </div>
+    <!-- </section> -->
+
+
+    <section class="hero is-small">
+      <div class="hero-body">
+        <div class="container is-max-desktop is-centered has-text-centered">
+          <h2 class="title is-3" id="pipeline">A Comprehensive Medical FM Integration Pipeline</h2>
+          <div class="content has-text-justified">
+            <p>
+              The figure above presents the pipeline of FairMedFM framework, which offers an easy-to-use codebase for benchmarking the fairness of FMs in medical imaging. FairMedFM currently contains 17 datasets (9 for classification and 8 for segmentation) and 20 FMs (11 for classification and 9 for segmentation).
+              It also integrates 9 fairness metrics (5 for classification and 4 for segmentation) and 6 unfairness mitigation algorithms (3 for classification and 3 for segmentation), trying to provide a relatively comprehensive benchmark for fairness in medical imaging FMs.
+            </p>
+            
+            <h3 class="title is-4">Datasets</h3>
+            <p>
+              FairMedFM includes 17 publicly available datasets to evaluate fairness in FMs in medical imaging. These datasets vary in task type (classification and segmentation), dimension (2D and 3D), modality (OCT, X-ray, CT, MRI, Ultrasound, Fundus, dermatology), body part (brain, eyes, skin, thyroid, chest, liver, kidney, spine), number of classes (ranging from 2 to 15), number of samples (ranging from 20 to more than 350k), sensitive attribute (sex, age, race, preferred language, skin tone), and SA skewness (Male : Female ranging from 0.19 to 1.67). Some of the datasets include CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, and more.
+            </p>
+            
+            <h3 class="title is-4">Models</h3>
+            <p>
+              <strong>Classification FMs:</strong> FairMedFM uses 11 FMs from two categories: vision models (VMs) like C2L, DINOv2, MedLVM, MedMAE, MoCo-CXR, and vision-language models (VLMs) like CLIP, BLIP, BLIP2, MedCLIP, PubMedCLIP, BiomedCLIP. The evaluation is performed using linear probing (LP), parameter-efficient fine-tuning (PEFT), and CLIP-ZS and CLIP-Adapt for vision-language models.
+            </p>
+            <p>
+              <strong>Segmentation FMs:</strong> Nine SegFMs from three categories are used: general-SegFMs (SAM, MobileSAM, TinySAM), 2D Med-SegFMs (MedSAM, SAM-Med2D, FT-SAM), and 3D Med-SegFMs (SAM-Med3D, FastSAM3D). These models are evaluated using different types of prompts like center, rand, rands, and bbox.
+            </p>
+            
+            <h3 class="title is-4">Unfairness Mitigation Methods</h3>
+            <p>
+              FairMedFM integrates several bias mitigation strategies categorized as:
+              <ul>
+                <li><strong>Group rebalancing:</strong> Adjusting representation of different subgroups.</li>
+                <li><strong>Adversarial training:</strong> Penalizing models for recognizing sensitive attributes.</li>
+                <li><strong>Fairness constraints:</strong> Adding fairness metrics to the training objective.</li>
+                <li><strong>Subgroup-tailored modeling:</strong> Different model parameters for different subgroups.</li>
+                <li><strong>Domain generalization:</strong> Improving model performance across various domains.</li>
+              </ul>
+            </p>
+            
+            <h3 class="title is-4">Evaluation Metrics</h3>
+            <p>
+              FairMedFM evaluates fairness using the following metrics:
+              <ul>
+                <li><strong>Utility:</strong> AUC for classification, Dice similarity score (DSC) for segmentation.</li>
+                <li><strong>Group fairness:</strong> Including metrics like delta AUC, Equalized Odds (EqOdds), delta DSC, DSC skewness, and expected calibration error gap (ECEΔ).</li>
+                <li><strong>Utility-fairness trade-off:</strong> Metrics like equity-scaled AUC (AUC_ES) and equity-scaled DSC (DSC_ES).</li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+
+
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop is-centered has-text-centered">
+      <h2 class="title is-3", id="codebase">A Simple & Extendible Codebase</h2>
+      <span style="color: rgb(10, 239, 6);">Our codebase consists of five modules.</span>
+      
+      <div class="container is-max-desktop">
+        <div>
+          <img src="https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/package.png" alt="FairMedFM codebase modules: dataloader, model, usage wrapper, trainer and evaluation">
+        </div>
+      </div>
+
+      <div class="content has-text-justified">
+        <ol>
+          <li><strong>Dataloader</strong> provides a consistent interface for loading and processing imaging data across various modalities and dimensions, supporting both classification and segmentation tasks.</li>
+          <li><strong>Model</strong> is a one-stop library that includes implementations of the most popular pre-trained foundation models for medical image analysis.</li>
+          <li><strong>Usage Wrapper</strong> encapsulates foundation models for various use cases and tasks, including linear probe, zero-shot inference, PEFT, promptable segmentation, etc.</li>
+          <li><strong>Trainer</strong> offers a unified workflow for fine-tuning and testing wrapped models, and includes state-of-the-art unfairness mitigation algorithms.</li>
+          <li><strong>Evaluation</strong> includes a set of metrics and tools to visualize and analyze fairness across different tasks.</li>
+        </ol>        
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section class="section is-light" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title", id="reference">BibTeX</h2>
+    <p>If you find our code and paper helpful, please consider citing our work: (Citation coming soon)
+    </p>
+    <pre><code>@article{jin2024fairmedfm,
+      title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
+      author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qingsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
+      journal={arXiv preprint arXiv:2407.00983},
+      year={2024}
+    }
+</code></pre>
+  </div>
+</section>
+
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+              href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+              Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a href="https://github.com/nerfies/nerfies.github.io">source
+              code</a> of this website,
+            we just ask that you link back to this page in the footer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

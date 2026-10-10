@@ -28,7 +28,7 @@ The paper evaluates 20 foundation models on 17 medical imaging datasets (includi
 
 ### How does FairMedFM compare with Fairlearn and AIF360?
 
-Fairlearn and AIF360 are general fairness toolkits with bias mitigation algorithms and metrics on hard predictions such as demographic parity. FairMedFM has no mitigation algorithms; it evaluates from predicted probabilities and covers metrics they do not provide out of the box: AUC gap and worst-group AUC, calibration (ECE) and cross-entropy gaps, and segmentation Dice disparities (Dice gap, equity-scaled Dice, Dice skewness). On the same inputs, `fairmedfm.auc_gap` equals Fairlearn's `MetricFrame(metrics=roc_auc_score, ...).difference()`, `fairmedfm.equal_opportunity_difference` equals Fairlearn's `equal_opportunity_difference` on predictions binarized at the best-F1 threshold, and `fairmedfm.equalized_odds_score` equals `1 - equalized_odds_difference(..., agg="mean")`. Details: https://nanboy-ronan.github.io/FairMedFM-page/docs/comparison/
+Fairlearn and AIF360 are general fairness toolkits with bias mitigation algorithms and metrics on hard predictions such as demographic parity. FairMedFM has no mitigation algorithms; it evaluates from predicted probabilities and covers metrics they do not provide out of the box: AUC gap and worst-group AUC, calibration (ECE) and cross-entropy gaps, and segmentation Dice disparities (Dice gap, equity-scaled Dice, Dice skewness). On the same inputs, `fairmedfm.auc_gap` equals Fairlearn's `MetricFrame(metrics=roc_auc_score, ...).difference()`, `fairmedfm.equal_opportunity_difference` equals Fairlearn's `equal_opportunity_difference` on predictions binarized at the best-F1 threshold, and `fairmedfm.equalized_odds_score` equals `1 - equalized_odds_difference(..., agg="mean")`. Details: https://fairmedfm.github.io/FairMedFM/docs/comparison/
 
 ### Can FairMedFM be used commercially?
 
@@ -40,27 +40,27 @@ All evaluated medical foundation models show fairness disparities across sex, ra
 
 ## Documentation
 
-- [Documentation home](https://nanboy-ronan.github.io/FairMedFM-page/docs/)
-- [Installation](https://nanboy-ronan.github.io/FairMedFM-page/docs/installation/)
-- [Evaluate your model](https://nanboy-ronan.github.io/FairMedFM-page/docs/evaluate-your-model/): input formats, the Python API and fairmedfm score
-- [How-to recipes](https://nanboy-ronan.github.io/FairMedFM-page/docs/how-to/): AUC gap, calibration gap, equal opportunity, continuous and intersectional attributes, multi-class, segmentation, model selection
-- [Fairness metrics](https://nanboy-ronan.github.io/FairMedFM-page/docs/metrics/): exact definitions
-- [Command line](https://nanboy-ronan.github.io/FairMedFM-page/docs/cli/)
-- [Python API](https://nanboy-ronan.github.io/FairMedFM-page/docs/api/)
-- [FairMedFM vs Fairlearn and AIF360](https://nanboy-ronan.github.io/FairMedFM-page/docs/comparison/)
-- [Run experiments](https://nanboy-ronan.github.io/FairMedFM-page/docs/benchmark/): fairmedfm run, configs and outputs
-- [Models](https://nanboy-ronan.github.io/FairMedFM-page/docs/models/) and [Datasets](https://nanboy-ronan.github.io/FairMedFM-page/docs/datasets/)
-- [Reproduce the paper](https://nanboy-ronan.github.io/FairMedFM-page/docs/reproduce/)
-- [FAQ](https://nanboy-ronan.github.io/FairMedFM-page/docs/faq/)
+- [Documentation home](https://fairmedfm.github.io/FairMedFM/docs/)
+- [Installation](https://fairmedfm.github.io/FairMedFM/docs/installation/)
+- [Evaluate your model](https://fairmedfm.github.io/FairMedFM/docs/evaluate-your-model/): input formats, the Python API and fairmedfm score
+- [How-to recipes](https://fairmedfm.github.io/FairMedFM/docs/how-to/): AUC gap, calibration gap, equal opportunity, continuous and intersectional attributes, multi-class, segmentation, model selection
+- [Fairness metrics](https://fairmedfm.github.io/FairMedFM/docs/metrics/): exact definitions
+- [Command line](https://fairmedfm.github.io/FairMedFM/docs/cli/)
+- [Python API](https://fairmedfm.github.io/FairMedFM/docs/api/)
+- [FairMedFM vs Fairlearn and AIF360](https://fairmedfm.github.io/FairMedFM/docs/comparison/)
+- [Run experiments](https://fairmedfm.github.io/FairMedFM/docs/benchmark/): fairmedfm run, configs and outputs
+- [Models](https://fairmedfm.github.io/FairMedFM/docs/models/) and [Datasets](https://fairmedfm.github.io/FairMedFM/docs/datasets/)
+- [Reproduce the paper](https://fairmedfm.github.io/FairMedFM/docs/reproduce/)
+- [FAQ](https://fairmedfm.github.io/FairMedFM/docs/faq/)
 
 ## Optional
 
-- [Full documentation as one Markdown file](https://nanboy-ronan.github.io/FairMedFM-page/docs/llms-full.txt)
-- Each documentation page is also available as Markdown at `<page URL>index.md`, e.g. https://nanboy-ronan.github.io/FairMedFM-page/docs/metrics/index.md
+- [Full documentation as one Markdown file](https://fairmedfm.github.io/FairMedFM/docs/llms-full.txt)
+- Each documentation page is also available as Markdown at `<page URL>index.md`, e.g. https://fairmedfm.github.io/FairMedFM/docs/metrics/index.md
 
 ## Links
 
-- [Project page](https://nanboy-ronan.github.io/FairMedFM-page/)
+- [Project page](https://fairmedfm.github.io/FairMedFM/)
 - [PyPI package](https://pypi.org/project/fairmedfm/)
 - [GitHub repository](https://github.com/FairMedFM/FairMedFM)
 - [Paper: FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models](https://arxiv.org/abs/2407.00983)

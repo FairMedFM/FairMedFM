@@ -1,5 +1,5 @@
 site_name: FairMedFM
-site_url: https://nanboy-ronan.github.io/FairMedFM-page/docs/
+site_url: https://fairmedfm.github.io/FairMedFM/docs/
 site_description: Fairness evaluation for any classification or segmentation model, and a fairness benchmark of medical imaging foundation models.
 site_author: FairMedFM authors
 repo_url: https://github.com/FairMedFM/FairMedFM
@@ -99,7 +99,7 @@ nav:
       - Datasets: datasets.md
       - Reproduce the paper: reproduce.md
   - Project:
-      - Project page: https://nanboy-ronan.github.io/FairMedFM-page/
+      - Project page: https://fairmedfm.github.io/FairMedFM/
       - FAQ: faq.md
       - Cite FairMedFM: citation.md
       - Changelog: https://github.com/FairMedFM/FairMedFM/blob/main/CHANGELOG.md
