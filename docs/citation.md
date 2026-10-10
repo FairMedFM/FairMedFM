@@ -10,7 +10,7 @@ If you use FairMedFM, its fairness metrics or its benchmark results, please cite
 ```bibtex
 @article{jin2024fairmedfm,
   title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
-  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qiongsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
+  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qingsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
   journal={arXiv preprint arXiv:2407.00983},
   year={2024}
 }

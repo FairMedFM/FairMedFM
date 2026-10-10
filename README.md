@@ -355,7 +355,7 @@ If you think our project is helpful and love our project, it's nice if you can c
 ```bibtex
 @article{jin2024fairmedfm,
   title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
-  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qiongsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
+  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qingsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
   journal={arXiv preprint arXiv:2407.00983},
   year={2024}
 }
