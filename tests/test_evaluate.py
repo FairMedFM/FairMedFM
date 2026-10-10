@@ -262,3 +262,15 @@ def test_segmentation_inputs_are_paired_by_index():
     shuffled = frame.loc[[13, 10, 12, 11]]
     with pytest.warns(UserWarning, match="paired by index"):
         assert fm.dice_gap(shuffled["dice"], sensitive_features=frame["sex"]) == pytest.approx(0.4)
+
+
+def test_intersectional_groups_follow_each_attributes_order():
+    rng = np.random.default_rng(0)
+    label = rng.integers(0, 2, 600)
+    prob = np.clip(0.3 + 0.4 * label + rng.normal(0, 0.2, 600), 0, 1)
+    meta = pd.DataFrame({"sex": rng.choice(["M", "F"], 600), "age": rng.integers(20, 90, 600)})
+    report = fm.evaluate(label, prob, meta, bins={"age": [40, 60]}, intersectional=True)
+    assert list(report.by_group.loc["sex & age"].index) == ["F & <40", "F & 40-60", "F & >=60",
+                                                             "M & <40", "M & 40-60", "M & >=60"]
+    assert fm.auc_gap(label, prob, sensitive_features=meta, bins={"age": [40, 60]}) == pytest.approx(
+        report.summary.loc["sex & age", "auc-gap"])
