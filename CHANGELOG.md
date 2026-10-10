@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 (2026-10-10)
+
+- The project page and documentation moved to https://fairmedfm.github.io/FairMedFM/ (documentation at `/docs/`),
+  published from this repository. The old address redirects there. The package's project links point to the new
+  address.
+- Intersectional groups are ordered by each attribute's own group order (`F & <40`, `F & 40-60`, `F & >=60`, ...)
+  instead of alphabetically. Values are unchanged.
+- README cleanup: fixed typos and stale links to files that moved to `benchmark/`, and removed the outdated
+  schedule.
+
 ## 0.4.1 (2026-10-10)
 
 - **License**: the code, including this package, is now Apache-2.0 (previously CC BY 4.0, which is not meant for
