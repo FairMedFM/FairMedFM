@@ -82,18 +82,25 @@ def _parser() -> argparse.ArgumentParser:
     out.add_argument("--output", type=Path, help="write the full result: .json, or .csv for the per-group table")
     out.add_argument("--format", choices=["json", "table"], default="json", help="what to print (default: json)")
     commands.add_parser("run", add_help=False,
-                        help="Run a benchmark experiment with a built-in foundation model (needs fairmedfm[cls] or "
-                             "fairmedfm[seg]); see fairmedfm run --help.")
+                        help="Run a FairMedFM benchmark experiment with a built-in foundation model (needs the "
+                             "benchmark runner from GitHub); see fairmedfm run --help.")
     return parser
+
+
+BENCHMARK_URL = "git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"
 
 
 def _run(argv: List[str]) -> None:
     try:
-        from .run import main as run_main
+        from fairmedfm_bench.run import main as run_main
         run_main(argv)
     except ModuleNotFoundError as exc:
-        sys.exit(f"fairmedfm: error: missing module {exc.name!r}. fairmedfm run needs the benchmark dependencies: "
-                 "pip install 'fairmedfm[cls]' for classification or 'fairmedfm[seg]' for segmentation.")
+        if exc.name == "fairmedfm_bench":
+            sys.exit("fairmedfm: error: fairmedfm run needs the benchmark runner, which is installed from GitHub:\n"
+                     f'  pip install "fairmedfm-bench @ {BENCHMARK_URL}"        # classification\n'
+                     f'  pip install "fairmedfm-bench[seg] @ {BENCHMARK_URL}"   # + segmentation')
+        sys.exit(f"fairmedfm: error: missing module {exc.name!r}. Models whose packages are not on PyPI need a "
+                 "separate install; see https://nanboy-ronan.github.io/FairMedFM-page/docs/models/")
 
 
 def score(args: argparse.Namespace):
