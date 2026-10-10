@@ -1,12 +1,12 @@
 # Changelog
 
-## 0.5.0 (2026-10-10)
+## 0.4.1 (2026-10-10)
 
 - **License**: the code, including this package, is now Apache-2.0 (previously CC BY 4.0, which is not meant for
   software). The documentation and figures stay CC BY 4.0.
 - **The benchmark runner is a separate package.** `fairmedfm` now contains only the fairness metrics, `evaluate`
   and `fairmedfm score`. The datasets, models, trainers and wrappers moved from `fairmedfm.models`,
-  `fairmedfm.datasets`, ... (0.2 to 0.4) to `fairmedfm_bench`, installed from GitHub with
+  `fairmedfm.datasets`, ... (0.2.0 to 0.4.0) to `fairmedfm_bench`, installed from GitHub with
   `pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"` (add `[seg]`
   for segmentation). The `fairmedfm[cls]` and `fairmedfm[seg]` extras no longer exist. `fairmedfm run` still works
   once the runner is installed, and otherwise prints the install command; `python main.py` works in a checkout.
