@@ -6,7 +6,7 @@
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/v/fairmedfm.svg" alt="PyPI"></a>
   <a href="https://nanboy-ronan.github.io/FairMedFM-page/docs/"><img src="https://img.shields.io/badge/docs-online-teal.svg" alt="Documentation"></a>
   <a href="https://arxiv.org/abs/2407.00983"><img src="https://img.shields.io/badge/arXiv-2407.00983-b31b1b.svg" alt="arXiv"></a>
-  <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg" alt="License"></a>
+  <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/pyversions/fairmedfm.svg" alt="Python versions"></a>
   <img src="https://img.shields.io/github/stars/FairMedFM/FairMedFM?style=social" alt="Stars">
   <a href="https://github.com/ubc-tea/MedVLMBench"><img src="https://img.shields.io/badge/Companion-MedVLMBench-orange.svg" alt="MedVLMBench"></a>
@@ -35,7 +35,9 @@ Each metric works like `sklearn.metrics`: arrays in, one number out. `y_true` an
 labels and outputs, and `group` is any attribute you want to compare across (sex, age group, hospital, scanner,
 skin tone, ...). Lists, NumPy, pandas and PyTorch all work; labels can be class names (`pos_label=`), scores can be
 probabilities, logits or `predict_proba`/softmax output. The package needs only NumPy, pandas and scikit-learn, and
-its numbers match the FairMedFM paper. Documentation: **[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**.
+its numbers match the FairMedFM paper. Apache-2.0 licensed. Documentation: **[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**
+([how-to recipes](https://nanboy-ronan.github.io/FairMedFM-page/docs/how-to/),
+[comparison with Fairlearn and AIF360](https://nanboy-ronan.github.io/FairMedFM-page/docs/comparison/)).
 
 **All metrics at once**, as pandas tables, for several attributes:
 
@@ -93,8 +95,8 @@ Image and NIfTI masks and Parquet tables need `pip install "fairmedfm[io]"`.
 Accuracy, `eo` and `eod` use the decision threshold with the best overall F1; `report.by_group` also reports
 every metric at threshold 0.5. Attributes can have any number of groups; a classification group with only one
 label is reported but left out of the gaps. For multi-class models, `pos_label` evaluates one class against the
-rest. To run the benchmark itself with the built-in foundation models,
-install `fairmedfm[cls]` or `fairmedfm[seg]` and use `fairmedfm run` (see [Installation](#installation)).
+rest. To run the benchmark itself with the built-in foundation models, install the benchmark runner from GitHub
+and use `fairmedfm run` (see [Installation](#installation)).
 
 ## Table of Contents
 
@@ -142,6 +144,10 @@ FairMedFM and MedVLMBench form a **two-part evaluation suite** for medical found
 ## Structure
 
 FairMedFM captures comprehensive modules for benchmarking the fairness of foundation models in medical image analysis.
+The repository holds two Python packages: [`src/fairmedfm/`](https://github.com/FairMedFM/FairMedFM/tree/main/src/fairmedfm),
+the fairness metrics published on PyPI as `fairmedfm`, and
+[`benchmark/fairmedfm_bench/`](https://github.com/FairMedFM/FairMedFM/tree/main/benchmark), the benchmark runner
+(datasets, models, wrappers and trainers) installed from GitHub.
 
 ![main](https://raw.githubusercontent.com/FairMedFM/FairMedFM/main/figs/package.png)
 
@@ -165,11 +171,11 @@ FairMedFM captures comprehensive modules for benchmarking the fairness of founda
 > - **3D CT**: [Merlin](https://github.com/StanfordMIMI/Merlin) (Stanford, 2024) — volumetric CT feature extractor for ADNI/COVID-CT-MD/KiTS-style 3D data
 >
 > **Gated repos** (request access on the model page, then `huggingface-cli login` / set `HF_TOKEN`): DINOv3, MedGemma, UNI2-h, Virchow2, Prov-GigaPath, CONCH, RETFound.
-> **Not covered by `fairmedfm[cls]`/`[seg]`**: SAM2 needs the [`sam2`](https://github.com/facebookresearch/sam2) package; CONCH needs `pip install git+https://github.com/Mahmoodlab/CONCH.git`; Merlin needs `pip install merlin-vlm`.
+> **Not installed with the benchmark runner**: SAM2 needs the [`sam2`](https://github.com/facebookresearch/sam2) package; CONCH needs `pip install git+https://github.com/Mahmoodlab/CONCH.git`; Merlin needs `pip install merlin-vlm`.
 > **SAM3 / MedicalSAM3 (2D)**: These use the official [SAM 3 image model](https://github.com/facebookresearch/sam3) API. SAM3 supports the existing point and box prompts; MedicalSAM3 currently supports boxes only. Meta's package requires Python 3.12+, PyTorch 2.7+, and a compatible CUDA setup, so use a separate environment if the main FairMedFM environment is older. Download [Medical SAM3's `checkpoint_2D.pt`](https://huggingface.co/ChongCong/Medical-SAM3/blob/main/checkpoint_2D.pt) separately. Neither checkpoint is part of `pretrained.zip`.
 > **RETFound checkpoints**: unlike the other gated models here, RETFound ships raw `.pth` files (not a `transformers`-loadable repo) — download manually after access is granted and point `configs/models/RETFound.json`'s `pretrained_path` at the local file, the same convention used for MedMAE/MoCo-CXR/C2L.
 >
-> **Not integrated (previously miscredited in this table)**: SAM-Med3D, FastSAM3D, and SegVol were listed here before but had no corresponding code anywhere in the repo. We looked into adding them: SAM-Med3D is loadable via the third-party [`medim`](https://pypi.org/project/medim/) package, and SegVol via `AutoModel.from_pretrained("BAAI/SegVol", trust_remote_code=True)`, but both expose custom, undocumented inference APIs (3D sliding-window prompting, `forward_test()` with joint text/point/box prompts) that don't match this repo's `encode()`/`decode()` segmentation wrapper contract (see `wrappers/sam_model.py`, `wrappers/medsam2.py`). Wiring them in correctly needs a new wrapper/trainer path built against their actual source, not just their README — left as follow-up work rather than shipped half-verified. FastSAM3D additionally has no documented Python inference API at all.
+> **Not integrated (previously miscredited in this table)**: SAM-Med3D, FastSAM3D, and SegVol were listed here before but had no corresponding code anywhere in the repo. We looked into adding them: SAM-Med3D is loadable via the third-party [`medim`](https://pypi.org/project/medim/) package, and SegVol via `AutoModel.from_pretrained("BAAI/SegVol", trust_remote_code=True)`, but both expose custom, undocumented inference APIs (3D sliding-window prompting, `forward_test()` with joint text/point/box prompts) that don't match this repo's `encode()`/`decode()` segmentation wrapper contract (see `benchmark/fairmedfm_bench/wrappers/sam_model.py` and `medsam2.py`). Wiring them in correctly needs a new wrapper/trainer path built against their actual source, not just their README — left as follow-up work rather than shipped half-verified. FastSAM3D additionally has no documented Python inference API at all.
 
 
 
@@ -196,12 +202,16 @@ Your are welcome to post your thoughts about updated features and we will try to
 To score your own model's predictions, `pip install fairmedfm` is all you need (see
 [above](#pip-package-fairness-metrics-for-any-model)). To run the benchmark with the built-in foundation models:
 
-1. Install the benchmark runner (Python 3.10+). Install PyTorch for your CUDA version first if needed.
+1. Install the benchmark runner (Python 3.10+) from GitHub. Install PyTorch for your CUDA version first if
+   needed.
 
    ```bash
-   pip install "fairmedfm[cls]"   # classification: linear probing, CLIP zero-shot and CLIP adaptation
-   pip install "fairmedfm[seg]"   # segmentation with SAM-family models (includes [cls])
+   pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"        # classification
+   pip install "fairmedfm-bench[seg] @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"   # + segmentation with SAM-family models
    ```
+
+   Use the full GitHub URL: the runner (`fairmedfm-bench`, code in [`benchmark/`](https://github.com/FairMedFM/FairMedFM/tree/main/benchmark))
+   is not published on PyPI. It installs the `fairmedfm` metrics package as a dependency.
 
    A few models need packages that are not on PyPI: BLIP/BLIP2 (`salesforce-lavis`, which pins older
    dependencies, so use a separate environment), CONCH (`pip install git+https://github.com/Mahmoodlab/CONCH.git`),
@@ -232,7 +242,7 @@ Our notebook tutorials also contains how to setup the environment in Colab. [![O
 You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data your self. However, not all dataset we used permit us to release the data on our end (e.g., dataset like MIMIC and ADNI requires the user go through their data usage application first). In such case, we cannot provide the download link of our preprocessed dataset for them, but we have the original dataset downloading link and our pre-process scripts released.
 
 ### Preprocess data on your own
-We provide data preprocessing scripts for each datasets [here](./notebooks/preprocess). The data preprocessing contains 3 steps:
+We provide data preprocessing scripts for each datasets [here](https://github.com/FairMedFM/FairMedFM/tree/main/pre-processing). The data preprocessing contains 3 steps:
 
 - (Optional) preprocess imaging data.
 - Preprocess metadata and sensitive attributes.
@@ -333,7 +343,11 @@ We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering work
 
 ## License
 
-This project is released under the CC BY 4.0 license. Please see the LICENSE file for more information.
+The code is released under the [Apache License 2.0](https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE), so you can use
+FairMedFM in academic, clinical and commercial projects. The documentation and figures are under
+[CC BY 4.0](https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE-docs). One file of the benchmark runner keeps a
+non-commercial license from its source; see
+[benchmark/THIRD_PARTY_NOTICES.md](https://github.com/FairMedFM/FairMedFM/blob/main/benchmark/THIRD_PARTY_NOTICES.md).
 
 ## Citation
 If you think our project is helpful and love our project, it's nice if you can cite us. Such supports will help us secure resources for further developing similar projects.
@@ -341,7 +355,7 @@ If you think our project is helpful and love our project, it's nice if you can c
 ```bibtex
 @article{jin2024fairmedfm,
   title={FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models},
-  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qiongsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
+  author={Jin, Ruinan and Xu, Zikang and Zhong, Yuan and Yao, Qingsong and Dou, Qi and Zhou, S Kevin and Li, Xiaoxiao},
   journal={arXiv preprint arXiv:2407.00983},
   year={2024}
 }

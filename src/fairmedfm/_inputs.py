@@ -31,6 +31,65 @@ def to_numpy(values: Any, name: str) -> np.ndarray:
     return array
 
 
+def align_by_index(named: Dict[str, Any], notes: List[str]) -> Tuple[Any, ...]:
+    """The values of ``named``, with pandas inputs reordered to the first one's index where that is clearly meant.
+
+    Inputs are paired by position, as in scikit-learn. When two pandas inputs have the same unique index labels in
+    a different order (e.g. predictions and a metadata table indexed by image ID), they are paired by index, as
+    pandas would, and a note says so. If one of them has the default index 0, 1, 2, ..., the intent is ambiguous
+    (a shuffled table next to model outputs in the same row order looks the same), so this raises an error that
+    explains how to pair either way. Indexes with different labels stay positional.
+    """
+    values = dict(named)
+    reference_name = next((name for name, value in values.items() if pandas_index(value) is not None), None)
+    if reference_name is None:
+        return tuple(values.values())
+    reference = pandas_index(values[reference_name])
+    if reference is None or not reference.is_unique:
+        return tuple(values.values())
+    for name, value in values.items():
+        if name == reference_name:
+            continue
+        if isinstance(value, Mapping):
+            reordered: Any = {key: _reorder(item, reference) for key, item in value.items()}
+            changed = any(reordered[key] is not item for key, item in value.items())
+        else:
+            reordered = _reorder(value, reference)
+            changed = reordered is not value
+        if changed and (_is_default_index(reference) or _is_default_index(pandas_index(value))):
+            raise ValueError(
+                f"{reference_name} and {name} have the same index labels in a different order, and one has the "
+                "default index 0, 1, 2, ..., so it is unclear whether samples should be paired by position or by "
+                f"index label. To pair by label, pass {name}.loc[{reference_name}.index]; to pair by position, "
+                f"pass {name}.to_numpy() (or reset_index(drop=True) on both)")
+        if changed:
+            notes.append(f"{name} was reordered to match the index of {reference_name} (same index labels in a "
+                         "different order); samples are paired by index")
+            values[name] = reordered
+    return tuple(values.values())
+
+
+def pandas_index(value: Any) -> Optional[pd.Index]:
+    if isinstance(value, (pd.Series, pd.DataFrame)):
+        return value.index
+    if isinstance(value, Mapping):
+        return next((item.index for item in value.values() if isinstance(item, (pd.Series, pd.DataFrame))), None)
+    return None
+
+
+def _is_default_index(index: Optional[pd.Index]) -> bool:
+    return index is not None and index.equals(pd.RangeIndex(len(index)))
+
+
+def _reorder(value: Any, reference: pd.Index) -> Any:
+    if not isinstance(value, (pd.Series, pd.DataFrame)):
+        return value
+    index = value.index
+    if index.equals(reference) or len(index) != len(reference) or not index.is_unique or not index.isin(reference).all():
+        return value
+    return value.loc[reference]
+
+
 def binary_labels(y_true: Any, pos_label: Any = None) -> Tuple[np.ndarray, Dict[str, Any]]:
     """0/1 labels from booleans, 0/1, any two labels plus pos_label, or several classes plus pos_label."""
     labels = to_numpy(y_true, "y_true")
@@ -278,8 +337,10 @@ def _bin(values: pd.Series, spec: Union[int, Sequence[float]], column: str) -> p
     if isinstance(spec, (int, np.integer)):
         if spec < 2:
             raise ValueError(f"bins for {column!r} must be at least 2 quantile groups")
-        spec = np.unique(np.quantile(numeric.dropna(), np.linspace(0, 1, int(spec) + 1)[1:-1]))
-    edges = sorted(float(e) for e in spec)
+        cut_points: Any = np.unique(np.quantile(numeric.dropna(), np.linspace(0, 1, int(spec) + 1)[1:-1]))
+    else:
+        cut_points = spec
+    edges = sorted(float(e) for e in cut_points)
     if not edges:
         raise ValueError(f"bins for {column!r} must contain at least one cut point")
     labels = [f"<{edges[0]:.4g}"] + [f"{a:.4g}-{b:.4g}" for a, b in zip(edges, edges[1:])] + [f">={edges[-1]:.4g}"]

@@ -5,13 +5,16 @@ site_author: FairMedFM authors
 repo_url: https://github.com/FairMedFM/FairMedFM
 repo_name: FairMedFM/FairMedFM
 edit_uri: edit/main/docs/
-copyright: FairMedFM authors · CC BY 4.0
+copyright: FairMedFM authors · Code Apache-2.0 · Documentation CC BY 4.0
 docs_dir: docs
 site_dir: site
 strict: true
 exclude_docs: |
   /overrides/
+  /hooks/
   /requirements.txt
+hooks:
+  - docs/hooks/llms.py
 
 theme:
   name: material
@@ -84,10 +87,12 @@ nav:
   - Get started:
       - Installation: installation.md
       - Evaluate your model: evaluate-your-model.md
+      - How-to recipes: how-to.md
   - Reference:
       - Fairness metrics: metrics.md
       - Command line: cli.md
       - Python API: api.md
+      - FairMedFM vs Fairlearn and AIF360: comparison.md
   - Benchmark:
       - Run experiments: benchmark.md
       - Models: models.md

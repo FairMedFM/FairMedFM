@@ -9,8 +9,12 @@ description: Run fairness experiments with medical imaging foundation models - l
 sensitive attribute. Install the runner first:
 
 ```bash
-pip install "fairmedfm[cls]"   # or "fairmedfm[seg]" for segmentation
+pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"
+pip install "fairmedfm-bench[seg] @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"   # for segmentation
 ```
+
+The runner's code is in [`benchmark/`](https://github.com/FairMedFM/FairMedFM/tree/main/benchmark) (Python package
+`fairmedfm_bench`); the metrics it reports come from the `fairmedfm` package.
 
 ## Working directory
 

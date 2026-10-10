@@ -7,10 +7,12 @@ only (no PyTorch or GPU).
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Mapping, Sequence, Tuple
+import warnings
+from typing import Any, Collection, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
+from numpy.typing import ArrayLike
 from sklearn.metrics import confusion_matrix, precision_recall_curve, roc_auc_score
 
 __all__ = [
@@ -26,18 +28,23 @@ __all__ = [
 ]
 
 
-# Adapted from https://github.com/LalehSeyyed/Underdiagnosis_NatMed/blob/main/CXP/classification/predictions.py
-# and https://github.com/MLforHealth/CXR_Fairness/blob/master/cxr_fairness/metrics.py
-def find_threshold(prob: Sequence[float], label: Sequence[int]) -> float:
-    """Return the decision threshold with the highest F1 score (the first one on ties)."""
+ALL_METRICS = ("auc", "acc", "bce", "ece", "tpr", "tnr", "tn", "fp", "fn", "tp")
+
+
+def find_threshold(prob: ArrayLike, label: ArrayLike) -> float:
+    """Decision threshold with the highest F1 score on these samples (the lowest such threshold on ties).
+
+    Choosing the operating point by F1 follows the chest X-ray fairness evaluations of Seyyed-Kalantari et al.
+    (Nature Medicine, 2021) and Zhang et al. (CHIL, 2022).
+    """
     precision, recall, thresholds = precision_recall_curve(label, prob)
-    f1 = np.multiply(2, np.divide(np.multiply(precision, recall), np.add(recall, precision) + 1e-8))
-    # The last precision/recall point (recall 0) has no threshold.
-    best = np.where(f1[:-1] == f1[:-1].max())[0]
-    return float(thresholds[best[0]])
+    # The curve ends with the point (recall 0, precision 1), which has no threshold.
+    precision, recall = precision[:-1], recall[:-1]
+    f1 = 2 * precision * recall / (precision + recall + 1e-8)
+    return float(thresholds[np.argmax(f1)])
 
 
-def binary_cross_entropy(prob: Sequence[float], label: Sequence[int]) -> float:
+def binary_cross_entropy(prob: ArrayLike, label: ArrayLike) -> float:
     """Mean binary cross-entropy, with log terms clamped at -100 as in ``torch.nn.BCELoss``."""
     prob = np.asarray(prob, dtype=np.float64).ravel()
     label = np.asarray(label, dtype=np.float64).ravel()
@@ -47,50 +54,80 @@ def binary_cross_entropy(prob: Sequence[float], label: Sequence[int]) -> float:
     return float(-np.mean(label * log_p + (1 - label) * log_not_p))
 
 
-def expected_calibration_error(prob: Sequence[float], label: Sequence[int], num_bins: int = 10,
+def expected_calibration_error(prob: ArrayLike, label: ArrayLike, num_bins: int = 10,
                                metric_variant: str = "abs", quantile_bins: bool = False) -> float:
-    """Calibration error over ``num_bins`` equal-width bins spanning the range of ``prob``.
+    """Calibration error: the sample-weighted mean, over bins of ``prob``, of |mean prob - fraction positive|.
 
-    See http://arxiv.org/abs/1706.04599 and https://arxiv.org/abs/1904.01685. Adapted from
-    https://github.com/MLforHealth/CXR_Fairness/blob/c2a0e884171d6418e28d59dca1ccfb80a3f125fe/cxr_fairness/metrics.py#L1557
+    Bins are ``num_bins`` equal-width intervals over the range of ``prob`` (``pandas.cut``), or equal-count bins
+    with ``quantile_bins=True``. ``metric_variant="squared"`` averages squared differences and ``"rmse"`` takes
+    the square root of that. See Guo et al. (2017), https://arxiv.org/abs/1706.04599, and Nixon et al. (2019),
+    https://arxiv.org/abs/1904.01685.
     """
-    if metric_variant == "abs":
-        transform = np.abs
-    elif metric_variant in ("squared", "rmse"):
-        transform = np.square
-    else:
+    if metric_variant not in ("abs", "squared", "rmse"):
         raise ValueError("metric_variant must be 'abs', 'squared' or 'rmse'")
-    prob = np.asarray(prob)
-    cut = pd.qcut if quantile_bins else pd.cut
-    bin_ids = cut(prob, num_bins, labels=False, retbins=False)
-    df = pd.DataFrame({"prob": prob, "label": np.asarray(label), "bin_id": bin_ids})
-    bins = df.groupby("bin_id").agg(prob_mean=("prob", "mean"), label_mean=("label", "mean"),
-                                    bin_size=("prob", "size"))
-    weight = bins.bin_size / df.shape[0]
-    result = np.average(transform(bins.prob_mean - bins.label_mean).values, weights=weight)
-    if metric_variant == "rmse":
-        result = np.sqrt(result)
-    return float(result)
+    prob = np.asarray(prob, dtype=np.float64).ravel()
+    label = np.asarray(label, dtype=np.float64).ravel()
+    bin_ids = (pd.qcut if quantile_bins else pd.cut)(prob, num_bins, labels=False)
+    errors, sizes = [], []
+    for bin_id in np.unique(bin_ids):
+        in_bin = bin_ids == bin_id
+        difference = prob[in_bin].mean() - label[in_bin].mean()
+        errors.append(abs(difference) if metric_variant == "abs" else difference ** 2)
+        sizes.append(in_bin.sum())
+    error = float(np.average(errors, weights=sizes))
+    return float(np.sqrt(error)) if metric_variant == "rmse" else error
 
 
-def binary_classification_report(prob: Sequence[float], label: Sequence[int], threshold: float = 0.5,
+def binary_classification_report(prob: ArrayLike, label: ArrayLike, threshold: float = 0.5,
                                  suffix: str = "") -> Dict[str, float]:
     """AUC, accuracy, BCE, ECE, TPR, TNR and confusion counts at one decision threshold."""
-    prob = np.asarray(prob)
-    label = np.asarray(label)
-    tn, fp, fn, tp = confusion_matrix(label, (prob > threshold).astype(int), labels=[0, 1]).ravel()
-    return {
-        f"auc{suffix}": float(roc_auc_score(label, prob)),
-        f"acc{suffix}": float((tp + tn) / (tn + fp + fn + tp)),
-        f"bce{suffix}": binary_cross_entropy(prob, label),
-        f"ece{suffix}": expected_calibration_error(prob, label),
-        f"tpr{suffix}": float(tp / (tp + fn)),
-        f"tnr{suffix}": float(tn / (tn + fp)),
-        f"tn{suffix}": int(tn),
-        f"fp{suffix}": int(fp),
-        f"fn{suffix}": int(fn),
-        f"tp{suffix}": int(tp),
-    }
+    return _report(np.asarray(prob), np.asarray(label), threshold, suffix, ALL_METRICS)
+
+
+def _report(prob: np.ndarray, label: np.ndarray, threshold: float, suffix: str, names) -> Dict[str, float]:
+    """The metrics in ``names`` (a subset of ``ALL_METRICS``), keyed with ``suffix``."""
+    values: Dict[str, float] = {}
+    if "auc" in names:
+        values["auc"] = float(roc_auc_score(label, prob))
+    if {"acc", "tpr", "tnr", "tn", "fp", "fn", "tp"} & set(names):
+        tn, fp, fn, tp = confusion_matrix(label, (prob > threshold).astype(int), labels=[0, 1]).ravel()
+        values.update(acc=float((tp + tn) / (tn + fp + fn + tp)), tpr=float(tp / (tp + fn)),
+                      tnr=float(tn / (tn + fp)), tn=int(tn), fp=int(fp), fn=int(fn), tp=int(tp))
+    if "bce" in names:
+        values["bce"] = binary_cross_entropy(prob, label)
+    if "ece" in names:
+        values["ece"] = expected_calibration_error(prob, label)
+    return {f"{name}{suffix}": values[name] for name in ALL_METRICS if name in names}
+
+
+def _threshold_reports(prob: np.ndarray, label: np.ndarray, group: Optional[np.ndarray] = None,
+                      values: Optional[List[Any]] = None, wanted: Optional[Collection[str]] = None
+                      ) -> Tuple[Dict[str, float], Dict[Any, Dict[str, float]]]:
+    """Metrics on all samples and on each group, at threshold 0.5 and at the best overall F1 threshold.
+
+    ``wanted`` limits the work to some keys, e.g. ``{"auc", "tpr@best_f1"}``; by default every metric is computed.
+    ``values`` are the groups to report (default: all values of ``group``, sorted).
+    """
+    wanted = None if wanted is None else set(wanted)
+    thresholds = []
+    for suffix in ("", "@best_f1"):
+        names = ALL_METRICS if wanted is None else [m for m in ALL_METRICS if f"{m}{suffix}" in wanted]
+        if names:
+            threshold = 0.5 if suffix == "" else find_threshold(prob, label)
+            thresholds.append((threshold, suffix, names))
+    overall: Dict[str, float] = {}
+    for threshold, suffix, names in thresholds:
+        overall.update(_report(prob, label, threshold, suffix, names))
+    if group is None:
+        return overall, {}
+    if values is None:
+        values = list(np.unique(group))
+    reports: Dict[Any, Dict[str, float]] = {value: {} for value in values}
+    for threshold, suffix, names in thresholds:
+        for value in values:
+            mask = group == value
+            reports[value].update(_report(prob[mask], label[mask], threshold, suffix, names))
+    return overall, reports
 
 
 def _check_binary_inputs(prob: np.ndarray, label: np.ndarray, group: np.ndarray) -> None:
@@ -112,41 +149,30 @@ def _check_binary_inputs(prob: np.ndarray, label: np.ndarray, group: np.ndarray)
         raise ValueError("the sensitive attribute needs at least two groups")
 
 
-def _per_group_reports(prob: np.ndarray, label: np.ndarray, group: np.ndarray
-                       ) -> Tuple[Dict[str, float], List[Any], List[Dict[str, float]]]:
-    thresholds = [(0.5, ""), (find_threshold(prob, label), "@best_f1")]
-    overall: Dict[str, float] = {}
-    groups = list(np.unique(group))
-    reports: List[Dict[str, float]] = [{} for _ in groups]
-    for threshold, suffix in thresholds:
-        overall.update(binary_classification_report(prob, label, threshold, suffix))
-        for report, value in zip(reports, groups):
-            mask = group == value
-            report.update(binary_classification_report(prob[mask], label[mask], threshold, suffix))
-    return overall, groups, reports
-
-
 def _summary(overall: Mapping[str, float], subgroup: Mapping[str, Sequence[float]]) -> Dict[str, float]:
+    """The FairMedFM summary columns whose inputs are present in ``overall`` and ``subgroup``."""
     def gap(key: str) -> float:
         return float(max(subgroup[key]) - min(subgroup[key]))
 
-    tpr, tnr = subgroup["tpr@best_f1"], subgroup["tnr@best_f1"]
-    return {
-        "overall-auc": float(overall["auc"]),
-        "overall-acc": float(overall["acc@best_f1"]),
-        "overall-bce": float(overall["bce"]),
-        "overall-ece": float(overall["ece"]),
-        "worst-auc": float(min(subgroup["auc"])),
-        "auc-gap": gap("auc"),
-        "acc-gap": gap("acc@best_f1"),
-        "bce-gap": gap("bce"),
-        "ece-gap": gap("ece"),
-        "eod": float(1 - ((max(tpr) - min(tpr)) + (max(tnr) - min(tnr))) / 2),
-        "eo": gap("tpr@best_f1"),
+    columns = {
+        "overall-auc": (["auc"], [], lambda: float(overall["auc"])),
+        "overall-acc": (["acc@best_f1"], [], lambda: float(overall["acc@best_f1"])),
+        "overall-bce": (["bce"], [], lambda: float(overall["bce"])),
+        "overall-ece": (["ece"], [], lambda: float(overall["ece"])),
+        "worst-auc": ([], ["auc"], lambda: float(min(subgroup["auc"]))),
+        "auc-gap": ([], ["auc"], lambda: gap("auc")),
+        "acc-gap": ([], ["acc@best_f1"], lambda: gap("acc@best_f1")),
+        "bce-gap": ([], ["bce"], lambda: gap("bce")),
+        "ece-gap": ([], ["ece"], lambda: gap("ece")),
+        "eod": ([], ["tpr@best_f1", "tnr@best_f1"],
+                lambda: float(1 - (gap("tpr@best_f1") + gap("tnr@best_f1")) / 2)),
+        "eo": ([], ["tpr@best_f1"], lambda: gap("tpr@best_f1")),
     }
+    return {name: value() for name, (in_overall, in_groups, value) in columns.items()
+            if all(k in overall for k in in_overall) and all(k in subgroup for k in in_groups)}
 
 
-def classification_fairness(prob: Sequence[float], label: Sequence[int], group: Sequence[Any]) -> Dict[str, Any]:
+def classification_fairness(prob: ArrayLike, label: ArrayLike, group: Sequence[Any]) -> Dict[str, Any]:
     """Fairness of a binary classifier across the groups of one sensitive attribute.
 
     Args:
@@ -154,6 +180,9 @@ def classification_fairness(prob: Sequence[float], label: Sequence[int], group: 
         label: ground-truth label (0 or 1) for each sample.
         group: sensitive attribute value for each sample, e.g. ``"F"``/``"M"`` or age bins. Two or more
             groups; every group must contain both labels.
+
+    Deprecated since 0.5 and to be removed in 1.0: use :func:`fairmedfm.evaluate`, which accepts more input forms
+    and reports groups it cannot evaluate instead of failing, or a single metric such as :func:`fairmedfm.auc_gap`.
 
     Returns:
         ``summary``: the FairMedFM fairness metrics (``overall-auc``, ``worst-auc``, ``auc-gap``, ``acc-gap``,
@@ -163,11 +192,13 @@ def classification_fairness(prob: Sequence[float], label: Sequence[int], group: 
         ``overall``: metrics on all samples at threshold 0.5 and at the best-F1 threshold (``@best_f1``).
         ``groups``: the same metrics for each group, keyed by group value as a string, with sample counts.
     """
+    _deprecated("classification_fairness", "fairmedfm.evaluate(label, prob, group)")
     prob_array = np.asarray(prob, dtype=np.float64)
     label_array = np.asarray(label)
     group_array = np.asarray(group)
     _check_binary_inputs(prob_array, label_array, group_array)
-    overall, groups, reports = _per_group_reports(prob_array, label_array, group_array)
+    overall, by_value = _threshold_reports(prob_array, label_array, group_array)
+    groups, reports = list(by_value), list(by_value.values())
     subgroup = {key: [report[key] for report in reports] for key in reports[0]}
     return {
         "summary": _summary(overall, subgroup),
@@ -177,12 +208,15 @@ def classification_fairness(prob: Sequence[float], label: Sequence[int], group: 
     }
 
 
-def segmentation_fairness(dice: Sequence[float], group: Sequence[Any]) -> Dict[str, Any]:
+def segmentation_fairness(dice: ArrayLike, group: Sequence[Any]) -> Dict[str, Any]:
     """Fairness of a segmentation model from per-sample Dice scores across the groups of one attribute.
 
     Args:
         dice: Dice similarity coefficient in [0, 1] for each sample (image or volume).
         group: sensitive attribute value for each sample; two or more groups.
+
+    Deprecated since 0.5 and to be removed in 1.0: use :func:`fairmedfm.evaluate_segmentation` or a single metric
+    such as :func:`fairmedfm.dice_gap`.
 
     Returns:
         ``summary``: ``mean_dice`` (over all samples), ``min_dice``/``max_dice`` (worst and best group mean),
@@ -191,6 +225,7 @@ def segmentation_fairness(dice: Sequence[float], group: Sequence[Any]) -> Dict[s
         ``es_dice`` (equity-scaled Dice, ``mean_dice / (1 + std_dice)``).
         ``groups``: mean Dice and sample count per group, keyed by group value as a string.
     """
+    _deprecated("segmentation_fairness", "fairmedfm.evaluate_segmentation(group, dice=dice)")
     dice_array = np.asarray(dice, dtype=np.float64).ravel()
     if np.isnan(dice_array).any() or (dice_array < 0).any() or (dice_array > 1).any():
         raise ValueError("dice must contain values in [0, 1]")
@@ -198,6 +233,11 @@ def segmentation_fairness(dice: Sequence[float], group: Sequence[Any]) -> Dict[s
     if not np.isfinite(result["summary"]["skewness_dice"]):
         result["summary"]["skewness_dice"] = None
     return result
+
+
+def _deprecated(name: str, replacement: str) -> None:
+    warnings.warn(f"fairmedfm.{name} is deprecated and will be removed in fairmedfm 1.0; use {replacement}",
+                  FutureWarning, stacklevel=3)
 
 
 def _segmentation(dice: np.ndarray, group: Sequence[Any]) -> Dict[str, Any]:
@@ -230,12 +270,13 @@ def _segmentation(dice: np.ndarray, group: Sequence[Any]) -> Dict[str, Any]:
 
 # Interfaces used by the FairMedFM training code; kept for existing callers.
 
-def evaluate_binary(pred: Sequence[float], Y: Sequence[int], A: Sequence[Any]
+def evaluate_binary(pred: ArrayLike, Y: ArrayLike, A: Sequence[Any]
                     ) -> Tuple[Dict[str, float], Dict[str, List[float]]]:
     """Overall metrics and per-group metric lists (groups in sorted order)."""
     pred_array, label_array, group_array = np.asarray(pred, dtype=np.float64), np.asarray(Y), np.asarray(A)
     _check_binary_inputs(pred_array, label_array, group_array)
-    overall, _, reports = _per_group_reports(pred_array, label_array, group_array)
+    overall, by_value = _threshold_reports(pred_array, label_array, group_array)
+    reports = list(by_value.values())
     return overall, {key: [report[key] for report in reports] for key in reports[0]}
 
 
@@ -245,7 +286,7 @@ def organize_results(overall_metrics: Mapping[str, float], subgroup_metrics: Map
     return _summary(overall_metrics, subgroup_metrics)
 
 
-def evaluate_seg(dsc_list: Sequence[float], sensitive_list: Sequence[Any]) -> Dict[str, Any]:
+def evaluate_seg(dsc_list: ArrayLike, sensitive_list: Sequence[Any]) -> Dict[str, Any]:
     """Segmentation fairness summary as logged by the trainers; see :func:`segmentation_fairness`.
 
     Unlike :func:`segmentation_fairness`, ``skewness_dice`` is ``inf`` when the best group has a mean Dice of 1,

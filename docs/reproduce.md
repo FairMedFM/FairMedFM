@@ -37,5 +37,5 @@ Prepare the data as described in [Datasets](datasets.md) and the checkpoints as 
 
 Fairness metrics are computed by `fairmedfm.metrics`, which reproduces the paper's original implementation to
 within 1e-6 (see [Fairness metrics](metrics.md#consistency-with-the-paper)). Results from newer environments
-installed with `pip install "fairmedfm[cls]"` can differ slightly from the paper because of newer model and
+with the benchmark runner installed from GitHub can differ slightly from the paper because of newer model and
 library versions.

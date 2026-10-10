@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use FairMedFM, please cite the paper."
 title: "FairMedFM: Fairness Benchmarking for Medical Imaging Foundation Models"
 type: software
-version: 0.4.0
+version: 0.5.0
 abstract: "Fairness metrics for any binary classification or segmentation model (subgroup AUC, accuracy, calibration and Dice gaps, equal opportunity, equalized odds and equity-scaled Dice), and a fairness benchmark of medical imaging foundation models."
 authors:
   - family-names: Jin
@@ -12,7 +12,7 @@ authors:
   - family-names: Zhong
     given-names: Yuan
   - family-names: Yao
-    given-names: Qiongsong
+    given-names: Qingsong
   - family-names: Dou
     given-names: Qi
   - family-names: Zhou
@@ -21,7 +21,7 @@ authors:
     given-names: Xiaoxiao
 repository-code: "https://github.com/FairMedFM/FairMedFM"
 url: "https://nanboy-ronan.github.io/FairMedFM-page/"
-license: CC-BY-4.0
+license: Apache-2.0
 keywords:
   - fairness
   - fairness metrics
@@ -43,7 +43,7 @@ preferred-citation:
     - family-names: Zhong
       given-names: Yuan
     - family-names: Yao
-      given-names: Qiongsong
+      given-names: Qingsong
     - family-names: Dou
       given-names: Qi
     - family-names: Zhou

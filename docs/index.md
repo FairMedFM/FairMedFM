@@ -53,8 +53,8 @@ report = fm.evaluate(y_true, y_score, sensitive_features=df[["sex", "age"]], bin
 
     ---
 
-    `pip install "fairmedfm[cls]"` or `"fairmedfm[seg]"` adds the benchmark runner: linear probing, CLIP
-    zero-shot and adaptation, and promptable segmentation with SAM-family models.
+    The benchmark runner, installed from GitHub, adds `fairmedfm run`: linear probing, CLIP zero-shot and
+    adaptation, and promptable segmentation with SAM-family models. See [Installation](installation.md#benchmark-runner).
 
 </div>
 

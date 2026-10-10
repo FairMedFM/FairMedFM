@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.5.0 (2026-10-10)
+
+- **License**: the code, including this package, is now Apache-2.0 (previously CC BY 4.0, which is not meant for
+  software). The documentation and figures stay CC BY 4.0.
+- **The benchmark runner is a separate package.** `fairmedfm` now contains only the fairness metrics, `evaluate`
+  and `fairmedfm score`. The datasets, models, trainers and wrappers moved from `fairmedfm.models`,
+  `fairmedfm.datasets`, ... (0.2 to 0.4) to `fairmedfm_bench`, installed from GitHub with
+  `pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"` (add `[seg]`
+  for segmentation). The `fairmedfm[cls]` and `fairmedfm[seg]` extras no longer exist. `fairmedfm run` still works
+  once the runner is installed, and otherwise prints the install command; `python main.py` works in a checkout.
+- pandas inputs with the same index labels in a different order (for example predictions and a metadata table
+  indexed by image ID) are now paired by index, with a note in `report.warnings`. Before, they were paired by
+  position, which silently mixed up samples. When one of the two has the default index 0, 1, 2, ..., the intended
+  pairing is ambiguous and an error explains how to pair by label (`.loc[...]`) or by position (`.to_numpy()`).
+- The top-level functions are visible to type checkers and editors (they were typed as `Any`), and the
+  single-metric functions show their arguments in help, editors and the API reference.
+- Single-metric functions compute only what they report: `auc_gap` is about 6 times faster.
+- `classification_fairness` and `segmentation_fairness` are deprecated (`FutureWarning`; removal in 1.0). Use
+  `evaluate`, `evaluate_segmentation` or the single metrics.
+- `find_threshold` and `expected_calibration_error` are reimplemented from their definitions; results are unchanged.
+- Benchmark runner: drop the `trans-utils` dependency (it pulled in pyradiomics, which has no wheels after Python
+  3.9); C2L ResNets with `pretrained=True` work again with current torchvision; a missing dataset config or a
+  sensitive attribute without a test split now fails with an explanation; `--if_wandb False` is no longer read as
+  True; the learning-rate schedule is reimplemented with the same values.
+- Documentation: how-to recipes, a comparison with Fairlearn and AIF360, and `llms-full.txt` plus Markdown copies
+  of every page for AI assistants.
+
 ## 0.4.0 (2026-10-06)
 
 - Add one function per fairness metric, in the style of `sklearn.metrics`: `auc_gap`, `worst_group_auc`,

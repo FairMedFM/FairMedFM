@@ -9,6 +9,8 @@ from fairmedfm import metrics
 GOLDEN = json.loads((Path(__file__).parent / "fixtures" / "legacy_golden.json").read_text())
 # The legacy BCE runs in float32 on PyTorch; everything else matches to float64 rounding.
 TOLERANCE = 1e-6
+# classification_fairness and segmentation_fairness are deprecated but still checked against the paper values.
+pytestmark = pytest.mark.filterwarnings("ignore:fairmedfm.*_fairness is deprecated:FutureWarning")
 
 
 @pytest.mark.parametrize("case", ["cls_two_groups", "cls_three_groups"])
@@ -95,3 +97,18 @@ def test_top_level_exports():
     import fairmedfm
     assert fairmedfm.classification_fairness is metrics.classification_fairness
     assert fairmedfm.segmentation_fairness is metrics.segmentation_fairness
+
+
+def test_the_0_1_functions_are_deprecated():
+    data = GOLDEN["cls_two_groups"]
+    with pytest.warns(FutureWarning, match="use fairmedfm.evaluate"):
+        metrics.classification_fairness(data["prob"], data["label"], data["group"])
+    with pytest.warns(FutureWarning, match="use fairmedfm.evaluate_segmentation"):
+        metrics.segmentation_fairness([0.5, 0.7], ["a", "b"])
+
+
+def test_trainer_interfaces_are_not_deprecated(recwarn):
+    data = GOLDEN["cls_two_groups"]
+    metrics.organize_results(*metrics.evaluate_binary(data["prob"], data["label"], data["group"]))
+    metrics.evaluate_seg([0.5, 0.7], ["a", "b"])
+    assert not [w for w in recwarn if issubclass(w.category, FutureWarning)]

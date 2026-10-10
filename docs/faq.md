@@ -16,7 +16,8 @@ names, scores can be probabilities, logits or softmax matrices, and segmentation
 ## Does FairMedFM need PyTorch or a GPU?
 
 Not for the fairness metrics: `pip install fairmedfm` depends only on NumPy, pandas and scikit-learn. PyTorch
-is needed only for the benchmark runner (`fairmedfm[cls]` or `fairmedfm[seg]`).
+is needed only for the benchmark runner, a separate package installed from GitHub (see
+[Installation](installation.md#benchmark-runner)).
 
 ## Which fairness metrics does FairMedFM compute?
 
@@ -54,10 +55,31 @@ class names; scores as probabilities, logits or softmax matrices; masks as array
 line: CSV, TSV, Parquet, Feather, JSON, JSON Lines and Excel tables, with predictions and patient metadata in one
 file or two. See [Evaluate your model](evaluate-your-model.md).
 
+## How is FairMedFM different from Fairlearn or AIF360?
+
+Fairlearn and AIF360 are general fairness toolkits with mitigation algorithms and metrics on hard predictions,
+such as demographic parity. FairMedFM only evaluates, but works from predicted probabilities: AUC, calibration
+(ECE) and cross-entropy gaps, equal opportunity and equalized odds at the best-F1 threshold, and Dice disparities
+for segmentation, which the others do not provide out of the box. Its AUC and equal opportunity gaps equal
+Fairlearn's `MetricFrame(...).difference()` and `equal_opportunity_difference` on the same inputs. See
+[FairMedFM, Fairlearn and AIF360](comparison.md).
+
+## How are predictions matched with patient attributes?
+
+By position, as in scikit-learn: the i-th score belongs to the i-th label and the i-th group. When pandas inputs
+have the same index labels in a different order, for example predictions and a metadata table both indexed by
+image ID, FairMedFM pairs them by index instead and notes it in the report's warnings. If one of them has the
+default index 0, 1, 2, ... (as after shuffling a table and wrapping model outputs in a new Series), it is unclear
+which pairing is meant, so FairMedFM raises an error that shows how to choose: `.loc[y_true.index]` pairs by
+label, `.to_numpy()` by position. On the command line, `fairmedfm score --metadata patients.csv --on image_id`
+joins the two tables.
+
 ## Why is `eod` higher-is-better while the gaps are lower-is-better?
 
 `eod` is an equalized odds score, `1 - (TPR gap + TNR gap) / 2`, so 1 means equal true positive and true
 negative rates across groups. `eo` and the `*-gap` metrics are differences, so 0 means equal performance.
+Fairlearn's `equalized_odds_difference` is a difference (0 is fair); `eod` equals 1 minus it with `agg="mean"`, on
+predictions binarized at the same threshold.
 
 ## Which threshold does FairMedFM use?
 
@@ -83,6 +105,12 @@ RETFound, UNI2-h, SAM2 and SAM3. See [Models](models.md) and [Datasets](datasets
 Yes. [MedVLMBench](https://github.com/ubc-tea/MedVLMBench) is the companion benchmark for the capability of
 medical vision-language models; FairMedFM measures fairness. Together they evaluate both on shared models and
 datasets.
+
+## Can I use FairMedFM in commercial or clinical projects?
+
+Yes. The code, including the `fairmedfm` pip package, is released under the Apache License 2.0. The documentation
+is CC BY 4.0. In the benchmark runner, only the MoCo code used by the MoCo-CXR model is non-commercial; see
+[License](citation.md#license). Pretrained model weights used by the benchmark have their own terms.
 
 ## How do I cite FairMedFM?
 

@@ -83,8 +83,9 @@ the table's columns and the option to use. See [Evaluate your model](evaluate-yo
 
 ## `fairmedfm run`
 
-Runs a benchmark experiment. Requires `pip install "fairmedfm[cls]"` or `"fairmedfm[seg]"`; in a source
-checkout, `python main.py` accepts the same arguments.
+Runs a benchmark experiment. Requires the benchmark runner (see
+[Installation](installation.md#benchmark-runner)); without it, `fairmedfm run` prints the install command. In a
+source checkout, `python main.py` accepts the same arguments.
 
 ```bash
 fairmedfm run --task cls --usage lp --dataset HAM10000 --model BiomedCLIP --sensitive_name Sex
