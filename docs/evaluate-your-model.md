@@ -105,6 +105,9 @@ How the input is interpreted:
 - **Small groups.** A group with only one label cannot have an AUC, TPR or TNR. It is listed in
   `report.by_group` with a `skipped` reason and left out of the gaps, and the other groups are still evaluated.
 - **Intersections.** `intersectional=True` also evaluates combined groups such as `F & >=60`.
+- **Pairing.** Samples are paired by position, as in scikit-learn. When pandas inputs have the same index labels
+  in a different order (for example shuffled predictions and a metadata table, both indexed by image ID), they are
+  paired by index instead, and `report.warnings` says so.
 
 ## Segmentation in Python
 

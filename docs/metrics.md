@@ -36,7 +36,10 @@ Details:
   number of samples.
 - **BCE** clamps log-probabilities at -100, like `torch.nn.BCELoss`, so a probability of exactly 0 or 1 gives a
   finite loss.
-- **`eod` is a score, not a gap**: unlike the other fairness metrics, higher is fairer.
+- **`eod` is a score, not a gap**: unlike the other fairness metrics, higher is fairer. It is not Fairlearn's
+  `equalized_odds_difference` (0 is fair, the larger of the TPR and FPR gaps by default): on predictions
+  binarized at the same threshold, `eod = 1 - equalized_odds_difference(..., agg="mean")`. See
+  [FairMedFM, Fairlearn and AIF360](comparison.md#using-fairmedfm-with-fairlearn).
 
 ## Segmentation
 

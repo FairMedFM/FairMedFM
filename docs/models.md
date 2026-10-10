@@ -5,8 +5,9 @@ description: Classification and segmentation foundation models supported by fair
 
 # Models
 
-Pass the name in the first column to `fairmedfm run --model`. "Extra" is the pip extra that installs the
-model's dependencies; "separate" means an additional install (see [Installation](installation.md#models-with-separate-installs)).
+Pass the name in the first column to `fairmedfm run --model`. "Install" says what provides the model's
+dependencies: "runner" is the [benchmark runner](installation.md#benchmark-runner), `[seg]` its segmentation
+extra, and "separate" an additional install (see [Installation](installation.md#models-with-separate-installs)).
 
 ## Classification
 
@@ -15,31 +16,31 @@ All classification models support linear probing (`--usage lp`). Models marked C
 
 | `--model` | Model | CLIP-style | Install | Weights |
 | --- | --- | --- | --- | --- |
-| `CLIP` | OpenAI CLIP | yes | `[cls]` | downloaded |
+| `CLIP` | OpenAI CLIP | yes | runner | downloaded |
 | `BLIP` | BLIP | yes | separate (LAVIS) | downloaded |
 | `BLIP2` | BLIP-2 | yes | separate (LAVIS) | downloaded |
-| `BiomedCLIP` | BiomedCLIP | yes | `[cls]` | downloaded |
-| `PubMedCLIP` | PubMedCLIP | yes | `[cls]` | downloaded |
-| `MedCLIP` | MedCLIP | yes | `[cls]` | downloaded |
-| `PLIP` | PLIP (pathology) | yes | `[cls]` | downloaded |
-| `SigLIP` | SigLIP | yes | `[cls]` | downloaded |
-| `SigLIP2` | SigLIP 2 | yes | `[cls]` | downloaded |
-| `MedSigLIP` | MedSigLIP | yes | `[cls]` | gated |
+| `BiomedCLIP` | BiomedCLIP | yes | runner | downloaded |
+| `PubMedCLIP` | PubMedCLIP | yes | runner | downloaded |
+| `MedCLIP` | MedCLIP | yes | runner | downloaded |
+| `PLIP` | PLIP (pathology) | yes | runner | downloaded |
+| `SigLIP` | SigLIP | yes | runner | downloaded |
+| `SigLIP2` | SigLIP 2 | yes | runner | downloaded |
+| `MedSigLIP` | MedSigLIP | yes | runner | gated |
 | `CONCH` | CONCH (pathology) | yes | separate | gated |
-| `DINOv2` | DINOv2 | | `[cls]` | downloaded |
-| `DINOv3` | DINOv3 | | `[cls]` | gated |
-| `AIMv2` | AIMv2 | | `[cls]` | downloaded |
-| `RADDINO` | RAD-DINO (chest X-ray) | | `[cls]` | downloaded |
-| `MedGemma` | MedGemma vision tower | | `[cls]` | gated |
-| `UNI2` | UNI2-h (pathology) | | `[cls]` | gated |
-| `Virchow2` | Virchow2 (pathology) | | `[cls]` | gated |
-| `ProvGigaPath` | Prov-GigaPath (pathology) | | `[cls]` | gated |
-| `RETFound` | RETFound (ophthalmology) | | `[cls]` | gated, local file |
+| `DINOv2` | DINOv2 | | runner | downloaded |
+| `DINOv3` | DINOv3 | | runner | gated |
+| `AIMv2` | AIMv2 | | runner | downloaded |
+| `RADDINO` | RAD-DINO (chest X-ray) | | runner | downloaded |
+| `MedGemma` | MedGemma vision tower | | runner | gated |
+| `UNI2` | UNI2-h (pathology) | | runner | gated |
+| `Virchow2` | Virchow2 (pathology) | | runner | gated |
+| `ProvGigaPath` | Prov-GigaPath (pathology) | | runner | gated |
+| `RETFound` | RETFound (ophthalmology) | | runner | gated, local file |
 | `Merlin` | Merlin (3D CT) | | separate | downloaded |
-| `MedLVM` | LVM-Med | | `[cls]` | `pretrained/` |
-| `C2L` | C2L | | `[cls]` | `pretrained/` |
-| `MedMAE` | MedMAE | | `[cls]` | `pretrained/` |
-| `MoCoCXR` | MoCo-CXR | | `[cls]` | `pretrained/` |
+| `MedLVM` | LVM-Med | | runner | `pretrained/` |
+| `C2L` | C2L | | runner | `pretrained/` |
+| `MedMAE` | MedMAE | | runner | `pretrained/` |
+| `MoCoCXR` | MoCo-CXR | | runner | `pretrained/` |
 
 - **downloaded**: fetched from Hugging Face or the model's source on first use.
 - **gated**: request access on the model's Hugging Face page, then `huggingface-cli login` or set `HF_TOKEN`.

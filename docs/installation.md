@@ -26,14 +26,14 @@ on any operating system and without a GPU.
 
 ## Benchmark runner
 
-To run the benchmark with the built-in foundation models, install an extra. Install PyTorch for your CUDA
-version first (see [pytorch.org](https://pytorch.org/get-started/locally/)); otherwise pip installs the default
-PyTorch build.
+To run the benchmark with the built-in foundation models, install the benchmark runner, `fairmedfm-bench`, from
+GitHub. Install PyTorch for your CUDA version first (see [pytorch.org](https://pytorch.org/get-started/locally/));
+otherwise pip installs the default PyTorch build. A separate environment is recommended.
 
 === "Classification"
 
     ```bash
-    pip install "fairmedfm[cls]"
+    pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"
     ```
 
     Linear probing, CLIP zero-shot and CLIP adaptation with the classification models.
@@ -41,17 +41,19 @@ PyTorch build.
 === "Segmentation"
 
     ```bash
-    pip install "fairmedfm[seg]"
+    pip install "fairmedfm-bench[seg] @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"
     ```
 
-    Promptable segmentation with SAM-family models. Includes everything in `[cls]`.
+    Promptable segmentation with SAM-family models, in addition to classification.
 
-The extras keep transformers below 5, albumentations below 2, torchmetrics below 1.7 and setuptools below 81,
-because the benchmark code uses APIs that later versions removed.
+Always use the full GitHub URL: `fairmedfm-bench` is not published on PyPI. The runner installs `fairmedfm` as a
+dependency and keeps transformers below 5, albumentations below 2, torchmetrics below 1.7 and setuptools below 81,
+because the benchmark code uses APIs that later versions removed. Until version 0.4, the runner was part of the pip
+package as `fairmedfm[cls]` and `fairmedfm[seg]`.
 
 ### Models with separate installs
 
-These models need packages that are not on PyPI or that conflict with the extras. FairMedFM reports which
+These models need packages that are not on PyPI or that conflict with the runner's dependencies. FairMedFM reports which
 package is missing when you select one of them.
 
 | Model | Install |
@@ -69,7 +71,7 @@ or set `HF_TOKEN`. See [Models](models.md).
 
 ```bash
 fairmedfm --version
-fairmedfm run --help      # needs [cls] or [seg]
+fairmedfm run --help      # needs the benchmark runner
 ```
 
 ## Paper environment

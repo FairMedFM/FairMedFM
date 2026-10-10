@@ -2,7 +2,7 @@
 
 > Fairness evaluation for any binary classification or segmentation model. `pip install fairmedfm` computes subgroup AUC, accuracy, calibration (ECE) and cross-entropy gaps, equal opportunity, equalized odds and Dice disparities from per-sample predictions and a sensitive attribute such as sex, age or race. It is also the FairMedFM benchmark of 20 medical imaging foundation models on 17 datasets (arXiv:2407.00983).
 
-The pip package depends only on NumPy, pandas and scikit-learn (no PyTorch or GPU) and reproduces the metrics used in the FairMedFM paper. Python, one metric at a time like sklearn.metrics: `fairmedfm.auc_gap(y_true, y_score, sensitive_features=group)`, `worst_group_auc`, `accuracy_gap`, `bce_gap`, `ece_gap`, `equal_opportunity_difference`, `equalized_odds_score`, and for segmentation `dice_gap`, `worst_group_dice`, `dice_std`, `dice_skewness`, `equity_scaled_dice`; they also work as scikit-learn scorers with metadata routing. All metrics at once: `fairmedfm.evaluate(y_true, y_score, sensitive_features)` for binary classification and `fairmedfm.evaluate_segmentation(sensitive_features, dice=... or pred_masks=..., true_masks=...)` for segmentation; both return a report with pandas tables (`summary`, `by_group`) and JSON export. Command line: `fairmedfm score predictions.csv --metadata patients.csv --sensitive sex age --bins age=40,60`. To run the benchmark with built-in foundation models, install `fairmedfm[cls]` (classification) or `fairmedfm[seg]` (segmentation) and use `fairmedfm run`.
+The pip package depends only on NumPy, pandas and scikit-learn (no PyTorch or GPU) and reproduces the metrics used in the FairMedFM paper. Python, one metric at a time like sklearn.metrics: `fairmedfm.auc_gap(y_true, y_score, sensitive_features=group)`, `worst_group_auc`, `accuracy_gap`, `bce_gap`, `ece_gap`, `equal_opportunity_difference`, `equalized_odds_score`, and for segmentation `dice_gap`, `worst_group_dice`, `dice_std`, `dice_skewness`, `equity_scaled_dice`; they also work as scikit-learn scorers with metadata routing. All metrics at once: `fairmedfm.evaluate(y_true, y_score, sensitive_features)` for binary classification and `fairmedfm.evaluate_segmentation(sensitive_features, dice=... or pred_masks=..., true_masks=...)` for segmentation; both return a report with pandas tables (`summary`, `by_group`) and JSON export. Command line: `fairmedfm score predictions.csv --metadata patients.csv --sensitive sex age --bins age=40,60`. Inputs are paired by position; pandas inputs with the same index labels in a different order are paired by index. License: Apache-2.0 (code), CC BY 4.0 (documentation). The benchmark runner with built-in foundation models is a separate package installed from GitHub: `pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"` (add `[seg]` for segmentation), then `fairmedfm run`.
 
 ## Key facts
 
@@ -24,7 +24,15 @@ Python inputs can be lists, NumPy arrays, pandas objects or PyTorch tensors. Lab
 
 ### What does the FairMedFM benchmark cover?
 
-The paper evaluates 20 foundation models on 17 medical imaging datasets (including CheXpert, MIMIC-CXR, HAM10000, PAPILA, FairVLMed10k, GF3300, ADNI, TUSC and FairSeg) with linear probing, zero-shot, CLIP adaptation, parameter-efficient fine-tuning and prompted segmentation, and compares unfairness mitigation methods. The repository has since added newer models such as DINOv3, SigLIP2, AIMv2, MedGemma, RETFound, UNI2-h, Virchow2, Prov-GigaPath, CONCH, Merlin, SAM2, SAM3 and MedicalSAM3. The benchmark runs with `pip install "fairmedfm[cls]"` or `"fairmedfm[seg]"` and `fairmedfm run`, or from the GitHub repository with `python main.py` in the paper's environment.
+The paper evaluates 20 foundation models on 17 medical imaging datasets (including CheXpert, MIMIC-CXR, HAM10000, PAPILA, FairVLMed10k, GF3300, ADNI, TUSC and FairSeg) with linear probing, zero-shot, CLIP adaptation, parameter-efficient fine-tuning and prompted segmentation, and compares unfairness mitigation methods. The repository has since added newer models such as DINOv3, SigLIP2, AIMv2, MedGemma, RETFound, UNI2-h, Virchow2, Prov-GigaPath, CONCH, Merlin, SAM2, SAM3 and MedicalSAM3. The benchmark runs with `fairmedfm run` after installing the benchmark runner from GitHub (`fairmedfm-bench`, not on PyPI), or from a clone of the repository with `python main.py` in the paper's environment.
+
+### How does FairMedFM compare with Fairlearn and AIF360?
+
+Fairlearn and AIF360 are general fairness toolkits with bias mitigation algorithms and metrics on hard predictions such as demographic parity. FairMedFM has no mitigation algorithms; it evaluates from predicted probabilities and covers metrics they do not provide out of the box: AUC gap and worst-group AUC, calibration (ECE) and cross-entropy gaps, and segmentation Dice disparities (Dice gap, equity-scaled Dice, Dice skewness). On the same inputs, `fairmedfm.auc_gap` equals Fairlearn's `MetricFrame(metrics=roc_auc_score, ...).difference()`, `fairmedfm.equal_opportunity_difference` equals Fairlearn's `equal_opportunity_difference` on predictions binarized at the best-F1 threshold, and `fairmedfm.equalized_odds_score` equals `1 - equalized_odds_difference(..., agg="mean")`. Details: https://nanboy-ronan.github.io/FairMedFM-page/docs/comparison/
+
+### Can FairMedFM be used commercially?
+
+Yes. The code and the `fairmedfm` pip package are Apache-2.0. In the separate benchmark runner, only the MoCo code used by the MoCo-CXR model keeps a non-commercial (CC BY-NC 4.0) license.
 
 ### What did the FairMedFM benchmark find?
 
@@ -35,13 +43,20 @@ All evaluated medical foundation models show fairness disparities across sex, ra
 - [Documentation home](https://nanboy-ronan.github.io/FairMedFM-page/docs/)
 - [Installation](https://nanboy-ronan.github.io/FairMedFM-page/docs/installation/)
 - [Evaluate your model](https://nanboy-ronan.github.io/FairMedFM-page/docs/evaluate-your-model/): input formats, the Python API and fairmedfm score
+- [How-to recipes](https://nanboy-ronan.github.io/FairMedFM-page/docs/how-to/): AUC gap, calibration gap, equal opportunity, continuous and intersectional attributes, multi-class, segmentation, model selection
 - [Fairness metrics](https://nanboy-ronan.github.io/FairMedFM-page/docs/metrics/): exact definitions
 - [Command line](https://nanboy-ronan.github.io/FairMedFM-page/docs/cli/)
 - [Python API](https://nanboy-ronan.github.io/FairMedFM-page/docs/api/)
+- [FairMedFM vs Fairlearn and AIF360](https://nanboy-ronan.github.io/FairMedFM-page/docs/comparison/)
 - [Run experiments](https://nanboy-ronan.github.io/FairMedFM-page/docs/benchmark/): fairmedfm run, configs and outputs
 - [Models](https://nanboy-ronan.github.io/FairMedFM-page/docs/models/) and [Datasets](https://nanboy-ronan.github.io/FairMedFM-page/docs/datasets/)
 - [Reproduce the paper](https://nanboy-ronan.github.io/FairMedFM-page/docs/reproduce/)
 - [FAQ](https://nanboy-ronan.github.io/FairMedFM-page/docs/faq/)
+
+## Optional
+
+- [Full documentation as one Markdown file](https://nanboy-ronan.github.io/FairMedFM-page/docs/llms-full.txt)
+- Each documentation page is also available as Markdown at `<page URL>index.md`, e.g. https://nanboy-ronan.github.io/FairMedFM-page/docs/metrics/index.md
 
 ## Links
 

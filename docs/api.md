@@ -69,8 +69,10 @@ Each function returns one float and accepts the same inputs and options as `eval
 
 ## Earlier interfaces
 
-These functions from version 0.1 remain available. They take one sensitive attribute, require 0/1 labels and
-positive-class probabilities, and raise an error for a group with only one label.
+`classification_fairness` and `segmentation_fairness` from version 0.1 are deprecated: they emit a
+`FutureWarning` and will be removed in 1.0. Use `evaluate`, `evaluate_segmentation` or the single metrics instead.
+They take one sensitive attribute, require 0/1 labels and positive-class probabilities, and raise an error for a
+group with only one label.
 
 ::: fairmedfm.metrics.classification_fairness
 
