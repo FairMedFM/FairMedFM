@@ -34,9 +34,11 @@ def to_numpy(values: Any, name: str) -> np.ndarray:
 def align_by_index(named: Dict[str, Any], notes: List[str]) -> Tuple[Any, ...]:
     """The values of ``named``, with pandas inputs reordered to the first one's index where that is clearly meant.
 
-    Inputs are paired by position, as in scikit-learn. The exception: when two pandas inputs have the same unique
-    index labels in a different order (e.g. predictions in one order and a metadata table in another), they are
-    paired by index, as pandas would, and a note says so. Indexes with different labels stay positional.
+    Inputs are paired by position, as in scikit-learn. When two pandas inputs have the same unique index labels in
+    a different order (e.g. predictions and a metadata table indexed by image ID), they are paired by index, as
+    pandas would, and a note says so. If one of them has the default index 0, 1, 2, ..., the intent is ambiguous
+    (a shuffled table next to model outputs in the same row order looks the same), so this raises an error that
+    explains how to pair either way. Indexes with different labels stay positional.
     """
     values = dict(named)
     reference_name = next((name for name, value in values.items() if pandas_index(value) is not None), None)
@@ -54,6 +56,12 @@ def align_by_index(named: Dict[str, Any], notes: List[str]) -> Tuple[Any, ...]:
         else:
             reordered = _reorder(value, reference)
             changed = reordered is not value
+        if changed and (_is_default_index(reference) or _is_default_index(pandas_index(value))):
+            raise ValueError(
+                f"{reference_name} and {name} have the same index labels in a different order, and one has the "
+                "default index 0, 1, 2, ..., so it is unclear whether samples should be paired by position or by "
+                f"index label. To pair by label, pass {name}.loc[{reference_name}.index]; to pair by position, "
+                f"pass {name}.to_numpy() (or reset_index(drop=True) on both)")
         if changed:
             notes.append(f"{name} was reordered to match the index of {reference_name} (same index labels in a "
                          "different order); samples are paired by index")
@@ -67,6 +75,10 @@ def pandas_index(value: Any) -> Optional[pd.Index]:
     if isinstance(value, Mapping):
         return next((item.index for item in value.values() if isinstance(item, (pd.Series, pd.DataFrame))), None)
     return None
+
+
+def _is_default_index(index: Optional[pd.Index]) -> bool:
+    return index is not None and index.equals(pd.RangeIndex(len(index)))
 
 
 def _reorder(value: Any, reference: pd.Index) -> Any:

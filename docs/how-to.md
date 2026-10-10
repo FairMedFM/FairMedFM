@@ -89,9 +89,10 @@ On the command line, join them on an ID column:
 fairmedfm score predictions.csv --metadata patients.csv --on image_id --sensitive sex age --bins age=40,60
 ```
 
-In Python, pandas inputs whose indexes contain the same labels in a different order are paired by index, so a
-predictions table and a metadata table indexed by the same image IDs line up. Otherwise samples are paired by
-position, as in scikit-learn.
+In Python, index both tables by the image ID: pandas inputs with the same index labels in a different order are
+paired by index. Otherwise samples are paired by position, as in scikit-learn. If one input has the default index
+0, 1, 2, ... and the other is a shuffled version of it, FairMedFM cannot tell which pairing you mean and raises an
+error showing both options.
 
 ## How do I track fairness during training?
 

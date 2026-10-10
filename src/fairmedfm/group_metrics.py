@@ -87,7 +87,7 @@ def _value(report, column: str) -> float:
 
 
 def auc_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None, score_type: str = "auto",
-            score_column: Optional[int] = None, bins=None) -> float:
+            score_column: Optional[int] = None, bins: Optional[_inputs.Bins] = None) -> float:
     """Largest minus smallest group ROC AUC (0 is fair).
 
     Args:
@@ -96,14 +96,21 @@ def auc_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: An
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("auc-gap", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
 
 
 def worst_group_auc(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None,
-                    score_type: str = "auto", score_column: Optional[int] = None, bins=None) -> float:
+                    score_type: str = "auto", score_column: Optional[int] = None,
+                    bins: Optional[_inputs.Bins] = None) -> float:
     """Lowest group ROC AUC (higher is better).
 
     Args:
@@ -112,14 +119,21 @@ def worst_group_auc(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_l
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("worst-auc", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
 
 
 def accuracy_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None,
-                 score_type: str = "auto", score_column: Optional[int] = None, bins=None) -> float:
+                 score_type: str = "auto", score_column: Optional[int] = None,
+                 bins: Optional[_inputs.Bins] = None) -> float:
     """Largest minus smallest group accuracy at the threshold with the best overall F1 (0 is fair).
 
     Args:
@@ -128,14 +142,20 @@ def accuracy_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_labe
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("acc-gap", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
 
 
 def bce_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None, score_type: str = "auto",
-            score_column: Optional[int] = None, bins=None) -> float:
+            score_column: Optional[int] = None, bins: Optional[_inputs.Bins] = None) -> float:
     """Largest minus smallest group binary cross-entropy (0 is fair).
 
     Args:
@@ -144,14 +164,20 @@ def bce_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: An
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("bce-gap", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
 
 
 def ece_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None, score_type: str = "auto",
-            score_column: Optional[int] = None, bins=None) -> float:
+            score_column: Optional[int] = None, bins: Optional[_inputs.Bins] = None) -> float:
     """Largest minus smallest group expected calibration error (0 is fair).
 
     Args:
@@ -160,14 +186,21 @@ def ece_gap(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: An
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("ece-gap", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
 
 
 def equal_opportunity_difference(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None,
-                                 score_type: str = "auto", score_column: Optional[int] = None, bins=None) -> float:
+                                 score_type: str = "auto", score_column: Optional[int] = None,
+                                 bins: Optional[_inputs.Bins] = None) -> float:
     """Largest minus smallest group true positive rate at the best-F1 threshold (``eo``; 0 is fair).
 
     Args:
@@ -176,14 +209,21 @@ def equal_opportunity_difference(y_true: Any, y_score: Any, *, sensitive_feature
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("eo", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
 
 
 def equalized_odds_score(y_true: Any, y_score: Any, *, sensitive_features: Any, pos_label: Any = None,
-                         score_type: str = "auto", score_column: Optional[int] = None, bins=None) -> float:
+                         score_type: str = "auto", score_column: Optional[int] = None,
+                         bins: Optional[_inputs.Bins] = None) -> float:
     """``1 - (TPR gap + TNR gap) / 2`` at the best-F1 threshold (``eod``; 1 is fair).
 
     A score, not a difference: unlike fairlearn's ``equalized_odds_difference`` (0 is fair), higher is fairer.
@@ -194,7 +234,13 @@ def equalized_odds_score(y_true: Any, y_score: Any, *, sensitive_features: Any, 
             or softmax output.
         sensitive_features: group of each sample, e.g. sex or site: an array, Series, list, or a DataFrame or dict
             of several attributes (their combinations are compared).
-        pos_label, score_type, score_column, bins: as in :func:`fairmedfm.evaluate`.
+        pos_label: the positive class, when labels are not 0/1 or booleans (one-vs-rest with more classes).
+        score_type: ``"auto"``, ``"probability"`` or ``"logit"``: how to read ``y_score``.
+        score_column: column of the positive class in a (samples, classes) ``y_score``.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}`` (cut points) or ``{"age": 4}``
+            (quantiles).
+
+    See :func:`fairmedfm.evaluate` for details.
     """
     return _classification("eod", y_true, y_score, sensitive_features, pos_label=pos_label,
                            score_type=score_type, score_column=score_column, bins=bins)
@@ -202,66 +248,74 @@ def equalized_odds_score(y_true: Any, y_score: Any, *, sensitive_features: Any, 
 
 
 
-def dice_gap(dice: Any = None, *, sensitive_features: Any, bins=None, **masks: Any) -> float:
+def dice_gap(dice: Any = None, *, sensitive_features: Any, bins: Optional[_inputs.Bins] = None, **masks: Any) -> float:
     """Largest minus smallest group mean Dice (``delta_dice``; 0 is fair).
 
     Args:
         dice: Dice score per sample. Alternatively pass ``pred_masks`` and ``true_masks`` (arrays, tensors or file
             paths) and Dice is computed per sample.
         sensitive_features: group of each sample, as in the classification functions.
-        bins, pred_masks, true_masks, label, mask_threshold, empty_score: as in
-            :func:`fairmedfm.evaluate_segmentation`.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}``.
+        **masks: ``pred_masks`` and ``true_masks`` instead of ``dice``, and optionally ``label``,
+            ``mask_threshold`` and ``empty_score``, as in :func:`fairmedfm.evaluate_segmentation`.
     """
     return _segmentation("delta_dice", dice, sensitive_features, bins=bins, **masks)
 
 
-def worst_group_dice(dice: Any = None, *, sensitive_features: Any, bins=None, **masks: Any) -> float:
+def worst_group_dice(dice: Any = None, *, sensitive_features: Any,
+                     bins: Optional[_inputs.Bins] = None, **masks: Any) -> float:
     """Lowest group mean Dice (``min_dice``; higher is better).
 
     Args:
         dice: Dice score per sample. Alternatively pass ``pred_masks`` and ``true_masks`` (arrays, tensors or file
             paths) and Dice is computed per sample.
         sensitive_features: group of each sample, as in the classification functions.
-        bins, pred_masks, true_masks, label, mask_threshold, empty_score: as in
-            :func:`fairmedfm.evaluate_segmentation`.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}``.
+        **masks: ``pred_masks`` and ``true_masks`` instead of ``dice``, and optionally ``label``,
+            ``mask_threshold`` and ``empty_score``, as in :func:`fairmedfm.evaluate_segmentation`.
     """
     return _segmentation("min_dice", dice, sensitive_features, bins=bins, **masks)
 
 
-def dice_std(dice: Any = None, *, sensitive_features: Any, bins=None, **masks: Any) -> float:
+def dice_std(dice: Any = None, *, sensitive_features: Any, bins: Optional[_inputs.Bins] = None, **masks: Any) -> float:
     """Standard deviation of the group mean Dice scores (``std_dice``; 0 is fair).
 
     Args:
         dice: Dice score per sample. Alternatively pass ``pred_masks`` and ``true_masks`` (arrays, tensors or file
             paths) and Dice is computed per sample.
         sensitive_features: group of each sample, as in the classification functions.
-        bins, pred_masks, true_masks, label, mask_threshold, empty_score: as in
-            :func:`fairmedfm.evaluate_segmentation`.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}``.
+        **masks: ``pred_masks`` and ``true_masks`` instead of ``dice``, and optionally ``label``,
+            ``mask_threshold`` and ``empty_score``, as in :func:`fairmedfm.evaluate_segmentation`.
     """
     return _segmentation("std_dice", dice, sensitive_features, bins=bins, **masks)
 
 
-def dice_skewness(dice: Any = None, *, sensitive_features: Any, bins=None, **masks: Any) -> float:
+def dice_skewness(dice: Any = None, *, sensitive_features: Any,
+                  bins: Optional[_inputs.Bins] = None, **masks: Any) -> float:
     """``(1 - worst group Dice) / (1 - best group Dice)`` (``skewness_dice``; 1 is fair, NaN if a group is perfect).
 
     Args:
         dice: Dice score per sample. Alternatively pass ``pred_masks`` and ``true_masks`` (arrays, tensors or file
             paths) and Dice is computed per sample.
         sensitive_features: group of each sample, as in the classification functions.
-        bins, pred_masks, true_masks, label, mask_threshold, empty_score: as in
-            :func:`fairmedfm.evaluate_segmentation`.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}``.
+        **masks: ``pred_masks`` and ``true_masks`` instead of ``dice``, and optionally ``label``,
+            ``mask_threshold`` and ``empty_score``, as in :func:`fairmedfm.evaluate_segmentation`.
     """
     return _segmentation("skewness_dice", dice, sensitive_features, bins=bins, **masks)
 
 
-def equity_scaled_dice(dice: Any = None, *, sensitive_features: Any, bins=None, **masks: Any) -> float:
+def equity_scaled_dice(dice: Any = None, *, sensitive_features: Any,
+                       bins: Optional[_inputs.Bins] = None, **masks: Any) -> float:
     """Mean Dice divided by ``1 +`` the standard deviation of group means (``es_dice``; higher is better).
 
     Args:
         dice: Dice score per sample. Alternatively pass ``pred_masks`` and ``true_masks`` (arrays, tensors or file
             paths) and Dice is computed per sample.
         sensitive_features: group of each sample, as in the classification functions.
-        bins, pred_masks, true_masks, label, mask_threshold, empty_score: as in
-            :func:`fairmedfm.evaluate_segmentation`.
+        bins: groups for continuous attributes, e.g. ``{"age": [40, 60]}``.
+        **masks: ``pred_masks`` and ``true_masks`` instead of ``dice``, and optionally ``label``,
+            ``mask_threshold`` and ``empty_score``, as in :func:`fairmedfm.evaluate_segmentation`.
     """
     return _segmentation("es_dice", dice, sensitive_features, bins=bins, **masks)

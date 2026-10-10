@@ -107,7 +107,8 @@ How the input is interpreted:
 - **Intersections.** `intersectional=True` also evaluates combined groups such as `F & >=60`.
 - **Pairing.** Samples are paired by position, as in scikit-learn. When pandas inputs have the same index labels
   in a different order (for example shuffled predictions and a metadata table, both indexed by image ID), they are
-  paired by index instead, and `report.warnings` says so.
+  paired by index instead, and `report.warnings` says so. If one of them has the default index 0, 1, 2, ..., the
+  intended pairing is ambiguous and `evaluate` raises an error explaining how to pair by label or by position.
 
 ## Segmentation in Python
 

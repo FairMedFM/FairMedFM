@@ -68,8 +68,11 @@ Fairlearn's `MetricFrame(...).difference()` and `equal_opportunity_difference` o
 
 By position, as in scikit-learn: the i-th score belongs to the i-th label and the i-th group. When pandas inputs
 have the same index labels in a different order, for example predictions and a metadata table both indexed by
-image ID, FairMedFM pairs them by index instead and notes it in the report's warnings. On the command line,
-`fairmedfm score --metadata patients.csv --on image_id` joins the two tables.
+image ID, FairMedFM pairs them by index instead and notes it in the report's warnings. If one of them has the
+default index 0, 1, 2, ... (as after shuffling a table and wrapping model outputs in a new Series), it is unclear
+which pairing is meant, so FairMedFM raises an error that shows how to choose: `.loc[y_true.index]` pairs by
+label, `.to_numpy()` by position. On the command line, `fairmedfm score --metadata patients.csv --on image_id`
+joins the two tables.
 
 ## Why is `eod` higher-is-better while the gaps are lower-is-better?
 

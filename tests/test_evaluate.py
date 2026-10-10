@@ -221,9 +221,10 @@ def test_nan_dice_is_left_out_with_a_warning():
     assert "NaN" in report.warnings[0]
 
 
-def test_pandas_inputs_with_the_same_index_in_another_order_are_paired_by_index():
+def test_pandas_inputs_with_the_same_ids_in_another_order_are_paired_by_index():
     rng = np.random.default_rng(0)
-    frame = pd.DataFrame({"label": rng.integers(0, 2, 300), "sex": rng.choice(["F", "M"], 300)})
+    frame = pd.DataFrame({"label": rng.integers(0, 2, 300), "sex": rng.choice(["F", "M"], 300)},
+                         index=[f"img{i}" for i in range(300)])
     frame["prob"] = np.clip(0.3 + 0.4 * frame["label"] + rng.normal(0, 0.2, 300), 0, 1)
     expected = fm.evaluate(frame["label"], frame["prob"], frame[["sex"]])
     shuffled = frame.sample(frac=1, random_state=1)
@@ -233,10 +234,27 @@ def test_pandas_inputs_with_the_same_index_in_another_order_are_paired_by_index(
     with pytest.warns(UserWarning, match="paired by index"):
         assert fm.auc_gap(shuffled["label"], shuffled["prob"], sensitive_features=frame["sex"]) == pytest.approx(
             expected.summary.loc["sex", "auc-gap"])
-    # Different index labels (e.g. patient IDs and a fresh RangeIndex) are paired by position.
+
+
+def test_a_default_index_next_to_a_shuffled_one_is_ambiguous():
+    rng = np.random.default_rng(0)
+    frame = pd.DataFrame({"label": rng.integers(0, 2, 300), "sex": rng.choice(["F", "M"], 300)})
+    frame["prob"] = np.clip(0.3 + 0.4 * frame["label"] + rng.normal(0, 0.2, 300), 0, 1)
+    shuffled = frame.sample(frac=1, random_state=1)
+    # Model outputs in the shuffled row order, as a new Series with the default index: positional intent.
+    outputs = pd.Series(shuffled["prob"].to_numpy())
+    with pytest.raises(ValueError, match=r"pass y_score.loc\[y_true.index\]; to pair by position"):
+        fm.auc_gap(shuffled["label"], outputs, sensitive_features=shuffled["sex"])
+    with pytest.raises(ValueError, match="unclear whether samples should be paired"):
+        fm.evaluate(shuffled["label"], shuffled["prob"], frame[["sex"]])
+    expected = fm.auc_gap(shuffled["label"].to_numpy(), outputs, sensitive_features=shuffled["sex"].to_numpy())
+    assert fm.auc_gap(shuffled["label"], outputs.to_numpy(), sensitive_features=shuffled["sex"]) == expected
+    # Same frame, or different labels (IDs vs a fresh index): positional, no error and no note.
+    assert fm.evaluate(shuffled["label"], shuffled["prob"], shuffled[["sex"]]).warnings == []
     ids = shuffled.set_axis(np.arange(300) + 10_000)
     report = fm.evaluate(ids["label"], ids["prob"], shuffled[["sex"]].reset_index(drop=True))
-    assert summary(report, "sex") == pytest.approx(summary(expected, "sex")) and not report.warnings
+    assert summary(report, "sex") == pytest.approx(summary(fm.evaluate(frame["label"], frame["prob"], frame[["sex"]]),
+                                                           "sex")) and not report.warnings
 
 
 def test_segmentation_inputs_are_paired_by_index():

@@ -10,9 +10,10 @@
   `pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"` (add `[seg]`
   for segmentation). The `fairmedfm[cls]` and `fairmedfm[seg]` extras no longer exist. `fairmedfm run` still works
   once the runner is installed, and otherwise prints the install command; `python main.py` works in a checkout.
-- pandas inputs with the same index labels in a different order are now paired by index, with a note in
-  `report.warnings`. Before, they were paired by position, which silently mixed up samples when, for example,
-  predictions were shuffled and the metadata table was not.
+- pandas inputs with the same index labels in a different order (for example predictions and a metadata table
+  indexed by image ID) are now paired by index, with a note in `report.warnings`. Before, they were paired by
+  position, which silently mixed up samples. When one of the two has the default index 0, 1, 2, ..., the intended
+  pairing is ambiguous and an error explains how to pair by label (`.loc[...]`) or by position (`.to_numpy()`).
 - The top-level functions are visible to type checkers and editors (they were typed as `Any`), and the
   single-metric functions show their arguments in help, editors and the API reference.
 - Single-metric functions compute only what they report: `auc_gap` is about 6 times faster.
