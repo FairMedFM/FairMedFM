@@ -1,6 +1,7 @@
 """Turn the many shapes users have their data in into the arrays the metrics need."""
 from __future__ import annotations
 
+import itertools
 import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
@@ -231,11 +232,17 @@ def as_groups(values: pd.Series) -> np.ndarray:
 
 
 def intersect(table: pd.DataFrame) -> pd.Series:
-    """Combined attribute, e.g. 'F & 60+', missing when any part is missing."""
+    """Combined attribute, e.g. 'F & 60+', missing when any part is missing.
+
+    Groups are ordered by the first attribute, then the second, ..., each in its own group order (so age bins stay
+    in bin order).
+    """
     combined = table.astype(object).apply(lambda row: None if row.isna().any() else " & ".join(row.astype(str)),
                                           axis=1)
-    combined.name = " & ".join(table.columns)
-    return combined
+    present = set(combined.dropna())
+    order = [" & ".join(parts) for parts in itertools.product(*(group_order(table[c]) for c in table.columns))]
+    return pd.Series(pd.Categorical(combined, categories=[g for g in order if g in present]), index=combined.index,
+                     name=" & ".join(table.columns))
 
 
 def dice_scores(pred_masks: Any, true_masks: Any, *, label: Any = None, mask_threshold: float = 0.5,

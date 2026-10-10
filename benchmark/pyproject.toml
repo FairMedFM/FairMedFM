@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 #   pip install "fairmedfm-bench @ git+https://github.com/FairMedFM/FairMedFM#subdirectory=benchmark"
 [project]
 name = "fairmedfm-bench"
-version = "0.4.1"
+version = "0.4.2"
 description = "FairMedFM benchmark runner: fairness of medical imaging foundation models on classification and segmentation"
 readme = "README.md"
 requires-python = ">=3.10"

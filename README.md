@@ -105,7 +105,6 @@ and use `fairmedfm run` (see [Installation](#installation)).
 - [Key Findings](#key-findings)
 - [Companion Benchmark: MedVLMBench](#companion-benchmark-medvlmbench)
 - [Structure](#structure)
-- [Schedule](#schedule)
 - [Installation](#installation)
 - [Data](#data)
 - [Notebook Tutorial](#notebook-tutorial)
@@ -159,7 +158,7 @@ the fairness metrics published on PyPI as `fairmedfm`, and
 
 |        Tasks         | Supported Usages                                        |                       Supported Models                       |                      Supported Datasets                      |
 | :------------------: | ------------------------------------------------------- | :----------------------------------------------------------: | :----------------------------------------------------------: |
-| Image Classification | Linear probe, zero-shot, CLIP adaptaion, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, **DINOv3**, **AIMv2**, RAD-DINO, **RETFound**, C2L, LVM-Med, MedMAE, MoCo-CXR, PLIP, SigLIP, **SigLIP2**, MedSigLIP, **MedGemma**, **UNI2-h**, **Virchow2**, **Prov-GigaPath**, **CONCH**, **Merlin** | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
+| Image Classification | Linear probe, zero-shot, CLIP adaptation, PEFT           | CLIP, BLIP, BLIP2, MedCLIP, BiomedCLIP, PubMedCLIP, DINOv2, **DINOv3**, **AIMv2**, RAD-DINO, **RETFound**, C2L, LVM-Med, MedMAE, MoCo-CXR, PLIP, SigLIP, **SigLIP2**, MedSigLIP, **MedGemma**, **UNI2-h**, **Virchow2**, **Prov-GigaPath**, **CONCH**, **Merlin** | CheXpert, MIMIC-CXR, HAM10000, FairVLMed10k, GF3300, PAPILA, BRSET, COVID-CT-MD, ADNI-1.5T |
 |  Image Segmentation  | Interactive segmentation prompted with boxes and points | SAM, MobileSAM, TinySAM, MedSAM, MedSAM2, **SAM2**, **SAM3**, **MedicalSAM3 (box)**, SAM-Med2D, FT-SAM | HAM10000, TUSC, FairSeg, Montgomery County X-ray, KiTS, CANDI, IRCADb, SPIDER |
 
 > **Newly integrated foundation models (2023-2026)**
@@ -175,27 +174,7 @@ the fairness metrics published on PyPI as `fairmedfm`, and
 > **SAM3 / MedicalSAM3 (2D)**: These use the official [SAM 3 image model](https://github.com/facebookresearch/sam3) API. SAM3 supports the existing point and box prompts; MedicalSAM3 currently supports boxes only. Meta's package requires Python 3.12+, PyTorch 2.7+, and a compatible CUDA setup, so use a separate environment if the main FairMedFM environment is older. Download [Medical SAM3's `checkpoint_2D.pt`](https://huggingface.co/ChongCong/Medical-SAM3/blob/main/checkpoint_2D.pt) separately. Neither checkpoint is part of `pretrained.zip`.
 > **RETFound checkpoints**: unlike the other gated models here, RETFound ships raw `.pth` files (not a `transformers`-loadable repo) — download manually after access is granted and point `configs/models/RETFound.json`'s `pretrained_path` at the local file, the same convention used for MedMAE/MoCo-CXR/C2L.
 >
-> **Not integrated (previously miscredited in this table)**: SAM-Med3D, FastSAM3D, and SegVol were listed here before but had no corresponding code anywhere in the repo. We looked into adding them: SAM-Med3D is loadable via the third-party [`medim`](https://pypi.org/project/medim/) package, and SegVol via `AutoModel.from_pretrained("BAAI/SegVol", trust_remote_code=True)`, but both expose custom, undocumented inference APIs (3D sliding-window prompting, `forward_test()` with joint text/point/box prompts) that don't match this repo's `encode()`/`decode()` segmentation wrapper contract (see `benchmark/fairmedfm_bench/wrappers/sam_model.py` and `medsam2.py`). Wiring them in correctly needs a new wrapper/trainer path built against their actual source, not just their README — left as follow-up work rather than shipped half-verified. FastSAM3D additionally has no documented Python inference API at all.
-
-
-
-## Schedule
-
-- [x] Release the classification tasks.
-
-- [x] Release the segmentation tasks.
-  - [x] 2D dataset + 2D SAMs
-  - [x] 3D dataset + 2D SAMs
-  - [x] 3D dataset + 3D SAMs
-
-- [x] Release more models 
-
-- [x] Release the preprocessed datasets for classification.
-
-- [x] Release examples and tutorials.
-
-## Evolving
-Your are welcome to post your thoughts about updated features and we will try to make this repo evolving as the development of more FMs.
+> **Not included in this code release**: SAM-Med3D, FastSAM3D and SegVol. Their 3D inference APIs (sliding-window prompting, joint text/point/box prompts) do not fit the runner's prompted-segmentation wrapper; contributions are welcome.
 
 ## Installation
 
@@ -235,14 +214,14 @@ git clone https://github.com/FairMedFM/FairMedFM.git && cd FairMedFM
 conda env create -f environment.yml && conda activate fairmedfm
 ```
 
-Our notebook tutorials also contains how to setup the environment in Colab. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/linear_probing.ipynb)
+Our notebook tutorials also show how to set up the environment in Colab. [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/FairMedFM/FairMedFM/blob/main/notebooks/linear_probing.ipynb)
 
 ## Data
 
-You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data your self. However, not all dataset we used permit us to release the data on our end (e.g., dataset like MIMIC and ADNI requires the user go through their data usage application first). In such case, we cannot provide the download link of our preprocessed dataset for them, but we have the original dataset downloading link and our pre-process scripts released.
+You can either download our pre-processed data directly (see [next section](#use-our-pre-processed-data)) or pre-process customized data yourself. However, not all datasets we used permit us to release the data on our end (e.g., datasets like MIMIC and ADNI require users to go through their data usage application first). In such case, we cannot provide the download link of our preprocessed dataset for them, but we have the original dataset downloading link and our pre-process scripts released.
 
 ### Preprocess data on your own
-We provide data preprocessing scripts for each datasets [here](https://github.com/FairMedFM/FairMedFM/tree/main/pre-processing). The data preprocessing contains 3 steps:
+We provide data preprocessing scripts for each dataset [here](https://github.com/FairMedFM/FairMedFM/tree/main/pre-processing). The data preprocessing contains 3 steps:
 
 - (Optional) preprocess imaging data.
 - Preprocess metadata and sensitive attributes.
@@ -304,7 +283,7 @@ We offer some examples of how to use our package through the notebook.
 
 ## Running Experiment
 
-Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options; in a source checkout, `python main.py` accepts the same arguments. The [documentation](https://fairmedfm.github.io/FairMedFM/docs/benchmark/) covers working directories, configs, outputs and every model.
+Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/benchmark/fairmedfm_bench/parse_args.py) for all options; in a source checkout, `python main.py` accepts the same arguments. The [documentation](https://fairmedfm.github.io/FairMedFM/docs/benchmark/) covers working directories, configs, outputs and every model.
 
 ### Classification
 
@@ -334,8 +313,13 @@ fairmedfm run --task seg --usage seg2d --dataset TUSC --sensitive_name Sex --met
 
 The existing segmentation trainer is single-image only (`--batch_size 1`). Box and point prompts are derived from the ground-truth mask, so results are interactive segmentation scores, not unprompted segmentation scores. The new adapters restore the dataset's normalized BGR tensors to RGB pixels before SAM3 preprocessing.
 
-MedicalSAM3 keeps detections above confidence 0.1 and uses the highest-scoring mask; an empty detection produces an empty mask. Run `python -m pytest -q tests/test_sam3.py` for checkpoint-free regression checks. These cover image conversion, prompt geometry, mask selection, empty detections, and checkpoint loading; actual checkpoint inference still needs validation in a SAM3-compatible environment.
+MedicalSAM3 keeps detections above confidence 0.1 and uses the highest-scoring mask; an empty detection produces an empty mask. Run `python -m pytest -q benchmark/tests/test_sam3.py` for checkpoint-free regression checks. These cover image conversion, prompt geometry, mask selection, empty detections, and checkpoint loading; actual checkpoint inference still needs validation in a SAM3-compatible environment.
 
+
+## Feedback
+
+Questions, bug reports and suggestions for new models or metrics are welcome in
+[GitHub issues](https://github.com/FairMedFM/FairMedFM/issues).
 
 ## Acknowledgement
 

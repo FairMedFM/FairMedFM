@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fairmedfm"
-version = "0.4.1"
+version = "0.4.2"
 description = "Fairness metrics for any binary classification or segmentation model: subgroup AUC, accuracy, calibration and Dice gaps, equalized odds and equity-scaled Dice"
 readme = "README.md"
 requires-python = ">=3.10"
