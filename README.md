@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/v/fairmedfm.svg" alt="PyPI"></a>
-  <a href="https://nanboy-ronan.github.io/FairMedFM-page/docs/"><img src="https://img.shields.io/badge/docs-online-teal.svg" alt="Documentation"></a>
+  <a href="https://fairmedfm.github.io/FairMedFM/docs/"><img src="https://img.shields.io/badge/docs-online-teal.svg" alt="Documentation"></a>
   <a href="https://arxiv.org/abs/2407.00983"><img src="https://img.shields.io/badge/arXiv-2407.00983-b31b1b.svg" alt="arXiv"></a>
   <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/pyversions/fairmedfm.svg" alt="Python versions"></a>
@@ -35,9 +35,9 @@ Each metric works like `sklearn.metrics`: arrays in, one number out. `y_true` an
 labels and outputs, and `group` is any attribute you want to compare across (sex, age group, hospital, scanner,
 skin tone, ...). Lists, NumPy, pandas and PyTorch all work; labels can be class names (`pos_label=`), scores can be
 probabilities, logits or `predict_proba`/softmax output. The package needs only NumPy, pandas and scikit-learn, and
-its numbers match the FairMedFM paper. Apache-2.0 licensed. Documentation: **[nanboy-ronan.github.io/FairMedFM-page/docs/](https://nanboy-ronan.github.io/FairMedFM-page/docs/)**
-([how-to recipes](https://nanboy-ronan.github.io/FairMedFM-page/docs/how-to/),
-[comparison with Fairlearn and AIF360](https://nanboy-ronan.github.io/FairMedFM-page/docs/comparison/)).
+its numbers match the FairMedFM paper. Apache-2.0 licensed. Documentation: **[fairmedfm.github.io/FairMedFM/docs/](https://fairmedfm.github.io/FairMedFM/docs/)**
+([how-to recipes](https://fairmedfm.github.io/FairMedFM/docs/how-to/),
+[comparison with Fairlearn and AIF360](https://fairmedfm.github.io/FairMedFM/docs/comparison/)).
 
 **All metrics at once**, as pandas tables, for several attributes:
 
@@ -304,7 +304,7 @@ We offer some examples of how to use our package through the notebook.
 
 ## Running Experiment
 
-Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options; in a source checkout, `python main.py` accepts the same arguments. The [documentation](https://nanboy-ronan.github.io/FairMedFM-page/docs/benchmark/) covers working directories, configs, outputs and every model.
+Run `fairmedfm run --help` or see [parse_args.py](https://github.com/FairMedFM/FairMedFM/blob/main/src/fairmedfm/parse_args.py) for all options; in a source checkout, `python main.py` accepts the same arguments. The [documentation](https://fairmedfm.github.io/FairMedFM/docs/benchmark/) covers working directories, configs, outputs and every model.
 
 ### Classification
 

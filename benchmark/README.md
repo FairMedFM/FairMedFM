@@ -14,4 +14,4 @@ fairmedfm run --help
 ```
 
 Always use the full GitHub URL: `fairmedfm-bench` is not published on PyPI. See the
-[benchmark documentation](https://nanboy-ronan.github.io/FairMedFM-page/docs/benchmark/).
+[benchmark documentation](https://fairmedfm.github.io/FairMedFM/docs/benchmark/).

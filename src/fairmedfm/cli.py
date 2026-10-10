@@ -100,7 +100,7 @@ def _run(argv: List[str]) -> None:
                      f'  pip install "fairmedfm-bench @ {BENCHMARK_URL}"        # classification\n'
                      f'  pip install "fairmedfm-bench[seg] @ {BENCHMARK_URL}"   # + segmentation')
         sys.exit(f"fairmedfm: error: missing module {exc.name!r}. Models whose packages are not on PyPI need a "
-                 "separate install; see https://nanboy-ronan.github.io/FairMedFM-page/docs/models/")
+                 "separate install; see https://fairmedfm.github.io/FairMedFM/docs/models/")
 
 
 def score(args: argparse.Namespace):
