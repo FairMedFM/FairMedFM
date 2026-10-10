@@ -6,7 +6,7 @@
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/v/fairmedfm.svg" alt="PyPI"></a>
   <a href="https://nanboy-ronan.github.io/FairMedFM-page/docs/"><img src="https://img.shields.io/badge/docs-online-teal.svg" alt="Documentation"></a>
   <a href="https://arxiv.org/abs/2407.00983"><img src="https://img.shields.io/badge/arXiv-2407.00983-b31b1b.svg" alt="arXiv"></a>
-  <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-blue.svg" alt="License"></a>
+  <a href="https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
   <a href="https://pypi.org/project/fairmedfm/"><img src="https://img.shields.io/pypi/pyversions/fairmedfm.svg" alt="Python versions"></a>
   <img src="https://img.shields.io/github/stars/FairMedFM/FairMedFM?style=social" alt="Stars">
   <a href="https://github.com/ubc-tea/MedVLMBench"><img src="https://img.shields.io/badge/Companion-MedVLMBench-orange.svg" alt="MedVLMBench"></a>
@@ -333,7 +333,11 @@ We thank [MEDFAIR](https://github.com/ys-zong/MEDFAIR) for their pioneering work
 
 ## License
 
-This project is released under the CC BY 4.0 license. Please see the LICENSE file for more information.
+The code is released under the [Apache License 2.0](https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE), so you can use
+FairMedFM in academic, clinical and commercial projects. The documentation and figures are under
+[CC BY 4.0](https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE-docs). One file of the benchmark runner keeps a
+non-commercial license from its source; see
+[benchmark/THIRD_PARTY_NOTICES.md](https://github.com/FairMedFM/FairMedFM/blob/main/benchmark/THIRD_PARTY_NOTICES.md).
 
 ## Citation
 If you think our project is helpful and love our project, it's nice if you can cite us. Such supports will help us secure resources for further developing similar projects.

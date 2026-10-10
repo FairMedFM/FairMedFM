@@ -28,8 +28,16 @@ If you also use the companion capability benchmark [MedVLMBench](https://github.
 ```
 
 The repository's [`CITATION.cff`](https://github.com/FairMedFM/FairMedFM/blob/main/CITATION.cff) provides the
-same information for GitHub's "Cite this repository" button and reference managers. FairMedFM is released under
-the [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.
+same information for GitHub's "Cite this repository" button and reference managers.
+
+## License
+
+The FairMedFM code, including the `fairmedfm` pip package, is released under the
+[Apache License 2.0](https://github.com/FairMedFM/FairMedFM/blob/main/LICENSE): you can use it in academic, clinical
+and commercial work. This documentation and the figures are under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). In the benchmark runner, the MoCo code used by the
+MoCo-CXR model keeps its non-commercial license; see
+[THIRD_PARTY_NOTICES.md](https://github.com/FairMedFM/FairMedFM/blob/main/benchmark/THIRD_PARTY_NOTICES.md).
 
 ## Acknowledgements
 

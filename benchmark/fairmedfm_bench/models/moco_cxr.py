@@ -4,6 +4,9 @@ import torch.nn.functional as F
 import torchvision
 
 
+# MoCo and concat_all_gather are from https://github.com/facebookresearch/moco (as used by MoCo-CXR,
+# https://github.com/stanfordmlgroup/MoCo-CXR) and stay under its CC BY-NC 4.0 license: non-commercial use only.
+# MoCoCXR below is FairMedFM code under the Apache License 2.0. See benchmark/THIRD_PARTY_NOTICES.md.
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 class MoCo(nn.Module):
     """

@@ -5,7 +5,7 @@ site_author: FairMedFM authors
 repo_url: https://github.com/FairMedFM/FairMedFM
 repo_name: FairMedFM/FairMedFM
 edit_uri: edit/main/docs/
-copyright: FairMedFM authors · CC BY 4.0
+copyright: FairMedFM authors · Code Apache-2.0 · Documentation CC BY 4.0
 docs_dir: docs
 site_dir: site
 strict: true

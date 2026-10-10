@@ -21,7 +21,7 @@ authors:
     given-names: Xiaoxiao
 repository-code: "https://github.com/FairMedFM/FairMedFM"
 url: "https://nanboy-ronan.github.io/FairMedFM-page/"
-license: CC-BY-4.0
+license: Apache-2.0
 keywords:
   - fairness
   - fairness metrics

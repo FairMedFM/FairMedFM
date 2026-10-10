@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/FairMedFM/FairMedFM",
   "url": "https://nanboy-ronan.github.io/FairMedFM-page/",
   "issueTracker": "https://github.com/FairMedFM/FairMedFM/issues",
-  "license": "https://spdx.org/licenses/CC-BY-4.0",
+  "license": "https://spdx.org/licenses/Apache-2.0",
   "programmingLanguage": "Python",
   "runtimePlatform": "Python 3.10+",
   "softwareRequirements": ["numpy", "pandas", "scikit-learn"],

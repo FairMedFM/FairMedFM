@@ -10,8 +10,9 @@ version = "0.5.0"
 description = "FairMedFM benchmark runner: fairness of medical imaging foundation models on classification and segmentation"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "CC-BY-4.0"
-license-files = ["LICENSE"]
+# moco_cxr.py keeps the CC BY-NC 4.0 license of MoCo; see THIRD_PARTY_NOTICES.md.
+license = "Apache-2.0 AND CC-BY-NC-4.0"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 authors = [
   { name = "Ruinan Jin", email = "ruinanjin@alumni.ubc.ca" },
   { name = "Zikang Xu" },
